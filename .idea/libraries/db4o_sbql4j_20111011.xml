@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="db4o_sbql4j_20111011">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/db4o_sbql4j_20111011.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/db4o_sbql4j_20111011.jar!/plugins/src" />
+    </SOURCES>
+  </library>
+</component>

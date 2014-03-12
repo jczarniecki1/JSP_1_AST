@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="sbql4j_0.95_xml">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/sbql4j_0.95_xml.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
