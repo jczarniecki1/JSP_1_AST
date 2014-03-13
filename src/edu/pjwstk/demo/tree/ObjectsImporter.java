@@ -21,8 +21,8 @@ public class ObjectsImporter implements IObjectsImporter {
     }
 
     @Override
-    public void visitAddress(Address address) {
-        importComplex("Address",
+    public IOID visitAddress(Address address) {
+        return importComplex("Address",
             new IOID[]{
                 importObject(address.getCity(), "City"),
                 importObject(address.getStreet(), "Street"),
@@ -31,15 +31,21 @@ public class ObjectsImporter implements IObjectsImporter {
     }
 
     @Override
-    public void visitPerson(Person person) {
-        importComplex("Person",
+    public IOID visitPerson(Person person) {
+        Address address = person.getAddress();
+        return importComplex("Person",
             new IOID[]{
                 importObject(person.getFName(), "FirstName"),
                 importObject(person.getLName(), "LastName"),
                 importObject(person.getAge(), "Age"),
-                importObject(person.getMarried(), "Married")
+                importObject(person.getMarried(), "Married"),
+                importComplex("Address",
+                    new IOID[]{
+                        importObject(address.getCity(), "City"),
+                        importObject(address.getStreet(), "Street"),
+                        importObject(address.getZip(), "Zip")
+                    })
             });
-        person.getAddress().accept(this);
 
     }
 

@@ -15,6 +15,6 @@ public class StringResult implements IStringResult{
 
     @Override
     public String toString(){
-        return value.toString();
+        return value;
     }
 }

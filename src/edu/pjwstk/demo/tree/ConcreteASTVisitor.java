@@ -1,5 +1,6 @@
 package edu.pjwstk.demo.tree;
 
+import edu.pjwstk.demo.datastore.*;
 import edu.pjwstk.demo.expr.NameExpression;
 import edu.pjwstk.demo.res.*;
 import edu.pjwstk.demo.res.ReferenceResult;
@@ -27,10 +28,10 @@ interface Selector<T, TResult> {
 
 public class ConcreteASTVisitor implements ASTVisitor {
 
-    private final ISBAStore store;
+    private final ISBAStore2 store;
     private final Stack<IAbstractQueryResult> qres;
 
-    public ConcreteASTVisitor(ISBAStore store, Stack<IAbstractQueryResult> qres) {
+    public ConcreteASTVisitor(ISBAStore2 store, Stack<IAbstractQueryResult> qres) {
         this.store = store;
         this.qres = qres;
     }
@@ -75,12 +76,11 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     }
 
-    private IBagResult map(IBagResult bag, Selector<ISingleResult, IOID> selector){
+    private IBagResult map(IBagResult bag, Selector<ISingleResult, ISingleResult> selector){
         List<ISingleResult> results = new ArrayList<>();
         for (ISingleResult element : bag.getElements()) {
-            IOID id = selector.select(element);
             results.add(
-                new ReferenceResult(id)
+                selector.select(element)
             );
         }
         return new BagResult(results);
@@ -106,10 +106,16 @@ public class ConcreteASTVisitor implements ASTVisitor {
                     // TODO: move to valueProvider and replace with:
                     //  field = valueProvider.valueByName(object, name);
                     ISBAObject field = firstChild(object,
-                        y -> y.getName().equals(name)
+                        y -> y.getName() == name.getValue()
                     );
 
-                    return field.getOID();
+                    ISBAObject o = store.retrieve(field.getOID());
+
+                         if (o instanceof StringObject)  return new StringResult (((StringObject) o).getValue());
+                    else if (o instanceof IntegerObject) return new IntegerResult(((IntegerObject)o).getValue());
+                    else if (o instanceof DoubleObject)  return new DoubleResult (((DoubleObject) o).getValue());
+                    else if (o instanceof BooleanObject) return new BooleanResult(((BooleanObject)o).getValue());
+                    else return new ReferenceResult(o.getOID());
                 }
             );
             qres.push(result);
@@ -228,7 +234,8 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
         // TODO: get bag by bagName
         //  using binder?
-        IBagResult bag = new BagResult(new ArrayList<>());
+        IBagResult bag = store.getFakeBag(bagName.getValue());
+                //new BagResult(new ArrayList<>());
 
         IExpression condition = expr.getRightExpression();
         if (condition instanceof NameExpression){
@@ -246,10 +253,10 @@ public class ConcreteASTVisitor implements ASTVisitor {
                     // TODO: move to valueProvider and replace with:
                     //  field = valueProvider.valueByName(object, name);
                     ISBAObject field = firstChild(object,
-                        y -> y.getName().equals(name)
+                        y -> y.getName() == name.getValue()
                     );
 
-                    return ((BooleanResult)field).getValue();
+                    return ((BooleanObject)field).getValue();
                 }
             );
             qres.push(result);
