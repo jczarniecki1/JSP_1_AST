@@ -76,13 +76,13 @@ public class ExampleData {
             for(int i=0; i<5; i++) {
                 persons.add(
                         new Person(random(maleFNames), random(maleLNames),
-                                randomInt(25, 35), randomBoolean(),
+                                randomInt(2, 3), randomBoolean(),
                                 new Address(c, random(streets), randomZip())
                         )
                 );
                 persons.add(
                         new Person(random(femaleFNames), random(femaleLNames),
-                                randomInt(25, 35), randomBoolean(),
+                                randomInt(2, 3), randomBoolean(),
                                 new Address(c, random(streets), randomZip())
                         )
                 );

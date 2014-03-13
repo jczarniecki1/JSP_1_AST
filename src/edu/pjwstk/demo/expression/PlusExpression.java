@@ -1,4 +1,4 @@
-package edu.pjwstk.demo.expr;
+package edu.pjwstk.demo.expression;
 
 import edu.pjwstk.jps.ast.binary.IPlusExpression;
 import edu.pjwstk.jps.visitor.ASTVisitor;

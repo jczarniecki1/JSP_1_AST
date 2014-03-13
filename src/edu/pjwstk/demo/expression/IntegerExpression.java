@@ -1,4 +1,4 @@
-package edu.pjwstk.demo.expr;
+package edu.pjwstk.demo.expression;
 
 import edu.pjwstk.jps.ast.terminal.IIntegerTerminal;
 import edu.pjwstk.jps.visitor.ASTVisitor;
