@@ -12,4 +12,9 @@ public class BooleanResult implements IBooleanResult {
 	public Boolean getValue() {
 		return value;
 	}
+
+    @Override
+    public String toString(){
+        return value.toString();
+    }
 }

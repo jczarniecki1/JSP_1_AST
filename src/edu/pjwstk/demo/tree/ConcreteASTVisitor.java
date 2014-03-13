@@ -1,9 +1,8 @@
 package edu.pjwstk.demo.tree;
 
-import edu.pjwstk.demo.datastore.SBAStore;
 import edu.pjwstk.demo.expr.NameExpression;
 import edu.pjwstk.demo.res.*;
-import edu.pjwstk.demo.result.ReferenceResult;
+import edu.pjwstk.demo.res.ReferenceResult;
 import edu.pjwstk.jps.ast.IExpression;
 import edu.pjwstk.jps.ast.auxname.IAsExpression;
 import edu.pjwstk.jps.ast.auxname.IGroupAsExpression;
@@ -27,8 +26,14 @@ interface Selector<T, TResult> {
 }
 
 public class ConcreteASTVisitor implements ASTVisitor {
-    private Stack<IAbstractQueryResult> qres = new Stack<>();
-    private ISBAStore store = new SBAStore();
+
+    private final ISBAStore store;
+    private final Stack<IAbstractQueryResult> qres;
+
+    public ConcreteASTVisitor(ISBAStore store, Stack<IAbstractQueryResult> qres) {
+        this.store = store;
+        this.qres = qres;
+    }
 
     @Override
     public void visitAsExpression(IAsExpression expr) {

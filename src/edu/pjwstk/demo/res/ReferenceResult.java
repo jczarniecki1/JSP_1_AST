@@ -1,4 +1,4 @@
-package edu.pjwstk.demo.result;
+package edu.pjwstk.demo.res;
 
 import edu.pjwstk.jps.datastore.IOID;
 import edu.pjwstk.jps.result.IReferenceResult;
@@ -14,5 +14,10 @@ public class ReferenceResult implements IReferenceResult {
     @Override
     public IOID getOIDValue() {
         return objectId;
+    }
+
+    @Override
+    public String toString(){
+        return objectId.toString();
     }
 }

@@ -17,4 +17,14 @@ public class BagResult implements IBagResult{
     public Collection<ISingleResult> getElements() {
         return values;
     }
+
+    @Override
+    public String toString(){
+        String textResult = "Bag{";
+        for (ISingleResult innerResult : values){
+            textResult += "\n" + innerResult;
+        }
+        textResult += (values.size() > 0 ? "\n" : "") + "}";
+        return textResult;
+    }
 }
