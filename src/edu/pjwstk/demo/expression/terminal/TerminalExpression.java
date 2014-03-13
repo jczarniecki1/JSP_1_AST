@@ -1,5 +1,6 @@
-package edu.pjwstk.demo.expression;
+package edu.pjwstk.demo.expression.terminal;
 
+import edu.pjwstk.demo.expression.Expression;
 import edu.pjwstk.jps.ast.terminal.ITerminalExpression;
 
 public abstract class TerminalExpression<T> extends Expression implements ITerminalExpression<T> {

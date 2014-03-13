@@ -1,7 +1,7 @@
 package edu.pjwstk.demo.tree;
 
 import edu.pjwstk.demo.datastore.*;
-import edu.pjwstk.demo.expression.NameExpression;
+import edu.pjwstk.demo.expression.terminal.NameExpression;
 import edu.pjwstk.demo.res.*;
 import edu.pjwstk.demo.res.ReferenceResult;
 import edu.pjwstk.jps.ast.IExpression;

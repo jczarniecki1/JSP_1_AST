@@ -1,4 +1,4 @@
-package edu.pjwstk.demo.expression;
+package edu.pjwstk.demo.expression.binary;
 
 import edu.pjwstk.jps.ast.IExpression;
 import edu.pjwstk.jps.ast.binary.IWhereExpression;
