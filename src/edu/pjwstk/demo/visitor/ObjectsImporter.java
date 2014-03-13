@@ -1,6 +1,6 @@
-package edu.pjwstk.demo.tree;
+package edu.pjwstk.demo.visitor;
 
-import edu.pjwstk.demo.datastore.ISBAStore2;
+import edu.pjwstk.demo.datastore.ISBAStoreJavaObjects;
 import edu.pjwstk.demo.model.Address;
 import edu.pjwstk.demo.model.Person;
 import edu.pjwstk.jps.datastore.IOID;
@@ -8,9 +8,9 @@ import edu.pjwstk.jps.datastore.IOID;
 import java.util.Collection;
 
 public class ObjectsImporter implements IObjectsImporter {
-    private ISBAStore2 store;
+    private ISBAStoreJavaObjects store;
 
-    public ObjectsImporter(ISBAStore2 store) {
+    public ObjectsImporter(ISBAStoreJavaObjects store) {
         this.store = store;
     }
 

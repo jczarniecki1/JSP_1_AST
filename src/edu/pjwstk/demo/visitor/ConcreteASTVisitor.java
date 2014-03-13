@@ -1,9 +1,9 @@
-package edu.pjwstk.demo.tree;
+package edu.pjwstk.demo.visitor;
 
 import edu.pjwstk.demo.datastore.*;
 import edu.pjwstk.demo.expression.terminal.NameExpression;
-import edu.pjwstk.demo.res.*;
-import edu.pjwstk.demo.res.ReferenceResult;
+import edu.pjwstk.demo.result.*;
+import edu.pjwstk.demo.result.ReferenceResult;
 import edu.pjwstk.jps.ast.IExpression;
 import edu.pjwstk.jps.ast.auxname.IAsExpression;
 import edu.pjwstk.jps.ast.auxname.IGroupAsExpression;
@@ -28,10 +28,10 @@ interface Selector<T, TResult> {
 
 public class ConcreteASTVisitor implements ASTVisitor {
 
-    private final ISBAStore2 store;
+    private final ISBAStoreJavaObjects store;
     private final Stack<IAbstractQueryResult> qres;
 
-    public ConcreteASTVisitor(ISBAStore2 store, Stack<IAbstractQueryResult> qres) {
+    public ConcreteASTVisitor(ISBAStoreJavaObjects store, Stack<IAbstractQueryResult> qres) {
         this.store = store;
         this.qres = qres;
     }
@@ -234,7 +234,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
         // TODO: get bag by bagName
         //  using binder?
-        IBagResult bag = store.getFakeBag(bagName.getValue());
+        IBagResult bag = store.getBag(bagName.getValue());
                 //new BagResult(new ArrayList<>());
 
         IExpression condition = expr.getRightExpression();

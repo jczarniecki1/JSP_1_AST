@@ -1,7 +1,7 @@
 package edu.pjwstk.demo.model;
 
-import edu.pjwstk.demo.tree.IObjectsImporter;
-import edu.pjwstk.demo.tree.VisitableObject;
+import edu.pjwstk.demo.visitor.IObjectsImporter;
+import edu.pjwstk.demo.visitor.VisitableObject;
 
 public class Person implements VisitableObject{
     private String fName;

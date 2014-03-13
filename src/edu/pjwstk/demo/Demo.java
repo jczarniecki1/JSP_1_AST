@@ -1,7 +1,7 @@
 package edu.pjwstk.demo;
 
-import edu.pjwstk.demo.datastore.ISBAStore2;
-import edu.pjwstk.demo.datastore.SBAStore2;
+import edu.pjwstk.demo.datastore.ISBAStoreJavaObjects;
+import edu.pjwstk.demo.datastore.SBAStoreForJavaObjects;
 import edu.pjwstk.demo.expression.*;
 import edu.pjwstk.demo.expression.binary.DotExpression;
 import edu.pjwstk.demo.expression.binary.MinusExpression;
@@ -11,8 +11,8 @@ import edu.pjwstk.demo.expression.terminal.DoubleExpression;
 import edu.pjwstk.demo.expression.terminal.IntegerExpression;
 import edu.pjwstk.demo.expression.terminal.NameExpression;
 import edu.pjwstk.demo.expression.terminal.StringExpression;
-import edu.pjwstk.demo.tree.ConcreteASTVisitor;
-import edu.pjwstk.demo.tree.ObjectsImporter;
+import edu.pjwstk.demo.visitor.ConcreteASTVisitor;
+import edu.pjwstk.demo.visitor.ObjectsImporter;
 import edu.pjwstk.jps.result.IAbstractQueryResult;
 import edu.pjwstk.jps.visitor.ASTVisitor;
 
@@ -21,7 +21,7 @@ import java.util.Stack;
 public class Demo {
 
     private static Stack<IAbstractQueryResult> qres = new Stack<>();
-    private static ISBAStore2 store = new SBAStore2();
+    private static ISBAStoreJavaObjects store = new SBAStoreForJavaObjects();
     private static ASTVisitor visitor;
 
     public static void main(String[] args){

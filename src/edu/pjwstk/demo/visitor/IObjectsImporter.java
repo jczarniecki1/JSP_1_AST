@@ -1,4 +1,4 @@
-package edu.pjwstk.demo.tree;
+package edu.pjwstk.demo.visitor;
 
 import edu.pjwstk.demo.model.Address;
 import edu.pjwstk.demo.model.Person;

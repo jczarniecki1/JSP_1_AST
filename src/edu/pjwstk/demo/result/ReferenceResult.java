@@ -1,4 +1,4 @@
-package edu.pjwstk.demo.res;
+package edu.pjwstk.demo.result;
 
 import edu.pjwstk.jps.datastore.IOID;
 import edu.pjwstk.jps.result.IReferenceResult;
