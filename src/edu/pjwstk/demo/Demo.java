@@ -109,6 +109,7 @@ public class Demo {
         Log(qres.pop());
     }
 
+    // TODO: Do zaimplementowania dla Gosi :)
     private static void SolveQuery3() {
         Expression expression =
             new InExpression(
