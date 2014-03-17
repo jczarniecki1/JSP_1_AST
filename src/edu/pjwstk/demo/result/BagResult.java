@@ -20,11 +20,12 @@ public class BagResult implements IBagResult{
 
     @Override
     public String toString(){
-        String textResult = "Bag{";
+        String textResult = "{ ";
         for (ISingleResult innerResult : values){
-            textResult += "\n" + innerResult;
+            textResult += (textResult.length() > 2 ? ", " : "")
+                    + innerResult;
         }
-        textResult += (values.size() > 0 ? "\n" : "") + "}";
+        textResult += (values.size() > 0 ? " " : "") + "}";
         return textResult;
     }
 }

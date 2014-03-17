@@ -8,7 +8,8 @@ public class IntegerResult implements IIntegerResult {
 	public IntegerResult(Integer value) {
 		this.value = value;
 	}
-	
+
+    @Override
 	public Integer getValue() {
 		return value;
 	}

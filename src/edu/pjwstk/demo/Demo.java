@@ -3,14 +3,14 @@ package edu.pjwstk.demo;
 import edu.pjwstk.demo.datastore.ISBAStoreJavaObjects;
 import edu.pjwstk.demo.datastore.SBAStoreForJavaObjects;
 import edu.pjwstk.demo.expression.*;
-import edu.pjwstk.demo.expression.binary.DotExpression;
-import edu.pjwstk.demo.expression.binary.MinusExpression;
-import edu.pjwstk.demo.expression.binary.PlusExpression;
-import edu.pjwstk.demo.expression.binary.WhereExpression;
+import edu.pjwstk.demo.expression.binary.*;
 import edu.pjwstk.demo.expression.terminal.DoubleExpression;
 import edu.pjwstk.demo.expression.terminal.IntegerExpression;
 import edu.pjwstk.demo.expression.terminal.NameExpression;
 import edu.pjwstk.demo.expression.terminal.StringExpression;
+import edu.pjwstk.demo.expression.unary.AvgExpression;
+import edu.pjwstk.demo.expression.unary.BagExpression;
+import edu.pjwstk.demo.expression.unary.ExistsExpression;
 import edu.pjwstk.demo.visitor.ConcreteASTVisitor;
 import edu.pjwstk.demo.visitor.ObjectsImporter;
 import edu.pjwstk.jps.result.IAbstractQueryResult;
@@ -45,17 +45,17 @@ public class Demo {
         //SolveQuery4();
     }
 
+    // SELECT Age FROM Person WHERE Married = 1
     private static void SolveDemoQuery() {
         Expression expression =
-            new DotExpression(
+            new AvgExpression(
                 new DotExpression(
                     new WhereExpression(
                         new NameExpression("Person"),
                         new NameExpression("Married")
                     ),
-                    new NameExpression("LastName")
-                ),
-                new NameExpression("City")
+                    new NameExpression("Age")
+                )
             );
 
         expression.accept(visitor);
@@ -71,7 +71,7 @@ public class Demo {
                 new GreaterThanExpression(
                     new AvgExpression(
                         new DotExpression(
-                            new NameExpression("Employes"),
+                            new NameExpression("Employees"),
                             new NameExpression("Salary")
                         )
                     ),
@@ -88,7 +88,7 @@ public class Demo {
     private static void SolveQuery2() {
         Expression expression =
             new WhereExpression(
-                new NameExpression("Employee"),
+                new NameExpression("Person"),
                 new InExpression(
                     new DotExpression(
                         new NameExpression("Address"),
@@ -145,7 +145,7 @@ public class Demo {
         Expression expression =
             new DotExpression(
                 new WhereExpression(
-                    new NameExpression("Employee"),
+                    new NameExpression("Person"),
                     new EqualsExpression(
                         new NameExpression("LastName"),
                         new StringExpression("Kowalski")

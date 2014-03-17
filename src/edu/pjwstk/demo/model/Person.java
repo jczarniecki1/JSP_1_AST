@@ -4,8 +4,8 @@ import edu.pjwstk.demo.visitor.IObjectsImporter;
 import edu.pjwstk.demo.visitor.VisitableObject;
 
 public class Person implements VisitableObject{
-    private String fName;
-    private String lName;
+    private String firstName;
+    private String lastName;
     private Integer age;
     private boolean married;
     private Address address;
@@ -13,8 +13,8 @@ public class Person implements VisitableObject{
     public Person(String name, String name2, Integer age,
                   boolean married, Address address) {
         super();
-        fName = name;
-        lName = name2;
+        firstName = name;
+        lastName = name2;
         this.age = age;
         this.married = married;
         this.address = address;
@@ -22,21 +22,21 @@ public class Person implements VisitableObject{
 
     @Override
     public String toString() {
-        return "Person[fName="+fName+", lName="+lName+", age="+age+
+        return "Person[firstName="+ firstName +", lastName="+ lastName +", age="+age+
                 ", married="+married+", address="+address+"]";
     }
 
     public String getFName() {
-        return fName;
+        return firstName;
     }
     public void setFName(String name) {
-        fName = name;
+        firstName = name;
     }
     public String getLName() {
-        return lName;
+        return lastName;
     }
     public void setLName(String name) {
-        lName = name;
+        lastName = name;
     }
     public Integer getAge() {
         return age;

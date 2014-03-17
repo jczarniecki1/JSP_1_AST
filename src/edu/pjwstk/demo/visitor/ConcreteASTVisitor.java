@@ -26,6 +26,10 @@ interface Selector<T, TResult> {
     TResult select(T element);
 }
 
+/*
+    Implementacja ASTVisitora
+    TODO:... dopisze się coś jeszcze :)
+ */
 public class ConcreteASTVisitor implements ASTVisitor {
 
     private final ISBAStoreJavaObjects store;
@@ -229,19 +233,26 @@ public class ConcreteASTVisitor implements ASTVisitor {
     }
     @Override
     public void visitWhereExpression(IWhereExpression expr) {
-        expr.getLeftExpression().accept(this);
-        IStringResult bagName = (IStringResult)qres.pop();
+        IBagResult collection;
+        IExpression subject = expr.getLeftExpression();
+        if (subject instanceof NameExpression){
+            subject.accept(this);
+            IStringResult bagName = (IStringResult)qres.pop();
 
-        // TODO: get bag by bagName
-        //  using binder?
-        IBagResult bag = store.getBag(bagName.getValue());
-                //new BagResult(new ArrayList<>());
+            // TODO: get collection by bagName
+            //  using binder?
+            collection = store.getBag(bagName.getValue());
+            //new BagResult(new ArrayList<>());
+        } else {
+            subject.accept(this);
+            collection = (IBagResult)qres.pop();
+        }
 
         IExpression condition = expr.getRightExpression();
         if (condition instanceof NameExpression){
             condition.accept(this);
             StringResult name = (StringResult)qres.pop();
-            IBagResult result = where(bag,
+            IBagResult result = where(collection,
                 // TODO: move to repository and replace with:
                 //  x -> repository.get<BooleanResult>(objectId, fieldName)
                 x -> {
@@ -343,5 +354,43 @@ public class ConcreteASTVisitor implements ASTVisitor {
     @Override
     public void visitAvgExpression(IAvgExpression expr) {
 
+        expr.getInnerExpression().accept(this);
+
+        IBagResult collection = (IBagResult)qres.pop();
+
+        Integer sum = 0;
+        for (ISingleResult item : collection.getElements()){
+            sum += ((IIntegerResult)item).getValue();
+        }
+
+        Double result =  (double)sum / collection.getElements().size();
+
+        qres.push(new DoubleResult(result));
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
