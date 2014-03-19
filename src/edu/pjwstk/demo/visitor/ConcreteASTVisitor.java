@@ -331,11 +331,30 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitMaxExpression(IMaxExpression expr) {
+        expr.getInnerExpression().accept(this);
+        IBagResult collection = (IBagResult)qres.pop();
 
+        double max = Integer.MIN_VALUE;
+        for (ISingleResult item : collection.getElements()){
+            if (item instanceof IIntegerResult) max = Math.max(max, (double) ((IIntegerResult) item).getValue());
+            if (item instanceof IDoubleResult)  max = Math.max(max, ((IDoubleResult) item).getValue());
+        }
+
+        qres.push(new DoubleResult(max));
     }
 
     @Override
     public void visitMinExpression(IMinExpression expr) {
+        expr.getInnerExpression().accept(this);
+        IBagResult collection = (IBagResult)qres.pop();
+
+        double min = Integer.MAX_VALUE;
+        for (ISingleResult item : collection.getElements()){
+            if (item instanceof IIntegerResult) min = Math.min(min, (double)((IIntegerResult)item).getValue());
+            if (item instanceof IDoubleResult)  min = Math.min(min, ((IDoubleResult)item).getValue());
+        }
+
+        qres.push(new DoubleResult(min));
 
     }
 
@@ -383,29 +402,3 @@ public class ConcreteASTVisitor implements ASTVisitor {
         qres.push(new DoubleResult(avg));
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

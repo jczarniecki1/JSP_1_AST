@@ -46,7 +46,7 @@ public class Demo {
     // SELECT Age FROM Person WHERE Married = 1
     private static void SolveDemoQuery() {
         Expression expression =
-            new AvgExpression(
+            new MinExpression(
                 new DotExpression(
                     new WhereExpression(
                         new NameExpression("Person"),
