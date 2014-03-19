@@ -355,15 +355,15 @@ public class ConcreteASTVisitor implements ASTVisitor {
     public void visitAvgExpression(IAvgExpression expr) {
 
         expr.getInnerExpression().accept(this);
-
         IBagResult collection = (IBagResult)qres.pop();
 
-        Integer sum = 0;
+        double sum = 0;
         for (ISingleResult item : collection.getElements()){
-            sum += ((IIntegerResult)item).getValue();
+            if (item instanceof IIntegerResult) sum += ((IIntegerResult)item).getValue();
+            if (item instanceof IDoubleResult)  sum += ((IDoubleResult)item).getValue();
         }
 
-        Double result =  (double)sum / collection.getElements().size();
+        Double result =  sum / collection.getElements().size();
 
         qres.push(new DoubleResult(result));
     }
