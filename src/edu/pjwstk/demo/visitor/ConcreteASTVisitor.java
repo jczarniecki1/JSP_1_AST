@@ -2,6 +2,8 @@ package edu.pjwstk.demo.visitor;
 
 import edu.pjwstk.demo.datastore.*;
 import edu.pjwstk.demo.expression.terminal.NameExpression;
+import edu.pjwstk.demo.expression.unary.CountExpression;
+import edu.pjwstk.demo.expression.unary.SumExpression;
 import edu.pjwstk.demo.result.*;
 import edu.pjwstk.demo.result.ReferenceResult;
 import edu.pjwstk.jps.ast.IExpression;
@@ -314,6 +316,12 @@ public class ConcreteASTVisitor implements ASTVisitor {
     @Override
     public void visitCountExpression(ICountExpression expr) {
 
+        expr.getInnerExpression().accept(this);
+        IBagResult collection = (IBagResult)qres.pop();
+
+        int count = collection.getElements().size();
+
+        qres.push(new IntegerResult(count));
     }
 
     @Override
@@ -343,17 +351,6 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitSumExpression(ISumExpression expr) {
-
-    }
-
-    @Override
-    public void visitUniqueExpression(IUniqueExpression expr) {
-
-    }
-
-    @Override
-    public void visitAvgExpression(IAvgExpression expr) {
-
         expr.getInnerExpression().accept(this);
         IBagResult collection = (IBagResult)qres.pop();
 
@@ -363,9 +360,27 @@ public class ConcreteASTVisitor implements ASTVisitor {
             if (item instanceof IDoubleResult)  sum += ((IDoubleResult)item).getValue();
         }
 
-        Double result =  sum / collection.getElements().size();
+        qres.push(new DoubleResult(sum));
+    }
 
-        qres.push(new DoubleResult(result));
+    @Override
+    public void visitUniqueExpression(IUniqueExpression expr) {
+
+    }
+
+    @Override
+    public void visitAvgExpression(IAvgExpression expr) {
+        IExpression innerExpression = expr.getInnerExpression();
+
+        new SumExpression(innerExpression).accept(this);
+        double sum = ((IDoubleResult)qres.pop()).getValue();
+
+        new CountExpression(innerExpression).accept(this);
+        int count =  ((IIntegerResult)qres.pop()).getValue();
+
+        double avg =  sum / count;
+
+        qres.push(new DoubleResult(avg));
     }
 }
 
