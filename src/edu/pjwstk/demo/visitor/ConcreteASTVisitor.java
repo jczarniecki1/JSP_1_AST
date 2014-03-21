@@ -16,10 +16,7 @@ import edu.pjwstk.jps.ast.unary.*;
 import edu.pjwstk.jps.result.*;
 import edu.pjwstk.jps.visitor.ASTVisitor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /*
     Implementacja ASTVisitora
@@ -176,6 +173,15 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitInExpression(IInExpression expr) {
+        expr.getLeftExpression().accept(this);
+        IBagResult collectionLeft = (IBagResult)qres.pop();
+
+        expr.getRightExpression().accept(this);
+        IBagResult collectionRight = (IBagResult)qres.pop();
+
+        boolean isIN = ((List<ISingleResult>) collectionRight).containsAll((List<ISingleResult>) collectionLeft);
+
+        qres.push(new BooleanResult(isIN));
 
     }
 
@@ -208,7 +214,10 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitMinusExpression(IMinusExpression expr) {
-
+        qres.push(new DoubleResult(
+                getDouble(expr.getLeftExpression())
+                        - getDouble(expr.getRightExpression())
+        ));
     }
 
     @Override
@@ -248,7 +257,10 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitPlusExpression(IPlusExpression expr) {
-
+        double left = getDouble(expr.getLeftExpression());
+        double right = getDouble(expr.getRightExpression());
+        double sum = left + right;
+        qres.push(new DoubleResult(sum));
     }
 
     @Override
