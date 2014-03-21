@@ -4,7 +4,6 @@ import edu.pjwstk.demo.common.lambda.Predicate;
 import edu.pjwstk.demo.common.lambda.Selector;
 import edu.pjwstk.demo.result.BagResult;
 import edu.pjwstk.jps.result.IBagResult;
-import edu.pjwstk.jps.result.IReferenceResult;
 import edu.pjwstk.jps.result.ISingleResult;
 
 import java.util.ArrayList;
@@ -22,9 +21,6 @@ public class Query {
         }
         return new BagResult(results);
     }
-    public static IBagResult selectFromBag(IBagResult bag, Selector<ISingleResult,ISingleResult> selector){
-        return new BagResult(select(bag.getElements(), selector));
-    }
 
     public static <T,TItem> List<T> select(Collection<TItem> collection, Selector<TItem,T> selector){
         List<T> results = new ArrayList<>();
@@ -32,5 +28,18 @@ public class Query {
             results.add(selector.select(element));
         }
         return results;
+    }
+
+    public static <TItem> TItem firstOrDefault(Collection<TItem> collection, Predicate<TItem> predicate){
+        for (TItem element : collection) {
+            if (predicate.apply(element)) {
+                return element;
+            }
+        }
+        return null;
+    }
+
+    public static <TItem> boolean any(Collection<TItem> collection, Predicate<TItem> predicate){
+        return firstOrDefault(collection, predicate) != null;
     }
 }
