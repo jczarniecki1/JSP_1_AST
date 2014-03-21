@@ -9,6 +9,13 @@ import edu.pjwstk.jps.datastore.ISBAStore;
 
 import java.util.*;
 
+/*
+    Implementacja bazy danych
+
+    TODO:
+      - zastąpienie wczytywania obiektów typu Person
+        uniwersalnym rozwiazaniem opartym na refleksji (CW3-DataStore.pdf)
+*/
 public class SBAStore implements ISBAStore {
 
     protected Integer lastGeneratedId = 0;

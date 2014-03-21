@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/*
+    Ułatwia nawigowanie po kolekcjach z pomocą lambd
+    Można dodawać więcej metod podobnych do tych z LINQ
+*/
 public class Query {
 
     public static IBagResult where(IBagResult bag, Predicate<ISingleResult> predicate){

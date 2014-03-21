@@ -71,6 +71,9 @@ public class Demo {
         Log(qres.pop());
     }
 
+    // SELECT c.* FROM Company c
+    // INNER  JOIN Employee e ON e.Company_Id = c.Id
+    // WHERE  AVG(e.Salary) > 2550.50
     private static void SolveQuery1() {
         Expression expression =
             new WhereExpression(
@@ -92,6 +95,9 @@ public class Demo {
         Log(qres.pop());
     }
 
+    // SELECT p.* FROM Person p
+    // INNER  JOIN Address a ON a.Id = p.Address_Id
+    // WHERE  a.City IN ('Warszawa', 'Łódź')
     private static void SolveQuery2() {
         Expression expression =
             new WhereExpression(
@@ -149,6 +155,9 @@ public class Demo {
         Log(qres.pop());
     }
 
+    // SELECT p.* FROM Person p
+    // INNER  JOIN Address a ON a.Id = p.Address_Id
+    // WHERE  p.LastName = 'Kowalski' && a.City = 'Łódź'
     private static void SolveQuery4() {
         Expression expression =
             new DotExpression(

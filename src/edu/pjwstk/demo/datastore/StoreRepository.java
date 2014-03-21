@@ -12,6 +12,9 @@ import edu.pjwstk.jps.result.ISingleResult;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/*
+    Ukrywa niskopoziomowe operacja odczytu z bazy
+*/
 public class StoreRepository implements IStoreRepository {
     private ISBAStore store;
 

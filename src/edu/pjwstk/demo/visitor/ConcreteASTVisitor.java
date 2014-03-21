@@ -23,7 +23,21 @@ import java.util.Stack;
 
 /*
     Implementacja ASTVisitora
-    TODO: Postęp: 26/43 (60%)
+     - odpowiada za wykonywanie wyrażeń (Expressions) i wrzucenie wyniku na stos (QRes)
+     - implementacje wyrażeń nie mają żadnej logiki, są tylko "pojemnikami" na inne wyrażenia
+
+    Postęp: 26/43 (60%)
+
+    TODO:
+     * operacje arytmetyczne,
+     * operacje na zbiorach,
+     * rzutowanie (... as ...)
+     * Equals, Struct
+     * poprawka w CommaExpression
+
+    Uwaga:
+     Implementacje nie muszą uwzględniać różnych typów danych wejściowych.
+     Najpierw obsłużmy najprostsze scenariusze (np. double + double)
  */
 
 public class ConcreteASTVisitor implements ASTVisitor {
@@ -47,6 +61,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     }
 
+    // All() jako odwrócone Any()
     @Override
     public void visitAllExpression(IForAllExpression expr) {
         IExpression condition = expr.getRightExpression();
@@ -55,9 +70,9 @@ public class ConcreteASTVisitor implements ASTVisitor {
         IBagResult collection = (IBagResult)qres.pop();
 
         IBooleanResult results = new BooleanResult(
-            Query.any(collection.getElements(), x -> {
+            ! Query.any(collection.getElements(), x -> {
                 qres.push(x);
-                new NotExpression(condition).accept(this);
+                condition.accept(this);
                 return ! ((IBooleanResult) qres.pop()).getValue();
             }));
 
@@ -72,6 +87,8 @@ public class ConcreteASTVisitor implements ASTVisitor {
         ));
     }
 
+    // Wykonuje prawe wyrażenie na każdym elemencie
+    // Jeśli choć jeden spełnia warunek, pętla będzie przerwana
     @Override
     public void visitAnyExpression(IForAnyExpression expr) {
         IExpression condition = expr.getRightExpression();
@@ -95,6 +112,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     }
 
+    // TODO: To ma zwracać StructResult, a nie BagResult (CW2-QRES.pdf)
     @Override
     public void visitCommaExpression(ICommaExpression expr) {
 
@@ -115,6 +133,8 @@ public class ConcreteASTVisitor implements ASTVisitor {
     public void visitDivideExpression(IDivideExpression expr) {
     }
 
+    // Wykonanie prawego wyrażenia na każdym elemencie kolekcji wejsciowej
+    // daje kolekcję wynikową
     @Override
     public void visitDotExpression(IDotExpression expr) {
         IExpression selection = expr.getRightExpression();
@@ -235,6 +255,9 @@ public class ConcreteASTVisitor implements ASTVisitor {
     public void visitUnionExpression(IUnionExpression expr) {
 
     }
+
+    // Zachowanie analogiczne do DotExpression, ale kolekcja wynikowa
+    // budowana jest z elementów kolekcji wejściowej
     @Override
     public void visitWhereExpression(IWhereExpression expr) {
 
@@ -274,6 +297,9 @@ public class ConcreteASTVisitor implements ASTVisitor {
         qres.push(new IntegerResult(expr.getValue()));
     }
 
+    // Jeśli jest coś na stosie, to wybierz obiekty z Bag-a, albo z kolekcji
+    // danej referencją (IReferenceResult)
+    // w przeciwnym wypadku zdobądź obiekty z bazy (repository.getCollection())
     @Override
     public void visitNameTerminal(INameTerminal expr) {
         IAbstractQueryResult result;
@@ -290,7 +316,8 @@ public class ConcreteASTVisitor implements ASTVisitor {
             if (input instanceof IBagResult)
             {
                 Collection collection = ((IBagResult) input).getElements();
-                result = new BagResult(Query.select(collection, x -> repository.getField((IReferenceResult) x, name)));
+                List values = Query.select(collection, x -> repository.getField((IReferenceResult) x, name));
+                result = new BagResult(values);
             }
             else
             {
@@ -378,6 +405,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     }
 
+    // Dla uproszczenia rzutujemy wszystko na double
     @Override
     public void visitSumExpression(ISumExpression expr) {
         expr.getInnerExpression().accept(this);
@@ -385,8 +413,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
         double sum = 0;
         for (ISingleResult item : collection.getElements()){
-            if (item instanceof IIntegerResult) sum += ((IIntegerResult)item).getValue();
-            if (item instanceof IDoubleResult)  sum += ((IDoubleResult)item).getValue();
+            sum += (double)((ISimpleResult)item).getValue();
         }
 
         qres.push(new DoubleResult(sum));
@@ -399,25 +426,21 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitAvgExpression(IAvgExpression expr) {
+
         IExpression innerExpression = expr.getInnerExpression();
+        double sum = getDouble(new SumExpression(innerExpression));
+        double count = getDouble(new CountExpression(innerExpression));
 
-        new SumExpression(innerExpression).accept(this);
-        double sum = ((IDoubleResult)qres.pop()).getValue();
-
-        new CountExpression(innerExpression).accept(this);
-        int count =  ((IIntegerResult)qres.pop()).getValue();
-
-        double avg =  sum / count;
-
-        qres.push(new DoubleResult(avg));
+        qres.push(new DoubleResult(sum / count));
     }
 
-
+    // Szybkie wyciąganie wartości z wyrażenia i rzutownie na double
     private double getDouble(IExpression expression) {
         expression.accept(this);
         return (double)((ISimpleResult)qres.pop()).getValue();
     }
 
+    // Szybkie wyciąganie wartości z wyrażenia i rzutownie na boolean
     private boolean getBoolean(IExpression expression) {
         expression.accept(this);
         return (boolean)((ISimpleResult)qres.pop()).getValue();
