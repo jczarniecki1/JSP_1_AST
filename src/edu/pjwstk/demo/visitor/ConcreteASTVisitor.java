@@ -1,18 +1,16 @@
 package edu.pjwstk.demo.visitor;
 
-import edu.pjwstk.demo.datastore.*;
-import edu.pjwstk.demo.expression.terminal.NameExpression;
+import edu.pjwstk.demo.common.Query;
+import edu.pjwstk.demo.datastore.IStoreRepository;
 import edu.pjwstk.demo.expression.unary.CountExpression;
 import edu.pjwstk.demo.expression.unary.SumExpression;
 import edu.pjwstk.demo.result.*;
-import edu.pjwstk.demo.result.ReferenceResult;
 import edu.pjwstk.jps.ast.IExpression;
 import edu.pjwstk.jps.ast.auxname.IAsExpression;
 import edu.pjwstk.jps.ast.auxname.IGroupAsExpression;
 import edu.pjwstk.jps.ast.binary.*;
 import edu.pjwstk.jps.ast.terminal.*;
 import edu.pjwstk.jps.ast.unary.*;
-import edu.pjwstk.jps.datastore.*;
 import edu.pjwstk.jps.result.*;
 import edu.pjwstk.jps.visitor.ASTVisitor;
 
@@ -20,26 +18,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-interface Predicate<T> {
-    boolean apply(T element);
-}
-
-interface Selector<T, TResult> {
-    TResult select(T element);
-}
-
 /*
     Implementacja ASTVisitora
     TODO:... dopisze się coś jeszcze :)
  */
+
 public class ConcreteASTVisitor implements ASTVisitor {
 
-    private final ISBAStoreJavaObjects store;
     private final Stack<IAbstractQueryResult> qres;
+    private final IStoreRepository repository;
 
-    public ConcreteASTVisitor(ISBAStoreJavaObjects store, Stack<IAbstractQueryResult> qres) {
-        this.store = store;
+    public ConcreteASTVisitor(Stack<IAbstractQueryResult> qres,
+                              IStoreRepository repository) {
         this.qres = qres;
+        this.repository = repository;
     }
 
     @Override
@@ -75,59 +67,38 @@ public class ConcreteASTVisitor implements ASTVisitor {
     @Override
     public void visitCommaExpression(ICommaExpression expr) {
 
+        List<ISingleResult> list = new ArrayList<>();
+
+        expr.getLeftExpression().accept(this);
+        ISingleResult leftResult = (ISingleResult) qres.pop();
+        list.add(leftResult);
+
+        expr.getRightExpression().accept(this);
+        ISingleResult rightResult = (ISingleResult) qres.pop();
+        list.add(rightResult);
+
+        qres.push(new BagResult(list));
     }
 
     @Override
     public void visitDivideExpression(IDivideExpression expr) {
-
     }
 
-    private IBagResult map(IBagResult bag, Selector<ISingleResult, ISingleResult> selector){
-        List<ISingleResult> results = new ArrayList<>();
-        for (ISingleResult element : bag.getElements()) {
-            results.add(
-                selector.select(element)
-            );
-        }
-        return new BagResult(results);
-    }
     @Override
     public void visitDotExpression(IDotExpression expr) {
+        IExpression selection = expr.getRightExpression();
+
         expr.getLeftExpression().accept(this);
-        IBagResult bag = (IBagResult)qres.pop();
+        IBagResult collection = (IBagResult)qres.pop();
 
-        IExpression condition = expr.getRightExpression();
-        if (condition instanceof NameExpression){
-            condition.accept(this);
-            StringResult name = (StringResult)qres.pop();
-            IBagResult result = map(bag,
-                // TODO: move to repository and replace with:
-                //  x -> repository.getFieldId(objectId, fieldName)
-                x -> {
-                    // TODO: move to repository and replace with:
-                    //  object = repository.get(id);
-                    IOID id = ((IReferenceResult)x).getOIDValue();
-                    IComplexObject object = (IComplexObject)store.retrieve(id);
+        IBagResult results =
+            Query.selectFromBag(collection, x -> {
+                qres.push(x);
+                selection.accept(this);
+                return (ISingleResult)qres.pop();
+            });
 
-                    // TODO: move to valueProvider and replace with:
-                    //  field = valueProvider.valueByName(object, name);
-                    ISBAObject field = firstChild(object,
-                        y -> y.getName() == name.getValue()
-                    );
-
-                    ISBAObject o = store.retrieve(field.getOID());
-
-                         if (o instanceof StringObject)  return new StringResult (((StringObject) o).getValue());
-                    else if (o instanceof IntegerObject) return new IntegerResult(((IntegerObject)o).getValue());
-                    else if (o instanceof DoubleObject)  return new DoubleResult (((DoubleObject) o).getValue());
-                    else if (o instanceof BooleanObject) return new BooleanResult(((BooleanObject)o).getValue());
-                    else return new ReferenceResult(o.getOID());
-                }
-            );
-            qres.push(result);
-        }
-        // TODO: else if (expression instanceof BooleanExpression) { ... }
-
+        qres.push(results);
     }
 
     @Override
@@ -137,11 +108,18 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitGreaterThanExpression(IGreaterThanExpression expr) {
+        double left = getDouble(expr.getLeftExpression());
+        double right = getDouble(expr.getRightExpression());
 
+        qres.push(new BooleanResult(left > right));
     }
 
     @Override
     public void visitGreaterOrEqualThanExpression(IGreaterOrEqualThanExpression expr) {
+        double left = getDouble(expr.getLeftExpression());
+        double right = getDouble(expr.getRightExpression());
+
+        qres.push(new BooleanResult(left >= right));
 
     }
 
@@ -162,12 +140,19 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitLessOrEqualThanExpression(ILessOrEqualThanExpression expr) {
+        double left = getDouble(expr.getLeftExpression());
+        double right = getDouble(expr.getRightExpression());
+
+        qres.push(new BooleanResult(left <= right));
 
     }
 
     @Override
     public void visitLessThanExpression(ILessThanExpression expr) {
+        double left = getDouble(expr.getLeftExpression());
+        double right = getDouble(expr.getRightExpression());
 
+        qres.push(new BooleanResult(left < right));
     }
 
     @Override
@@ -214,68 +199,23 @@ public class ConcreteASTVisitor implements ASTVisitor {
     public void visitUnionExpression(IUnionExpression expr) {
 
     }
-
-    private IBagResult where(IBagResult bag, Predicate<ISingleResult> predicate){
-        List<ISingleResult> results = new ArrayList<>();
-        for (ISingleResult element : bag.getElements()) {
-            if (predicate.apply(element)) {
-                results.add(element);
-            }
-        }
-        return new BagResult(results);
-    }
-    private ISBAObject firstChild(IComplexObject object, Predicate<ISBAObject> predicate){
-        for (IOID id : object.getChildOIDs()) {
-            ISBAObject child = store.retrieve(id);
-            if (predicate.apply(child)) {
-                return child;
-            }
-        }
-        return null;
-    }
     @Override
     public void visitWhereExpression(IWhereExpression expr) {
-        IBagResult collection;
-        IExpression subject = expr.getLeftExpression();
-        if (subject instanceof NameExpression){
-            subject.accept(this);
-            IStringResult bagName = (IStringResult)qres.pop();
-
-            // TODO: get collection by bagName
-            //  using binder?
-            collection = store.getBag(bagName.getValue());
-            //new BagResult(new ArrayList<>());
-        } else {
-            subject.accept(this);
-            collection = (IBagResult)qres.pop();
-        }
 
         IExpression condition = expr.getRightExpression();
-        if (condition instanceof NameExpression){
-            condition.accept(this);
-            StringResult name = (StringResult)qres.pop();
-            IBagResult result = where(collection,
-                // TODO: move to repository and replace with:
-                //  x -> repository.get<BooleanResult>(objectId, fieldName)
-                x -> {
-                    // TODO: move to repository and replace with:
-                    //  object = repository.get(id);
-                    IOID id = ((IReferenceResult)x).getOIDValue();
-                    IComplexObject object = (IComplexObject)store.retrieve(id);
 
-                    // TODO: move to valueProvider and replace with:
-                    //  field = valueProvider.valueByName(object, name);
-                    ISBAObject field = firstChild(object,
-                        y -> y.getName() == name.getValue()
-                    );
+        expr.getLeftExpression().accept(this);
+        IBagResult collection = (IBagResult)qres.pop();
 
-                    return ((BooleanObject)field).getValue();
-                }
-            );
-            qres.push(result);
-        }
-        // TODO: else if (expression instanceof BooleanExpression) { ... }
+        IBagResult results =
+            Query.where(collection, x -> {
+                qres.push(x);
+                condition.accept(this);
+                IBooleanResult result = (IBooleanResult) qres.pop();
+                return result.getValue();
+            });
 
+        qres.push(results);
     }
 
     @Override
@@ -285,12 +225,12 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitBooleanTerminal(IBooleanTerminal expr) {
-
+        qres.push(new BooleanResult(expr.getValue()));
     }
 
     @Override
     public void visitDoubleTerminal(IDoubleTerminal expr) {
-
+        qres.push(new DoubleResult(expr.getValue()));
     }
 
     @Override
@@ -300,7 +240,27 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitNameTerminal(INameTerminal expr) {
-        qres.push(new StringResult(expr.getName()));
+        IAbstractQueryResult result;
+        String name = expr.getName();
+
+        if (qres.empty())
+        {
+            result = new BagResult(repository.getCollection(name));
+            qres.push(result);
+        }
+        else
+        {
+            IAbstractQueryResult input = qres.pop();
+            if (input instanceof IBagResult)
+            {
+                result = Query.selectFromBag((IBagResult) input, x -> repository.getField((IReferenceResult) x, name));
+            }
+            else
+            {
+                result = repository.getField(((IReferenceResult)input), name);
+            }
+            qres.push(result);
+        }
     }
 
     @Override
@@ -400,5 +360,11 @@ public class ConcreteASTVisitor implements ASTVisitor {
         double avg =  sum / count;
 
         qres.push(new DoubleResult(avg));
+    }
+
+
+    private double getDouble(IExpression expression) {
+        expression.accept(this);
+        return (double)((ISimpleResult)qres.pop()).getValue();
     }
 }

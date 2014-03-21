@@ -1,9 +1,6 @@
 package edu.pjwstk.demo.model;
 
-import edu.pjwstk.demo.visitor.IObjectsImporter;
-import edu.pjwstk.demo.visitor.VisitableObject;
-
-public class Person implements VisitableObject{
+public class Person{
     private String firstName;
     private String lastName;
     private Integer age;
@@ -55,10 +52,5 @@ public class Person implements VisitableObject{
     }
     public void setAddress(Address address) {
         this.address = address;
-    }
-
-    @Override
-    public void accept(IObjectsImporter importer) {
-        importer.visitPerson(this);
     }
 }

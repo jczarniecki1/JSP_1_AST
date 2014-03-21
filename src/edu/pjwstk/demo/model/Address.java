@@ -1,9 +1,6 @@
 package edu.pjwstk.demo.model;
 
-import edu.pjwstk.demo.visitor.IObjectsImporter;
-import edu.pjwstk.demo.visitor.VisitableObject;
-
-public class Address implements VisitableObject {
+public class Address {
     private String city;
     private String street;
     private String zip;
@@ -37,10 +34,5 @@ public class Address implements VisitableObject {
     }
     public void setZip(String zip) {
         this.zip = zip;
-    }
-
-    @Override
-    public void accept(IObjectsImporter importer) {
-        importer.visitAddress(this);
     }
 }

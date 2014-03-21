@@ -1,16 +1,19 @@
 package edu.pjwstk.demo;
 
-import edu.pjwstk.demo.datastore.ISBAStoreJavaObjects;
-import edu.pjwstk.demo.datastore.SBAStoreForJavaObjects;
-import edu.pjwstk.demo.expression.*;
+import edu.pjwstk.demo.datastore.IStoreRepository;
+import edu.pjwstk.demo.datastore.SBAStore;
+import edu.pjwstk.demo.datastore.StoreRepository;
+import edu.pjwstk.demo.expression.Expression;
 import edu.pjwstk.demo.expression.binary.*;
 import edu.pjwstk.demo.expression.terminal.DoubleExpression;
 import edu.pjwstk.demo.expression.terminal.IntegerExpression;
 import edu.pjwstk.demo.expression.terminal.NameExpression;
 import edu.pjwstk.demo.expression.terminal.StringExpression;
-import edu.pjwstk.demo.expression.unary.*;
+import edu.pjwstk.demo.expression.unary.AvgExpression;
+import edu.pjwstk.demo.expression.unary.BagExpression;
+import edu.pjwstk.demo.expression.unary.CountExpression;
 import edu.pjwstk.demo.visitor.ConcreteASTVisitor;
-import edu.pjwstk.demo.visitor.ObjectsImporter;
+import edu.pjwstk.jps.datastore.ISBAStore;
 import edu.pjwstk.jps.result.IAbstractQueryResult;
 import edu.pjwstk.jps.visitor.ASTVisitor;
 
@@ -19,14 +22,14 @@ import java.util.Stack;
 public class Demo {
 
     private static Stack<IAbstractQueryResult> qres = new Stack<>();
-    private static ISBAStoreJavaObjects store = new SBAStoreForJavaObjects();
+    private static ISBAStore store = new SBAStore();
     private static ASTVisitor visitor;
 
     public static void main(String[] args){
 
         LoadData();
-
-        visitor = new ConcreteASTVisitor(store, qres);
+        IStoreRepository repository = new StoreRepository(store);
+        visitor = new ConcreteASTVisitor(qres, repository);
 
         SolveDemoQuery();
 
@@ -43,16 +46,22 @@ public class Demo {
         //SolveQuery4();
     }
 
-    // SELECT Age FROM Person WHERE Married = 1
+    // SELECT a.City
+    // FROM   Address a
+    // INNER  JOIN Person p ON a.Id = p.Address_Id
+    // WHERE  p.Married = 1;
     private static void SolveDemoQuery() {
         Expression expression =
-            new MinExpression(
+            new CountExpression(
                 new DotExpression(
-                    new WhereExpression(
-                        new NameExpression("Person"),
-                        new NameExpression("Married")
+                    new DotExpression(
+                        new WhereExpression(
+                            new NameExpression("Person"),
+                            new NameExpression("Married")
+                        ),
+                        new NameExpression("Address")
                     ),
-                    new NameExpression("Age")
+                    new NameExpression("City")
                 )
             );
 
@@ -93,10 +102,10 @@ public class Demo {
                         new NameExpression("City")
                     ),
                     new BagExpression(
-                        new Expression[]{
+                        new CommaExpression(
                             new StringExpression("Warszawa"),
                             new StringExpression("Łódź")
-                        }
+                        )
                     )
                 )
             );
@@ -112,16 +121,16 @@ public class Demo {
         Expression expression =
             new InExpression(
                 new BagExpression(
-                    new Expression[]{
+                    new CommaExpression(
                         new IntegerExpression(1),
                         new PlusExpression(
                             new IntegerExpression(2),
                             new IntegerExpression(1)
                         )
-                    }
+                    )
                 ),
                 new BagExpression(
-                    new Expression[]{
+                    new CommaExpression(
                         new MinusExpression(
                             new IntegerExpression(4),
                             new IntegerExpression(1)
@@ -130,7 +139,7 @@ public class Demo {
                             new IntegerExpression(3),
                             new IntegerExpression(2)
                         )
-                    }
+                    )
                 )
             );
 
@@ -167,8 +176,7 @@ public class Demo {
 
     private static void LoadData() {
         ExampleData data = new ExampleData();
-        ObjectsImporter importer = new ObjectsImporter(store);
-        importer.IntoStore(data.getPersons());
+        store.addJavaCollection(data.getPersons(), "Person");
     }
 
     public static void Log(Object o){
