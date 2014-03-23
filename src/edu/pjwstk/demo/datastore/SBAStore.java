@@ -94,13 +94,11 @@ public class SBAStore implements ISBAStore {
     }
     public IOID visitCompany(Company company) {
 
-        List<IOID> employeesIds = Query.select(company.getEmployees(), x -> importObject(x, "Employee"));
+        List<IOID> innerIds = Query.select(company.getEmployees(), x -> visitEmployee(x));
 
-        return importComplex("Company",
-            new IOID[]{
-                importObject(company.getName(), "Name"),
-                importComplex("Employees",employeesIds.toArray(new IOID[employeesIds.size()]))
-            });
+        innerIds.add(importObject(company.getName(), "Name"));
+
+        return importComplex("Company", innerIds.toArray(new IOID[innerIds.size()]));
     }
     public IOID visitEmployee(Employee employee) {
         return importComplex("Employee",

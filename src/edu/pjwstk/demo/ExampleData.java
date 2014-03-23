@@ -26,16 +26,16 @@ public class ExampleData {
     }
 
     private void initData() {
-        persons.add(new Person("MARCIN","LEWANDOWSKI",  20, true,  new Address("Gdańsk")));
-        persons.add(new Person("JAN","PIOTROWSKI",      21, true,  new Address("Łódź")));
-        persons.add(new Person("PIOTR","JANKOWSKI",     20, true,  new Address("Gdańsk")));
-        persons.add(new Person("KRZYSZTOF","KOWALSKI",  25, true,  new Address("Poznań")));
-        persons.add(new Person("TOMASZ","NOWAK",        40, false, new Address("Poznań")));
-        persons.add(new Person("MARIA","NOWAK",         31, false, new Address("Gdańsk")));
-        persons.add(new Person("KATARZYNA","WIECZOREK", 27, false, new Address("Łódź")));
-        persons.add(new Person("AGNIESZKA","NOWAKOWSKA",46, false, new Address("Warszawa")));
-        persons.add(new Person("WANDA","MAJEWSKA",      51, true,  new Address("Warszawa")));
-        persons.add(new Person("AGATA","OLSZEWSKA",     56, true,  new Address("Warszawa")));
+        persons.add(new Person("Marcin","Lewandowski",  20, true,  new Address("Gdańsk")));
+        persons.add(new Person("Jan","Kowalski",        21, true,  new Address("Łódź")));
+        persons.add(new Person("Piotr","Jankowski",     20, true,  new Address("Gdańsk")));
+        persons.add(new Person("Krzysztof","Kowalski",  25, true,  new Address("Poznań")));
+        persons.add(new Person("Tomasz","Nowak",        40, false, new Address("Poznań")));
+        persons.add(new Person("Maria","Nowak",         31, false, new Address("Gdańsk")));
+        persons.add(new Person("Katarzyna","Wieczorek", 27, false, new Address("Łódź")));
+        persons.add(new Person("Agnieszka","Nowakowska",46, false, new Address("Warszawa")));
+        persons.add(new Person("Wanda","Majewska",      51, true,  new Address("Warszawa")));
+        persons.add(new Person("Agata","Olszewska",     56, true,  new Address("Warszawa")));
 
         List<Employee> emp1 = new ArrayList<Employee>();
         emp1.add(new Employee("Jan",2000.0));
