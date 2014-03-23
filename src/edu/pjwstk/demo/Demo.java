@@ -33,16 +33,14 @@ public class Demo {
 
         SolveDemoQuery();
 
-        SolveQuery3();
-
         // 1. Firma where (avg(zatrudnia.pensja) > 2550.50)
-        //SolveQuery1();
+        SolveQuery1();
 
         // 2. Pracownik where (adres.miasto in (bag(„Warszawa”, „Łódź”)))
-        //SolveQuery2();
+        SolveQuery2();
 
         // 3. bag(1,2+1) in bag(4-1,3-2) – Uwaga! Bag jest operatorem unarnym
-        //SolveQuery3();
+        SolveQuery3();
 
         // 4. (Pracownik where nazwisko=”Kowalski”).(adres where miasto=”Łódź”)
         //SolveQuery4();
@@ -73,7 +71,7 @@ public class Demo {
         Log(qres.pop());
     }
 
-    // SELECT c.* FROM Company c
+    // SELECT c FROM Company c
     // INNER  JOIN Employee e ON e.Company_Id = c.Id
     // WHERE  AVG(e.Salary) > 2550.50
     private static void SolveQuery1() {
@@ -124,9 +122,7 @@ public class Demo {
         Log(qres.pop());
     }
 
-    // TODO: Do zaimplementowania dla Gosi :)
     //  bag(1,2+1) in bag(4-1,3-2)
-
     private static void SolveQuery3() {
         Expression expression =
             new InExpression(

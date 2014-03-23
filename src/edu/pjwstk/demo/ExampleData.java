@@ -37,6 +37,16 @@ public class ExampleData {
         persons.add(new Person("WANDA","MAJEWSKA",      51, true,  new Address("Warszawa")));
         persons.add(new Person("AGATA","OLSZEWSKA",     56, true,  new Address("Warszawa")));
 
-        companies.add(new Company(new ArrayList<Employee>()));
+        List<Employee> emp1 = new ArrayList<Employee>();
+        emp1.add(new Employee("Jan",2000.0));
+        emp1.add(new Employee("Tom",3000.0));
+        emp1.add(new Employee("Bob",3000.0));
+        companies.add(new Company("Intel",emp1));
+
+        List<Employee> emp2 = new ArrayList<Employee>();
+        emp2.add(new Employee("Peter",1000.0));
+        emp2.add(new Employee("Henry",2000.0));
+        emp2.add(new Employee("Adam",3000.0));
+        companies.add(new Company("Boeing",emp2));
     }
 }

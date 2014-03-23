@@ -1,16 +1,19 @@
 package edu.pjwstk.demo.datastore;
 
+import edu.pjwstk.demo.common.Query;
 import edu.pjwstk.demo.common.lambda.Predicate;
 import edu.pjwstk.demo.result.*;
 import edu.pjwstk.jps.datastore.IComplexObject;
 import edu.pjwstk.jps.datastore.IOID;
 import edu.pjwstk.jps.datastore.ISBAObject;
 import edu.pjwstk.jps.datastore.ISBAStore;
+import edu.pjwstk.jps.result.IBagResult;
 import edu.pjwstk.jps.result.IReferenceResult;
 import edu.pjwstk.jps.result.ISingleResult;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /*
     Ukrywa niskopoziomowe operacja odczytu z bazy
@@ -35,6 +38,14 @@ public class StoreRepository implements IStoreRepository {
     public Collection<ISingleResult> getCollection(String name) {
         IComplexObject entry = (IComplexObject)store.retrieve(store.getEntryOID());
         return childrenByName(entry, name);
+    }
+
+    @Override
+    public IBagResult getCollectionAsBag(IReferenceResult reference) {
+        IComplexObject object = getComplexObject(reference);
+        List<ISingleResult> ids = Query.select(object.getChildOIDs(),
+                x -> new ReferenceResult(x));
+        return new BagResult(ids);
     }
 
     private ISingleResult valueByName(IComplexObject object, String fieldName) {

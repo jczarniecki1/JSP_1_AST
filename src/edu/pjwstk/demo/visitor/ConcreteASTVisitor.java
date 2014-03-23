@@ -138,9 +138,15 @@ public class ConcreteASTVisitor implements ASTVisitor {
     @Override
     public void visitDotExpression(IDotExpression expr) {
         IExpression selection = expr.getRightExpression();
+        IBagResult collection;
 
         expr.getLeftExpression().accept(this);
-        IBagResult collection = (IBagResult)qres.pop();
+        IAbstractQueryResult bagOrReference = qres.pop();
+        if (bagOrReference  instanceof IBagResult){
+            collection = (IBagResult)bagOrReference;
+        } else {
+            collection = repository.getCollectionAsBag((IReferenceResult)bagOrReference);
+        }
 
         IBagResult results = new BagResult(
             Query.select(collection.getElements(), x -> {
@@ -444,9 +450,11 @@ public class ConcreteASTVisitor implements ASTVisitor {
     @Override
     public void visitAvgExpression(IAvgExpression expr) {
 
-        IExpression innerExpression = expr.getInnerExpression();
-        double sum = getDouble(new SumExpression(innerExpression));
-        double count = getDouble(new CountExpression(innerExpression));
+        expr.getInnerExpression().accept(this);
+        IBagResult collection = (IBagResult)qres.pop();
+        double sum = Query.aggregate(collection.getElements(), 0.0,
+                (current, x) -> current + ((DoubleResult)x).getValue());
+        double count = collection.getElements().size();
 
         qres.push(new DoubleResult(sum / count));
     }
