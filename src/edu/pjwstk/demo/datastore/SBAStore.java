@@ -2,6 +2,8 @@ package edu.pjwstk.demo.datastore;
 
 import edu.pjwstk.demo.common.Query;
 import edu.pjwstk.demo.model.Address;
+import edu.pjwstk.demo.model.Company;
+import edu.pjwstk.demo.model.Employee;
 import edu.pjwstk.demo.model.Person;
 import edu.pjwstk.jps.datastore.IOID;
 import edu.pjwstk.jps.datastore.ISBAObject;
@@ -58,14 +60,24 @@ public class SBAStore implements ISBAStore {
 
     @Override
     public void addJavaCollection(Collection collection, String name) {
-        entryOID = generateUniqueOID();
+        ComplexObject root = getRootObject();
+
         List<IOID> childrenIds = Query.select(collection,x -> {
             addJavaObject(x, name);
             return lastOID;
         });
-        hash.put(getEntryOID(), new ComplexObject(entryOID, "entry", childrenIds));
+
+        root.getChildOIDs().addAll(childrenIds);
     }
-    
+
+    private ComplexObject getRootObject() {
+        if (entryOID == null) {
+            entryOID = generateUniqueOID();
+            hash.put(entryOID, new ComplexObject(entryOID, "entry", new ArrayList<>()));
+        }
+        return  ((ComplexObject)retrieve(entryOID));
+    }
+
     public IOID visitPerson(Person person) {
         Address address = person.getAddress();
         return importComplex("Person",
@@ -76,10 +88,25 @@ public class SBAStore implements ISBAStore {
                 importObject(person.getMarried(), "Married"),
                 importComplex("Address",
                     new IOID[]{
-                        importObject(address.getCity(), "City"),
-                        importObject(address.getStreet(), "Street"),
-                        importObject(address.getZip(), "Zip")
+                        importObject(address.getCity(), "City")
                     })
+            });
+    }
+    public IOID visitCompany(Company company) {
+
+        List<IOID> employeesIds = Query.select(company.getEmployees(), x -> importObject(x, "Employee"));
+
+        return importComplex("Company",
+            new IOID[]{
+                //importObject(company.getName(), "Name"),
+                importComplex("Employees",employeesIds.toArray(new IOID[employeesIds.size()]))
+            });
+    }
+    public IOID visitEmployee(Employee employee) {
+        return importComplex("Employee",
+            new IOID[]{
+                importObject(employee.getName(), "Name"),
+                importObject(employee.getSalary(), "Salary")
             });
     }
 
@@ -95,5 +122,7 @@ public class SBAStore implements ISBAStore {
 
     public void visit(Object o) {
         if (o instanceof Person) visitPerson((Person)o);
+        else if (o instanceof Company) visitCompany((Company)o);
+        else if (o instanceof Employee) visitEmployee((Employee)o);
     }
 }

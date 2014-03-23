@@ -31,7 +31,8 @@ public class Demo {
         IStoreRepository repository = new StoreRepository(store);
         visitor = new ConcreteASTVisitor(qres, repository);
 
-        //SolveDemoQuery();
+        SolveDemoQuery();
+
         SolveDemoQuery3();
 
         // 1. Firma where (avg(zatrudnia.pensja) > 2550.50)
@@ -201,6 +202,7 @@ public class Demo {
     private static void LoadData() {
         ExampleData data = new ExampleData();
         store.addJavaCollection(data.getPersons(), "Person");
+        store.addJavaCollection(data.getCompanies(), "Company");
     }
 
     public static void Log(Object o){

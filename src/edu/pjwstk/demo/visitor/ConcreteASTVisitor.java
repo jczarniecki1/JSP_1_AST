@@ -15,6 +15,7 @@ import edu.pjwstk.jps.ast.terminal.*;
 import edu.pjwstk.jps.ast.unary.*;
 import edu.pjwstk.jps.result.*;
 import edu.pjwstk.jps.visitor.ASTVisitor;
+import javafx.beans.binding.DoubleExpression;
 
 import java.util.*;
 
@@ -449,7 +450,13 @@ public class ConcreteASTVisitor implements ASTVisitor {
     // Szybkie wyciąganie wartości z wyrażenia i rzutownie na double
     private double getDouble(IExpression expression) {
         expression.accept(this);
-        return (double)((ISimpleResult)qres.pop()).getValue();
+        Object result = qres.pop();
+        if (result instanceof IntegerResult) {
+            return ((IntegerResult)result).getValue().doubleValue();
+        }
+        else {
+            return ((DoubleResult)result).getValue();
+        }
     }
 
     // Szybkie wyciąganie wartości z wyrażenia i rzutownie na boolean
