@@ -2,7 +2,9 @@ package edu.pjwstk.demo.visitor;
 
 import edu.pjwstk.demo.common.Query;
 import edu.pjwstk.demo.datastore.IStoreRepository;
+import edu.pjwstk.demo.expression.Expression;
 import edu.pjwstk.demo.expression.binary.EqualsExpression;
+import edu.pjwstk.demo.expression.binary.PlusExpression;
 import edu.pjwstk.demo.expression.unary.CountExpression;
 import edu.pjwstk.demo.expression.unary.NotExpression;
 import edu.pjwstk.demo.expression.unary.SumExpression;
@@ -177,11 +179,11 @@ public class ConcreteASTVisitor implements ASTVisitor {
         expr.getLeftExpression().accept(this);
         IBagResult collectionLeft = (IBagResult)qres.pop();
 
+
         expr.getRightExpression().accept(this);
         IBagResult collectionRight = (IBagResult)qres.pop();
 
-        boolean isIN = ((List<ISingleResult>) collectionRight).containsAll((List<ISingleResult>) collectionLeft);
-
+        boolean isIN = (collectionRight.getElements()).containsAll(collectionLeft.getElements());
         qres.push(new BooleanResult(isIN));
 
     }
@@ -215,10 +217,11 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitMinusExpression(IMinusExpression expr) {
-        qres.push(new DoubleResult(
-                getDouble(expr.getLeftExpression())
-                        - getDouble(expr.getRightExpression())
-        ));
+        expr.getLeftExpression().accept(this);
+        double left = getDouble(qres.peek());
+        expr.getRightExpression().accept(this);
+        double right = getDouble(qres.peek());
+        qres.push(new SingleResult(left-right));
     }
 
     @Override
@@ -258,10 +261,11 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitPlusExpression(IPlusExpression expr) {
-        double left = getDouble(expr.getLeftExpression());
-        double right = getDouble(expr.getRightExpression());
-        double sum = left + right;
-        qres.push(new DoubleResult(sum));
+        expr.getLeftExpression().accept(this);
+        double left = getDouble(qres.peek());
+        expr.getRightExpression().accept(this);
+        double right = getDouble(qres.peek());
+        qres.push(new SingleResult(left+right));
     }
 
     @Override
@@ -458,7 +462,14 @@ public class ConcreteASTVisitor implements ASTVisitor {
             return ((DoubleResult)result).getValue();
         }
     }
-
+    private double getDouble(IAbstractQueryResult result) {
+        if (result instanceof IntegerResult) {
+            return ((IntegerResult)result).getValue().doubleValue();
+        }
+        else {
+            return ((DoubleResult)result).getValue();
+        }
+    }
     // Szybkie wyciąganie wartości z wyrażenia i rzutownie na boolean
     private boolean getBoolean(IExpression expression) {
         expression.accept(this);

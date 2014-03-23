@@ -33,7 +33,7 @@ public class Demo {
 
         SolveDemoQuery();
 
-        SolveDemoQuery3();
+        SolveQuery3();
 
         // 1. Firma where (avg(zatrudnia.pensja) > 2550.50)
         //SolveQuery1();
@@ -126,18 +126,6 @@ public class Demo {
 
     // TODO: Do zaimplementowania dla Gosi :)
     //  bag(1,2+1) in bag(4-1,3-2)
-
-    private static void SolveDemoQuery3() {
-        Expression expression =
-                new PlusExpression(
-                        new IntegerExpression(1),
-                        new IntegerExpression(2)
-                );
-
-        expression.accept(visitor);
-        Log("Result from Query Demo 3:");
-        Log(qres.pop());
-    }
 
     private static void SolveQuery3() {
         Expression expression =
