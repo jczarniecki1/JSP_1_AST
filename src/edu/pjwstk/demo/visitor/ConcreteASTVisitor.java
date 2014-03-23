@@ -188,6 +188,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
             double right = getDouble(qres.peek());
             if (left == right)  {qres.push(new BooleanResult(true)); } else {qres.push(new BooleanResult(false));}
         }
+        // TODO: potrzebne do Query2
         /* else if (resultLeft instanceof IReferenceResult & resultRight instanceof IBagResult) {
            // sprawdzenie czy wartość przekazana  przez referencję znajduje się w zbiorze
            // np. adres.miasto in (bag(„Warszawa”, „Łódź”))
