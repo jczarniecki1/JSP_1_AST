@@ -43,7 +43,7 @@ public class Demo {
         SolveQuery3();
 
         // 4. (Pracownik where nazwisko=”Kowalski”).(adres where miasto=”Łódź”)
-        //SolveQuery4();
+        SolveQuery4();
     }
 
     // SELECT a.City
@@ -81,7 +81,7 @@ public class Demo {
                 new GreaterThanExpression(
                     new AvgExpression(
                         new DotExpression(
-                            new NameExpression("Employees"),
+                            new NameExpression("Employee"),
                             new NameExpression("Salary")
                         )
                     ),
