@@ -98,7 +98,7 @@ public class SBAStore implements ISBAStore {
 
         return importComplex("Company",
             new IOID[]{
-                //importObject(company.getName(), "Name"),
+                importObject(company.getName(), "Name"),
                 importComplex("Employees",employeesIds.toArray(new IOID[employeesIds.size()]))
             });
     }

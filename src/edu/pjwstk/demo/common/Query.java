@@ -1,5 +1,6 @@
 package edu.pjwstk.demo.common;
 
+import edu.pjwstk.demo.common.lambda.Aggregator;
 import edu.pjwstk.demo.common.lambda.Predicate;
 import edu.pjwstk.demo.common.lambda.Selector;
 import edu.pjwstk.demo.result.BagResult;
@@ -32,6 +33,14 @@ public class Query {
             results.add(selector.select(element));
         }
         return results;
+    }
+
+    public static <T,TItem> T aggregate(Collection<TItem> collection, T startValue, Aggregator<TItem,T> aggregator){
+        T sum = startValue;
+        for (TItem element : collection) {
+            sum = aggregator.add(sum, element);
+        }
+        return sum;
     }
 
     public static <TItem> TItem firstOrDefault(Collection<TItem> collection, Predicate<TItem> predicate){
