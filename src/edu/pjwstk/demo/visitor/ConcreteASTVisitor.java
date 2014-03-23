@@ -22,13 +22,11 @@ import java.util.stream.Collectors;
      - odpowiada za wykonywanie wyrażeń (Expressions) i wrzucenie wyniku na stos (QRes)
      - implementacje wyrażeń nie mają żadnej logiki, są tylko "pojemnikami" na inne wyrażenia
 
-    Postęp: 26/43 (60%)
+    Postęp: 37/43 (60%)
 
     TODO:
-     * operacje arytmetyczne,
-     * operacje na zbiorach,
      * rzutowanie (... as ...)
-     * Equals, Struct
+     * Struct, OrderBy, Exists
      * poprawka w CommaExpression
 
     Uwaga:
