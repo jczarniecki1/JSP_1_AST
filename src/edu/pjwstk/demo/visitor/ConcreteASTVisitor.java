@@ -177,14 +177,37 @@ public class ConcreteASTVisitor implements ASTVisitor {
     @Override
     public void visitInExpression(IInExpression expr) {
         expr.getLeftExpression().accept(this);
-        IBagResult collectionLeft = (IBagResult)qres.pop();
-
-
+        Object resultLeft = qres.pop();
         expr.getRightExpression().accept(this);
-        IBagResult collectionRight = (IBagResult)qres.pop();
+        Object resultRight = qres.pop();
+        if (resultLeft instanceof ISingleResult & resultRight instanceof ISingleResult ) {
+            // porównanie dwóch wartości liczbowych
+            expr.getLeftExpression().accept(this);
+            double left = getDouble(qres.peek());
+            expr.getRightExpression().accept(this);
+            double right = getDouble(qres.peek());
+            if (left == right)  {qres.push(new BooleanResult(true)); } else {qres.push(new BooleanResult(false));}
+        }
+        /* else if (resultLeft instanceof IReferenceResult & resultRight instanceof IBagResult) {
+           // sprawdzenie czy wartość przekazana  przez referencję znajduje się w zbiorze
+           // np. adres.miasto in (bag(„Warszawa”, „Łódź”))
+            expr.getLeftExpression().accept(this);
+            IReferenceResult refLeft = (IReferenceResult) qres.peek();
+            IBagResult collectionRight = (IBagResult)qres.pop();
+            boolean isIN = (collectionRight.getElements()).contains(refLeft);
+            qres.push(new BooleanResult(isIN));
+        } */
+        else if (resultLeft instanceof IBagResult & resultLeft instanceof IBagResult ) {
+            // sprawdzenie czy lewy zbiór zawiera się w prawym zbiorze
+            expr.getLeftExpression().accept(this);
+            IBagResult collectionLeft = (IBagResult)qres.pop();
+            expr.getRightExpression().accept(this);
+            IBagResult collectionRight = (IBagResult)qres.pop();
+            boolean isIN = (collectionRight.getElements()).containsAll(collectionLeft.getElements());
+            qres.push(new BooleanResult(isIN));
+        }
 
-        boolean isIN = (collectionRight.getElements()).containsAll(collectionLeft.getElements());
-        qres.push(new BooleanResult(isIN));
+
 
     }
 
@@ -217,6 +240,8 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitMinusExpression(IMinusExpression expr) {
+        // wyrażenie tylko dla wartości liczbowych
+
         expr.getLeftExpression().accept(this);
         double left = getDouble(qres.peek());
         expr.getRightExpression().accept(this);
@@ -261,6 +286,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitPlusExpression(IPlusExpression expr) {
+        // wyrażenie tylko dla wartości liczbowych
         expr.getLeftExpression().accept(this);
         double left = getDouble(qres.peek());
         expr.getRightExpression().accept(this);

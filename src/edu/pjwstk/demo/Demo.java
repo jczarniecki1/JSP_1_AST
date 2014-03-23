@@ -33,8 +33,6 @@ public class Demo {
 
         SolveDemoQuery();
 
-        SolveQuery3();
-
         // 1. Firma where (avg(zatrudnia.pensja) > 2550.50)
         //SolveQuery1();
 
@@ -42,7 +40,7 @@ public class Demo {
         //SolveQuery2();
 
         // 3. bag(1,2+1) in bag(4-1,3-2) – Uwaga! Bag jest operatorem unarnym
-        //SolveQuery3();
+        SolveQuery3();
 
         // 4. (Pracownik where nazwisko=”Kowalski”).(adres where miasto=”Łódź”)
         //SolveQuery4();
@@ -126,6 +124,8 @@ public class Demo {
 
     // TODO: Do zaimplementowania dla Gosi :)
     //  bag(1,2+1) in bag(4-1,3-2)
+
+
 
     private static void SolveQuery3() {
         Expression expression =
