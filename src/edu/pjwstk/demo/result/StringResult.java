@@ -17,4 +17,21 @@ public class StringResult implements IStringResult{
     public String toString(){
         return value;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof StringResult)) return false;
+
+        StringResult that = (StringResult) o;
+
+        if (!value.equals(that.value)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
 }

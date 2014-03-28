@@ -12,6 +12,9 @@
     <orderEntry type="library" name="db4o_sbql4j_20111011" level="project" />
     <orderEntry type="library" name="java-cup-11a" level="project" />
     <orderEntry type="library" name="jps-api_1.0.4" level="project" />
+    <orderEntry type="library" name="junit-4.11" level="project" />
+    <orderEntry type="library" name="junit-4.11 (2)" level="project" />
+    <orderEntry type="library" name="hamcrest-core-1.3" level="project" />
   </component>
 </module>
 
