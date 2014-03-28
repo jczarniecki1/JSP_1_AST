@@ -42,10 +42,9 @@ public class WhereExpressionTest extends AbstractBinaryExpressionTest {
             );
 
         ISingleResult[] results = getResults(e);
+        ISingleResult[] expectedResults = getArrayOfResults("Jan");
 
-        ArrayList<StringResult> expectedResult = new ArrayList<>();
-        expectedResult.add(new StringResult("Jan"));
-
-        assertArrayEquals(results, expectedResult.toArray(new StringResult[expectedResult.size()]));
+        assertArrayEquals(results, expectedResults);
     }
+
 }

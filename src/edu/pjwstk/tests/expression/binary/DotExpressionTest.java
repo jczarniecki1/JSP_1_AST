@@ -5,7 +5,6 @@ import edu.pjwstk.demo.expression.binary.DotExpression;
 import edu.pjwstk.demo.expression.terminal.NameExpression;
 import edu.pjwstk.demo.model.Address;
 import edu.pjwstk.demo.model.Person;
-import edu.pjwstk.demo.result.StringResult;
 import edu.pjwstk.jps.result.ISingleResult;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,11 +38,8 @@ public class DotExpressionTest extends AbstractBinaryExpressionTest {
 
         ISingleResult[] results = getResults(e);
 
-        ArrayList<StringResult> expectedResult = new ArrayList<>();
-        expectedResult.add(new StringResult("Marcin"));
-        expectedResult.add(new StringResult("Jan"));
-        expectedResult.add(new StringResult("Piotr"));
+        ISingleResult[] expectedResults = getArrayOfResults("Marcin","Jan","Piotr");
 
-        assertArrayEquals(results, expectedResult.toArray(new StringResult[expectedResult.size()]));
+        assertArrayEquals(results, expectedResults);
     }
 }
