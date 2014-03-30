@@ -2,12 +2,8 @@ package edu.pjwstk.demo.visitor;
 
 import edu.pjwstk.demo.common.Query;
 import edu.pjwstk.demo.datastore.IStoreRepository;
-import edu.pjwstk.demo.expression.Expression;
 import edu.pjwstk.demo.expression.binary.EqualsExpression;
-import edu.pjwstk.demo.expression.binary.PlusExpression;
-import edu.pjwstk.demo.expression.unary.CountExpression;
 import edu.pjwstk.demo.expression.unary.NotExpression;
-import edu.pjwstk.demo.expression.unary.SumExpression;
 import edu.pjwstk.demo.result.*;
 import edu.pjwstk.jps.ast.IExpression;
 import edu.pjwstk.jps.ast.auxname.IAsExpression;
@@ -15,10 +11,8 @@ import edu.pjwstk.jps.ast.auxname.IGroupAsExpression;
 import edu.pjwstk.jps.ast.binary.*;
 import edu.pjwstk.jps.ast.terminal.*;
 import edu.pjwstk.jps.ast.unary.*;
-import edu.pjwstk.jps.datastore.ISimpleObject;
 import edu.pjwstk.jps.result.*;
 import edu.pjwstk.jps.visitor.ASTVisitor;
-import javafx.beans.binding.DoubleExpression;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,13 +22,11 @@ import java.util.stream.Collectors;
      - odpowiada za wykonywanie wyrażeń (Expressions) i wrzucenie wyniku na stos (QRes)
      - implementacje wyrażeń nie mają żadnej logiki, są tylko "pojemnikami" na inne wyrażenia
 
-    Postęp: 26/43 (60%)
+    Postęp: 37/43 (86%)
 
     TODO:
-     * operacje arytmetyczne,
-     * operacje na zbiorach,
      * rzutowanie (... as ...)
-     * Equals, Struct
+     * Struct, OrderBy, Exists
      * poprawka w CommaExpression
 
     Uwaga:
@@ -133,6 +125,12 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitDivideExpression(IDivideExpression expr) {
+        double left = getDouble(expr.getLeftExpression());
+        double right = getDouble(expr.getRightExpression());
+        if (right != 0) {
+            qres.push(new DoubleResult(left / right));
+        }
+        else qres.push(new StringResult("NaN"));
     }
 
     // Wykonanie prawego wyrażenia na każdym elemencie kolekcji wejsciowej
@@ -224,12 +222,39 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitIntersectExpression(IIntersectExpression expr) {
+        expr.getLeftExpression().accept(this);
+        IBagResult collectionLeft = (IBagResult)qres.pop();
 
+
+        expr.getRightExpression().accept(this);
+        IBagResult collectionRight = (IBagResult)qres.pop();
+
+        Collection<ISingleResult> scope = collectionRight.getElements();
+
+        boolean isIntersect = Query.any(collectionLeft.getElements(), x ->
+                Query.any(scope, y -> {
+                    Object left = ((ISimpleResult) y).getValue();
+                    Object right = ((ISimpleResult) x).getValue();
+                    if (left instanceof Integer) left = ((Integer)left).doubleValue();
+                    if (right instanceof Integer) right = ((Integer)right).doubleValue();
+                    return left.equals(right);
+                }));
+        qres.push(new BooleanResult(isIntersect));
     }
 
     @Override
     public void visitJoinExpression(IJoinExpression expr) {
+        expr.getLeftExpression().accept(this);
+        IBagResult collectionLeft = (IBagResult)qres.pop();
 
+
+        expr.getRightExpression().accept(this);
+        IBagResult collectionRight = (IBagResult)qres.pop();
+
+        Collection<ISingleResult> joinResult = new ArrayList<>(collectionLeft.getElements());
+        joinResult.addAll(collectionRight.getElements());
+
+        qres.push(new BagResult(joinResult));
     }
 
     @Override
@@ -259,16 +284,45 @@ public class ConcreteASTVisitor implements ASTVisitor {
     @Override
     public void visitMinusSetExpression(IMinusSetExpression expr) {
 
+        expr.getLeftExpression().accept(this);
+        IBagResult collectionLeft = (IBagResult)qres.pop();
+
+        expr.getRightExpression().accept(this);
+        IBagResult collectionRight = (IBagResult)qres.pop();
+
+        Collection<ISingleResult> scope = collectionLeft.getElements();
+        Collection<ISingleResult> scopeToSubstract = collectionRight.getElements();
+
+        Collection<ISingleResult> result = new ArrayList<>();
+        result.addAll(
+                scope
+                .stream()
+                .filter(x -> !Query.any(scopeToSubstract, y -> {
+                    Object left = ((ISimpleResult) y).getValue();
+                    Object right = ((ISimpleResult) x).getValue();
+                    if (left instanceof Integer) left = ((Integer)left).doubleValue();
+                    if (right instanceof Integer) right = ((Integer)right).doubleValue();
+                    return left.equals(right);
+                }))
+                .collect(Collectors.toList())
+        );
+
+        qres.push(new BagResult(result));
     }
 
+    //TODO: Potrzebujemy testów do tego
     @Override
     public void visitModuloExpression(IModuloExpression expr) {
-
+        double left = getDouble(expr.getLeftExpression());
+        double right = getDouble(expr.getRightExpression());
+        qres.push(new DoubleResult(left % right));
     }
 
     @Override
     public void visitMultiplyExpression(IMultiplyExpression expr) {
-
+        double left = getDouble(expr.getLeftExpression());
+        double right = getDouble(expr.getRightExpression());
+        qres.push(new DoubleResult(left * right));
     }
 
     @Override
@@ -298,9 +352,31 @@ public class ConcreteASTVisitor implements ASTVisitor {
         qres.push(new DoubleResult(left+right));
     }
 
+    // TODO: A co powinno się stać dla (1, 1, 1, 3) union (2, 2, 4) ? (1, 3, 2, 4) ?
     @Override
     public void visitUnionExpression(IUnionExpression expr) {
+        expr.getLeftExpression().accept(this);
+        IBagResult collectionLeft = (IBagResult)qres.pop();
 
+        expr.getRightExpression().accept(this);
+        IBagResult collectionRight = (IBagResult)qres.pop();
+
+        Collection<ISingleResult> scope = collectionLeft.getElements();
+        Collection<ISingleResult> unionResult = new ArrayList<>(scope);
+        unionResult.addAll(
+                collectionRight.getElements()
+                .stream()
+                .filter(x -> !Query.any(scope, y -> {
+                    Object left = ((ISimpleResult) y).getValue();
+                    Object right = ((ISimpleResult) x).getValue();
+                    if (left instanceof Integer) left = ((Integer)left).doubleValue();
+                    if (right instanceof Integer) right = ((Integer)right).doubleValue();
+                    return left.equals(right);
+                }))
+                .collect(Collectors.toList())
+        );
+
+        qres.push(new BagResult(unionResult));
     }
 
     // Zachowanie analogiczne do DotExpression, ale kolekcja wynikowa
@@ -334,7 +410,9 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitXORExpression(IXORExpression expr) {
-
+        int left = getInteger(expr.getLeftExpression());
+        int right = getInteger(expr.getRightExpression());
+        qres.push(new IntegerResult(left ^ right));
     }
 
     @Override
@@ -501,6 +579,11 @@ public class ConcreteASTVisitor implements ASTVisitor {
         else {
             return ((DoubleResult)result).getValue();
         }
+    }
+    // Szybkie wyciąganie wartości z wyrażenia i rzutownie na int
+    private int getInteger(IExpression expression) {
+        expression.accept(this);
+        return (int)((ISimpleResult)qres.pop()).getValue();
     }
     // Szybkie wyciąganie wartości z wyrażenia i rzutownie na String
     private String getString(IExpression expression) {

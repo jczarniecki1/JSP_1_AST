@@ -1,7 +1,7 @@
-package edu.pjwstk.jps.ast.binary;
+package edu.pjwstk.demo.expression.binary;
 
-import edu.pjwstk.demo.expression.binary.BinaryExpression;
 import edu.pjwstk.jps.ast.IExpression;
+import edu.pjwstk.jps.ast.binary.IOrExpression;
 import edu.pjwstk.jps.visitor.ASTVisitor;
 
 public class OrExpression extends BinaryExpression implements IOrExpression {

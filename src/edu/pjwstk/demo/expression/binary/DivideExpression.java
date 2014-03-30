@@ -1,16 +1,16 @@
 package edu.pjwstk.demo.expression.binary;
 
-import edu.pjwstk.demo.expression.Expression;
+import edu.pjwstk.jps.ast.IExpression;
 import edu.pjwstk.jps.ast.binary.IDivideExpression;
 import edu.pjwstk.jps.visitor.ASTVisitor;
 
 public class DivideExpression extends BinaryExpression implements IDivideExpression {
 
-    public DivideExpression(Expression leftExpr, Expression rightExpr) {
-		super(leftExpr, rightExpr);
-	}
+    public DivideExpression(IExpression left, IExpression right) {
+        super(left, right);
+    }
 
-	@Override
+    @Override
 	public void accept(ASTVisitor visitor) {
         visitor.visitDivideExpression(this);
 	}
