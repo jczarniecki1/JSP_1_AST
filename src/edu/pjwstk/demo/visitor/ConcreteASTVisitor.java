@@ -51,7 +51,14 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitAsExpression(IAsExpression expr) {
+        // TODO dodać obsługę bagów
 
+        expr.getInnerExpression().accept(this);
+        IAbstractQueryResult result = qres.pop();
+        String name = expr.getAuxiliaryName();
+        if (result instanceof ISingleResult) {
+            qres.push(new BinderResult(name,result));
+        }
     }
 
     @Override
@@ -590,6 +597,18 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitStructExpression(IStructExpression expr) {
+        //TODO Zaimplementować StructExpression
+        expr.getInnerExpression().accept(this);
+        IAbstractQueryResult result = qres.pop();
+        if (result instanceof IStructResult)
+        {
+            qres.push(result);
+        } else  {
+            List<ISingleResult> list = new ArrayList<>();
+            list.add((ISingleResult)result);
+            qres.push(new StructResult(list));
+        }
+
 
     }
 
