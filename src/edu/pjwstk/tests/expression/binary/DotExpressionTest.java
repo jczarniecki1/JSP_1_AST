@@ -36,10 +36,10 @@ public class DotExpressionTest extends AbstractBinaryExpressionTest {
                 new NameExpression("FirstName")
             );
 
-        ISingleResult[] results = getResults(e);
+        ISingleResult[] results = getResultsFromBag(e);
 
         ISingleResult[] expectedResults = getArrayOfResults("Marcin","Jan","Piotr");
 
-        assertArrayEquals(results, expectedResults);
+        assertArrayEquals(expectedResults, results);
     }
 }

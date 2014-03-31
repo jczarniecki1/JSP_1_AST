@@ -19,6 +19,6 @@ public class MinusExpressionTest extends AbstractBinaryExpressionTest {
         e.accept(visitor);
         IDoubleResult result = (IDoubleResult)qres.pop();
 
-        assertEquals(result.getValue(),3.0, 0.0000001);
+        assertEquals(3.0, result.getValue(), 0.0000001);
     }
 }
