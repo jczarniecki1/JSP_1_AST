@@ -7,6 +7,7 @@ import edu.pjwstk.demo.result.BooleanResult;
 import edu.pjwstk.demo.result.DoubleResult;
 import edu.pjwstk.demo.result.IntegerResult;
 import edu.pjwstk.demo.result.StringResult;
+import edu.pjwstk.jps.interpreter.qres.IQResStack;
 import edu.pjwstk.jps.result.IAbstractQueryResult;
 import edu.pjwstk.jps.result.ISingleResult;
 import edu.pjwstk.jps.visitor.ASTVisitor;
@@ -16,7 +17,7 @@ import java.util.Stack;
 
 public class AbstractExpressionTest {
     protected SBAStore store;
-    protected Stack<IAbstractQueryResult> qres;
+    protected IQResStack qres;
     protected IStoreRepository repository;
     protected ASTVisitor visitor;
 

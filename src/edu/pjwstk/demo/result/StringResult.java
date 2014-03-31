@@ -15,7 +15,7 @@ public class StringResult implements IStringResult{
 
     @Override
     public String toString(){
-        return value;
+        return "\"" + value + "\"";
     }
 
     @Override

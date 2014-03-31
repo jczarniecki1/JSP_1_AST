@@ -4,6 +4,7 @@ import edu.pjwstk.demo.datastore.IStoreRepository;
 import edu.pjwstk.demo.datastore.SBAStore;
 import edu.pjwstk.demo.datastore.StoreRepository;
 import edu.pjwstk.demo.expression.Expression;
+import edu.pjwstk.demo.expression.auxname.AsExpression;
 import edu.pjwstk.demo.expression.binary.*;
 import edu.pjwstk.demo.expression.terminal.DoubleExpression;
 import edu.pjwstk.demo.expression.terminal.IntegerExpression;
@@ -12,6 +13,8 @@ import edu.pjwstk.demo.expression.terminal.StringExpression;
 import edu.pjwstk.demo.expression.unary.AvgExpression;
 import edu.pjwstk.demo.expression.unary.BagExpression;
 import edu.pjwstk.demo.expression.unary.CountExpression;
+import edu.pjwstk.demo.expression.unary.StructExpression;
+import edu.pjwstk.demo.interpreter.qres.QResStack;
 import edu.pjwstk.demo.visitor.ConcreteASTVisitor;
 import edu.pjwstk.jps.datastore.ISBAStore;
 import edu.pjwstk.jps.result.IAbstractQueryResult;
@@ -21,7 +24,7 @@ import java.util.Stack;
 
 public class Demo {
 
-    private static Stack<IAbstractQueryResult> qres = new Stack<>();
+    private static QResStack qres = new QResStack();
     private static ISBAStore store = new SBAStore();
     private static ASTVisitor visitor;
 
@@ -33,16 +36,19 @@ public class Demo {
 
         SolveDemoQuery();
 
-        SolveQuery3();
+        // QRES
+
+        // 1.  (struct(1, 2+1), (bag("test", „Ala”) as nazwa));
+        SolveQRESQuery1();
 
         // 1. Firma where (avg(zatrudnia.pensja) > 2550.50)
-        //SolveQuery1();
+        SolveQuery1();
 
         // 2. Pracownik where (adres.miasto in (bag(„Warszawa”, „Łódź”)))
-        //SolveQuery2();
+        SolveQuery2();
 
         // 3. bag(1,2+1) in bag(4-1,3-2) – Uwaga! Bag jest operatorem unarnym
-        //SolveQuery3();
+        SolveQuery3();
 
         // 4. (Pracownik where nazwisko=”Kowalski”).(adres where miasto=”Łódź”)
         SolveQuery4();
@@ -184,6 +190,35 @@ public class Demo {
         expression.accept(visitor);
 
         Log("Result from Query 4:");
+        Log(qres.pop());
+    }
+
+    //  (struct(1, 2+1), (bag("test", „Ala”) as nazwa));
+    private static void SolveQRESQuery1(){
+
+        Expression expression = new CommaExpression(
+            new StructExpression(
+                new CommaExpression(
+                    new IntegerExpression(1),
+                    new PlusExpression(
+                        new IntegerExpression(2),
+                        new IntegerExpression(1)
+                    )
+                )
+            ),
+            new AsExpression(
+               new BagExpression(
+                   new CommaExpression(
+                        new StringExpression("test"),
+                        new StringExpression("Ala")
+                   )
+               ),
+               "nazwa"
+            )
+        );
+        expression.accept(visitor);
+
+        Log("Result from QRESQuery1:  (struct(1, 2+1), (bag(\"test\", „Ala”) as nazwa)); ");
         Log(qres.pop());
     }
 

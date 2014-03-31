@@ -3,6 +3,7 @@ package edu.pjwstk.tests.expression.binary;
 import edu.pjwstk.demo.datastore.SBAStore;
 import edu.pjwstk.demo.datastore.StoreRepository;
 import edu.pjwstk.demo.expression.Expression;
+import edu.pjwstk.demo.interpreter.qres.QResStack;
 import edu.pjwstk.demo.visitor.ConcreteASTVisitor;
 import edu.pjwstk.jps.result.IBagResult;
 import edu.pjwstk.jps.result.ISingleResult;
@@ -17,7 +18,7 @@ public class AbstractBinaryExpressionTest extends edu.pjwstk.tests.expression.Ab
     public void BeforeTest() {
 
         store = new SBAStore();
-        qres = new Stack<>();
+        qres = new QResStack();
 
         repository = new StoreRepository(store);
         visitor = new ConcreteASTVisitor(qres, repository);

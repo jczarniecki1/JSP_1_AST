@@ -2,8 +2,11 @@ package edu.pjwstk.demo.visitor;
 
 import edu.pjwstk.demo.common.Query;
 import edu.pjwstk.demo.datastore.IStoreRepository;
+import edu.pjwstk.demo.expression.Expression;
 import edu.pjwstk.demo.expression.binary.EqualsExpression;
+import edu.pjwstk.demo.expression.unary.BagExpression;
 import edu.pjwstk.demo.expression.unary.NotExpression;
+import edu.pjwstk.demo.interpreter.qres.QResStack;
 import edu.pjwstk.demo.result.*;
 import edu.pjwstk.jps.ast.IExpression;
 import edu.pjwstk.jps.ast.auxname.IAsExpression;
@@ -11,6 +14,7 @@ import edu.pjwstk.jps.ast.auxname.IGroupAsExpression;
 import edu.pjwstk.jps.ast.binary.*;
 import edu.pjwstk.jps.ast.terminal.*;
 import edu.pjwstk.jps.ast.unary.*;
+import edu.pjwstk.jps.interpreter.qres.IQResStack;
 import edu.pjwstk.jps.result.*;
 import edu.pjwstk.jps.visitor.ASTVisitor;
 
@@ -36,10 +40,10 @@ import java.util.stream.Collectors;
 
 public class ConcreteASTVisitor implements ASTVisitor {
 
-    private final Stack<IAbstractQueryResult> qres;
+    private final IQResStack qres;
     private final IStoreRepository repository;
 
-    public ConcreteASTVisitor(Stack<IAbstractQueryResult> qres,
+    public ConcreteASTVisitor(IQResStack qres,
                               IStoreRepository repository) {
         this.qres = qres;
         this.repository = repository;
@@ -120,7 +124,8 @@ public class ConcreteASTVisitor implements ASTVisitor {
         ISingleResult rightResult = (ISingleResult) qres.pop();
         list.add(rightResult);
 
-        qres.push(new BagResult(list));
+        //qres.push(new BagResult(list));
+        qres.push(new StructResult(list));
     }
 
     @Override
@@ -200,19 +205,52 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitInExpression(IInExpression expr) {
-        expr.getLeftExpression().accept(this);
-        IBagResult collectionLeft = (IBagResult)qres.pop();
+        /*
+        Uwaga 1: sugerowana implementacja ma działać na referencjach, nie na wartościach;
+        przykładowo dwa łańcuchy str1 = „abc” i str2 = ”abc” są z punktu widzenia
+        tych operatorów różne od siebie bo są różnymi obiektami.
+         */
+        BagResult collectionLeft;
+        BagResult collectionRight;
+        Expression leftExpr = (Expression) expr.getLeftExpression();
+        leftExpr.accept(this);
+        IAbstractQueryResult leftResult = qres.pop();
+
+        Expression rightExpr = (Expression) expr.getRightExpression();
+        rightExpr.accept(this);
+        IAbstractQueryResult rightResult = qres.pop();
+
+        if (leftResult instanceof BagResult) {
+            collectionLeft = (BagResult)leftResult;
+        } else  {
+
+            leftExpr = new BagExpression(leftExpr);
+            leftExpr.accept(this);
+            leftResult = qres.pop();
+            collectionLeft = (BagResult)leftResult;
+        }
 
 
-        expr.getRightExpression().accept(this);
-        IBagResult collectionRight = (IBagResult)qres.pop();
+        if (rightResult instanceof BagResult) {
+            // jeżeli na wejściu jest Bag
+            collectionRight = (BagResult)rightResult;
+        } else {
+
+                rightExpr = new BagExpression(rightExpr);
+                rightExpr.accept(this);
+                rightResult = qres.pop();
+                collectionRight = (BagResult)rightResult;
+        }
+
 
         Collection<ISingleResult> scope = collectionRight.getElements();
+
 
         boolean isIN = !Query.any(collectionLeft.getElements(), x ->
                 !Query.any(scope, y -> {
                     Object left = ((ISimpleResult) y).getValue();
                     Object right = ((ISimpleResult) x).getValue();
+
                     if (left instanceof Integer) left = ((Integer)left).doubleValue();
                     if (right instanceof Integer) right = ((Integer)right).doubleValue();
                     return left.equals(right);
@@ -347,9 +385,17 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitPlusExpression(IPlusExpression expr) {
-        double left = getDouble(expr.getLeftExpression());
-        double right = getDouble(expr.getRightExpression());
-        qres.push(new DoubleResult(left+right));
+        expr.getLeftExpression().accept(this);
+        IAbstractQueryResult leftValue = qres.pop();
+        expr.getRightExpression().accept(this);
+        IAbstractQueryResult rightValue = qres.pop();
+
+        if (leftValue instanceof IntegerResult
+         && rightValue instanceof IntegerResult) {
+            qres.push(new IntegerResult(((IntegerResult) leftValue).getValue()+((IntegerResult) rightValue).getValue()));
+        } else {
+            qres.push(new DoubleResult(getDouble(leftValue) + getDouble(rightValue)));
+        }
     }
 
     // TODO: A co powinno się stać dla (1, 1, 1, 3) union (2, 2, 4) ? (1, 3, 2, 4) ?
@@ -438,18 +484,22 @@ public class ConcreteASTVisitor implements ASTVisitor {
         IAbstractQueryResult result;
         String name = expr.getName();
 
-        if (qres.empty())
+        IAbstractQueryResult lastValue = qres.pop();
+        if (lastValue == null)
         {
             result = new BagResult(repository.getCollection(name));
             qres.push(result);
         }
         else
         {
-            IAbstractQueryResult input = qres.pop();
+            IAbstractQueryResult input = lastValue;
             if (input instanceof IBagResult)
             {
                 Collection collection = ((IBagResult) input).getElements();
                 List values = Query.select(collection, x -> repository.getField((IReferenceResult) x, name));
+//                var values = collection.map(function(i, x){
+//                    return repository.getField((IReferenceResult) x, name);
+//                });
                 result = new BagResult(values);
             }
             else
@@ -473,8 +523,13 @@ public class ConcreteASTVisitor implements ASTVisitor {
         {
             qres.push(result);
         }
-        else
-        {
+        else if (result instanceof IStructResult){
+            Collection<ISingleResult> list = new ArrayList<>();
+            for( ISingleResult element: ((IStructResult) result).elements()) {
+                list.add(element);
+            }
+            qres.push(new BagResult(list));
+        } else  {
             Collection<ISingleResult> list = new ArrayList<>();
             list.add((ISingleResult)result);
             qres.push(new BagResult(list));
@@ -572,7 +627,10 @@ public class ConcreteASTVisitor implements ASTVisitor {
     // Szybkie wyciąganie wartości z wyrażenia i rzutownie na double
     private double getDouble(IExpression expression) {
         expression.accept(this);
-        Object result = qres.pop();
+        return getDouble(qres.pop());
+    }
+    // Szybkie wyciąganie wartości z wyrażenia i rzutownie na double
+    private double getDouble(IAbstractQueryResult result) {
         if (result instanceof IntegerResult) {
             return ((IntegerResult)result).getValue().doubleValue();
         }

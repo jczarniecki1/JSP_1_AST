@@ -5,6 +5,7 @@ import edu.pjwstk.jps.result.ISingleResult;
 
 import java.util.Collection;
 
+
 public class BagResult implements IBagResult{
 
     private Collection<ISingleResult> values;
@@ -20,12 +21,16 @@ public class BagResult implements IBagResult{
 
     @Override
     public String toString(){
-        String textResult = "{ ";
+        int index=0;
+        String textResult = "bag(";
         for (ISingleResult innerResult : values){
-            textResult += (textResult.length() > 2 ? ", " : "")
-                    + innerResult;
+
+            textResult += (textResult.length() > 4 ? "," : "")
+                    + index + "="+ innerResult;
+            index++;
         }
-        textResult += (values.size() > 0 ? " " : "") + "}";
+        //textResult += (values.size() > 0 ? " " : "") + ")";
+        textResult += ")";
         return textResult;
     }
 }
