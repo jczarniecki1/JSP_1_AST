@@ -3,17 +3,22 @@ package edu.pjwstk.tests.expression;
 import edu.pjwstk.demo.common.lambda.Selector;
 import edu.pjwstk.demo.datastore.IStoreRepository;
 import edu.pjwstk.demo.datastore.SBAStore;
+import edu.pjwstk.demo.datastore.StoreRepository;
+import edu.pjwstk.demo.expression.Expression;
+import edu.pjwstk.demo.interpreter.qres.QResStack;
 import edu.pjwstk.demo.result.BooleanResult;
 import edu.pjwstk.demo.result.DoubleResult;
 import edu.pjwstk.demo.result.IntegerResult;
 import edu.pjwstk.demo.result.StringResult;
+import edu.pjwstk.demo.visitor.ConcreteASTVisitor;
 import edu.pjwstk.jps.interpreter.qres.IQResStack;
-import edu.pjwstk.jps.result.IAbstractQueryResult;
+import edu.pjwstk.jps.result.IBagResult;
 import edu.pjwstk.jps.result.ISingleResult;
 import edu.pjwstk.jps.visitor.ASTVisitor;
+import org.junit.Before;
 
 import java.util.ArrayList;
-import java.util.Stack;
+import java.util.Collection;
 
 public class AbstractExpressionTest {
     protected SBAStore store;
@@ -48,5 +53,25 @@ public class AbstractExpressionTest {
             expectedResultList.add(selector.select(o));
         }
         return expectedResultList.toArray(new ISingleResult[expectedResultList.size()]);
+    }
+
+    @Before
+    public void BeforeTest() {
+
+        store = new SBAStore();
+        qres = new QResStack();
+
+        repository = new StoreRepository(store);
+        visitor = new ConcreteASTVisitor(qres, repository);
+    }
+
+    protected ISingleResult[] getResultsFromBag(Expression e) {
+
+        e.accept(visitor);
+
+        IBagResult bagResult = (IBagResult) qres.pop();
+        Collection<ISingleResult> elements = bagResult.getElements();
+
+        return elements.toArray(new ISingleResult[elements.size()]);
     }
 }

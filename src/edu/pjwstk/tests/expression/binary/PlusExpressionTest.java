@@ -21,7 +21,7 @@ public class PlusExpressionTest extends AbstractBinaryExpressionTest {
         e.accept(visitor);
         IIntegerResult result = (IIntegerResult)qres.pop();
 
-        assertEquals(result.getValue(),2, 0.0000001);
+        assertEquals(2, result.getValue(), 0.0000001);
     }
 
     @Test
@@ -33,6 +33,6 @@ public class PlusExpressionTest extends AbstractBinaryExpressionTest {
         e.accept(visitor);
         IDoubleResult result = (IDoubleResult)qres.pop();
 
-        assertEquals(result.getValue(),2.0, 0.0000001);
+        assertEquals(2.0, result.getValue(), 0.0000001);
     }
 }

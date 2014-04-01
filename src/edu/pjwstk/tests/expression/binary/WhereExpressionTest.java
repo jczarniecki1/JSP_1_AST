@@ -6,7 +6,6 @@ import edu.pjwstk.demo.expression.binary.WhereExpression;
 import edu.pjwstk.demo.expression.terminal.NameExpression;
 import edu.pjwstk.demo.model.Address;
 import edu.pjwstk.demo.model.Person;
-import edu.pjwstk.demo.result.StringResult;
 import edu.pjwstk.jps.result.ISingleResult;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,10 +40,10 @@ public class WhereExpressionTest extends AbstractBinaryExpressionTest {
                 new NameExpression("FirstName")
             );
 
-        ISingleResult[] results = getResults(e);
+        ISingleResult[] results = getResultsFromBag(e);
         ISingleResult[] expectedResults = getArrayOfResults("Jan");
 
-        assertArrayEquals(results, expectedResults);
+        assertArrayEquals(expectedResults, results);
     }
 
 }
