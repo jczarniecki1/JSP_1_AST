@@ -21,4 +21,13 @@ public class BinderResult extends SingleResult implements IBinderResult {
     public IAbstractQueryResult getValue() {
         return value;
     }
+
+    @Override
+    public String toString(){
+        String textResult = "binder(";
+        textResult += "name=\"" + name + "\", ";
+        textResult += "value=" + value;
+        textResult += ")";
+        return textResult;
+    }
 }
