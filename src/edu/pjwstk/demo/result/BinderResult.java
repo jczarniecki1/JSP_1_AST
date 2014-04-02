@@ -33,7 +33,7 @@ public class BinderResult extends SingleResult implements IBinderResult {
     public String toString(){
         String textResult = "binder(";
         textResult += "name=\"" + name + "\",";
-        textResult += "value=" + result;
+        textResult += "value=\"" + result + "\"";
         textResult += ")";
         return textResult;
     }
