@@ -61,12 +61,12 @@ public class ConcreteASTVisitor implements ASTVisitor {
             qres.push(new BinderResult(result, name));
         }
         if (result instanceof ICollectionResult){
-            List<IBinderResult> binders = new ArrayList<>();
+            List<ISingleResult> binders = new ArrayList<>();
             IBagResult bagResults = (IBagResult) result;
             for (ISingleResult bagResult : bagResults.getElements()){
                 binders.add(new BinderResult(bagResult,name));
             }
-            qres.push((IAbstractQueryResult)binders);
+            qres.push(new BagResult(binders));
         }
     }
 
