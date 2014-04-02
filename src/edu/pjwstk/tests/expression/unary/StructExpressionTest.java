@@ -5,17 +5,18 @@ import edu.pjwstk.demo.expression.binary.CommaExpression;
 import edu.pjwstk.demo.expression.binary.PlusExpression;
 import edu.pjwstk.demo.expression.terminal.IntegerExpression;
 import edu.pjwstk.demo.expression.unary.BagExpression;
+import edu.pjwstk.demo.expression.unary.StructExpression;
 import edu.pjwstk.tests.expression.AbstractExpressionTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class BagExpressionTest extends AbstractExpressionTest {
+public class StructExpressionTest extends AbstractExpressionTest{
 
     @Test
-    public void shoudBeAbleToPushBagResult() throws Exception {
+    public void shoudBeAbleToPushStructResult() throws Exception {
         Expression e =
-            new BagExpression(
+            new StructExpression(
                 new CommaExpression(
                     new IntegerExpression(1),
                     new PlusExpression(
@@ -25,15 +26,13 @@ public class BagExpressionTest extends AbstractExpressionTest {
             )
         );
         e.accept(visitor);
-        boolean result = qres.pop().toString().equals("bag(0=1,1=3)");
-
-        assertEquals(true,result);
+        assertEquals("struct(0=1,1=3)", qres.pop().toString());
     }
 
     @Test
-    public void shoudBeReturnOneBagFromTwoBagResults() throws Exception {
+    public void shoudBeReturnOneStructWithTwoBagResults() throws Exception {
         Expression e =
-            new BagExpression(
+            new StructExpression(
                 new CommaExpression(
                     new BagExpression(new IntegerExpression(1)),
                     new BagExpression(
@@ -46,8 +45,6 @@ public class BagExpressionTest extends AbstractExpressionTest {
             );
 
         e.accept(visitor);
-        boolean result = qres.pop().toString().equals("bag(0=1,1=2,2=1)");
-
-        assertEquals(true,result);
+        assertEquals("struct(bag(0=1),bag(0=2,1=1))",qres.pop().toString());
     }
 }
