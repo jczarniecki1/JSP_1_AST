@@ -6,10 +6,7 @@ import edu.pjwstk.demo.datastore.StoreRepository;
 import edu.pjwstk.demo.expression.Expression;
 import edu.pjwstk.demo.expression.auxname.AsExpression;
 import edu.pjwstk.demo.expression.binary.*;
-import edu.pjwstk.demo.expression.terminal.DoubleExpression;
-import edu.pjwstk.demo.expression.terminal.IntegerExpression;
-import edu.pjwstk.demo.expression.terminal.NameExpression;
-import edu.pjwstk.demo.expression.terminal.StringExpression;
+import edu.pjwstk.demo.expression.terminal.*;
 import edu.pjwstk.demo.expression.unary.AvgExpression;
 import edu.pjwstk.demo.expression.unary.BagExpression;
 import edu.pjwstk.demo.expression.unary.CountExpression;
@@ -40,6 +37,9 @@ public class Demo {
 
         // 1.  (struct(1, 2+1), (bag("test", „Ala”) as nazwa));
         SolveQRESQuery1();
+
+        // 2.  (bag("ala"+" ma"+" kota"), bag(8*10, false));
+        SolveQRESQuery2();
 
         // 1. Firma where (avg(zatrudnia.pensja) > 2550.50)
         SolveQuery1();
@@ -219,6 +219,35 @@ public class Demo {
         expression.accept(visitor);
 
         Log("Result from QRESQuery1:  (struct(1, 2+1), (bag(\"test\", „Ala”) as nazwa)); ");
+        Log(qres.pop());
+    }
+
+    //   (bag("ala"+" ma"+" kota"), bag(8*10, false));
+    private static void SolveQRESQuery2(){
+
+        Expression expression = new CommaExpression(
+                new BagExpression(
+                        new PlusExpression(
+                                new StringExpression("ala"),
+                                new PlusExpression(
+                                        new StringExpression(" ma"),
+                                        new StringExpression(" kota")
+                                )
+                        )
+                ),
+                new BagExpression(
+                        new CommaExpression(
+                                new MultiplyExpression(
+                                        new IntegerExpression(8),
+                                        new IntegerExpression(10)
+                                ),
+                                new BooleanExpression(false)
+                        )
+                )
+        );
+        expression.accept(visitor);
+
+        Log("Result from QRESQuery1:  (bag(\"ala\"+\" ma\"+\" kota\"), bag(8*10, false)); ");
         Log(qres.pop());
     }
 

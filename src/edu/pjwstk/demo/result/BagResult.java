@@ -10,6 +10,9 @@ public class BagResult implements IBagResult{
 
     private Collection<ISingleResult> values;
 
+    public BagResult() {
+        // pusty bag
+    }
     public BagResult(Collection<ISingleResult> values) {
         this.values = values;
     }
