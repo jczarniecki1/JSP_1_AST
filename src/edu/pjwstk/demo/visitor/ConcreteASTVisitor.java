@@ -3,6 +3,7 @@ package edu.pjwstk.demo.visitor;
 import edu.pjwstk.demo.common.Query;
 import edu.pjwstk.demo.datastore.IStoreRepository;
 import edu.pjwstk.demo.expression.Expression;
+import edu.pjwstk.demo.expression.auxname.AsExpression;
 import edu.pjwstk.demo.expression.binary.EqualsExpression;
 import edu.pjwstk.demo.expression.unary.BagExpression;
 import edu.pjwstk.demo.expression.unary.NotExpression;
@@ -57,7 +58,15 @@ public class ConcreteASTVisitor implements ASTVisitor {
         IAbstractQueryResult result = qres.pop();
         String name = expr.getAuxiliaryName();
         if (result instanceof ISingleResult) {
-            qres.push(new BinderResult(name,result));
+            qres.push(new BinderResult(result, name));
+        }
+        if (result instanceof ICollectionResult){
+            List<IBinderResult> binders = new ArrayList<>();
+            IBagResult bagResults = (IBagResult) result;
+            for (ISingleResult bagResult : bagResults.getElements()){
+                binders.add(new BinderResult(bagResult,name));
+            }
+            qres.push((IAbstractQueryResult)binders);
         }
     }
 
@@ -124,12 +133,27 @@ public class ConcreteASTVisitor implements ASTVisitor {
         List<ISingleResult> list = new ArrayList<>();
 
         expr.getLeftExpression().accept(this);
-        ISingleResult leftResult = (ISingleResult) qres.pop();
-        list.add(leftResult);
+        IAbstractQueryResult leftResult = qres.pop();
+        if (leftResult instanceof ISingleResult) {
+            list.add((ISingleResult) leftResult);
+        } else if (leftResult instanceof ICollectionResult) {
+            IBagResult rightBag = (IBagResult) leftResult;
+            for (ISingleResult bagElement : rightBag.getElements()) {
+                list.add(bagElement);
+            }
+        }
 
         expr.getRightExpression().accept(this);
-        ISingleResult rightResult = (ISingleResult) qres.pop();
-        list.add(rightResult);
+
+        IAbstractQueryResult rightResult = qres.pop();
+        if (rightResult instanceof ISingleResult) {
+            list.add((ISingleResult) rightResult);
+        } else if (rightResult instanceof ICollectionResult) {
+            IBagResult rightBag = (IBagResult) rightResult;
+            for (ISingleResult bagElement : rightBag.getElements()) {
+                list.add(bagElement);
+            }
+        }
 
         //qres.push(new BagResult(list));
         qres.push(new StructResult(list));

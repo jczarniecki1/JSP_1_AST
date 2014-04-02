@@ -1,5 +1,6 @@
 package edu.pjwstk.demo.result;
 
+import edu.pjwstk.jps.result.IAbstractQueryResult;
 import edu.pjwstk.jps.result.ISingleResult;
 import edu.pjwstk.jps.result.IStructResult;
 
@@ -19,7 +20,7 @@ public class StructResult extends SingleResult implements IStructResult {
     public String toString() {
         String textResult = "struct(";
         int index=0;
-        for (ISingleResult innerResult : elementsOfStruct){
+        for (IAbstractQueryResult innerResult : elementsOfStruct){
             if (textResult.length()>7) {
                 textResult += ",";
             }
