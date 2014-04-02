@@ -26,11 +26,34 @@ public class StructExpressionTest extends AbstractExpressionTest{
             )
         );
         e.accept(visitor);
-        assertEquals("struct(0=1,1=3)", qres.pop().toString());
+        assertEquals("struct(1,3)", qres.pop().toString());
     }
 
     @Test
+    public void shoudBeReturnOneStructResult() throws Exception {
+        // struct(struct(1,2,3))
+
+        Expression e =
+           new StructExpression(
+               new StructExpression(
+                   new CommaExpression(
+                       new IntegerExpression(1),
+                       new CommaExpression(
+                            new IntegerExpression(2),
+                            new IntegerExpression(3)
+                       )
+                   )
+               )
+           );
+        e.accept(visitor);
+        assertEquals("struct(1,2,3)",qres.pop().toString());
+    }
+
+    /* @Test
     public void shoudBeReturnOneStructWithTwoBagResults() throws Exception {
+
+        // wydaje mi się, że tak nie może być
+        // structura może mieć tylko elementy typu ISingleResult
         Expression e =
             new StructExpression(
                 new CommaExpression(
@@ -46,5 +69,5 @@ public class StructExpressionTest extends AbstractExpressionTest{
 
         e.accept(visitor);
         assertEquals("struct(bag(0=1),bag(0=2,1=1))",qres.pop().toString());
-    }
+    } */
 }

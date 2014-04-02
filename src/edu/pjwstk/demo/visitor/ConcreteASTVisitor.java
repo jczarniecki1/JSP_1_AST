@@ -135,10 +135,17 @@ public class ConcreteASTVisitor implements ASTVisitor {
         expr.getLeftExpression().accept(this);
         IAbstractQueryResult leftResult = qres.pop();
         if (leftResult instanceof ISingleResult) {
-            list.add((ISingleResult) leftResult);
+            if (leftResult instanceof IStructResult) {
+                IStructResult leftStruct = (IStructResult)  leftResult;
+                for (ISingleResult structElement : leftStruct.elements()) {
+                    list.add(structElement);
+                }
+            } else {
+                list.add((ISingleResult) leftResult);
+            }
         } else if (leftResult instanceof ICollectionResult) {
-            IBagResult rightBag = (IBagResult) leftResult;
-            for (ISingleResult bagElement : rightBag.getElements()) {
+            IBagResult leftBag = (IBagResult) leftResult;
+            for (ISingleResult bagElement : leftBag.getElements()) {
                 list.add(bagElement);
             }
         }
@@ -147,7 +154,14 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
         IAbstractQueryResult rightResult = qres.pop();
         if (rightResult instanceof ISingleResult) {
+            if (rightResult instanceof IStructResult) {
+                IStructResult rightStruct = (IStructResult)  rightResult;
+                for (ISingleResult structElement : rightStruct.elements()) {
+                    list.add(structElement);
+                }
+            } else {
             list.add((ISingleResult) rightResult);
+            }
         } else if (rightResult instanceof ICollectionResult) {
             IBagResult rightBag = (IBagResult) rightResult;
             for (ISingleResult bagElement : rightBag.getElements()) {

@@ -22,8 +22,8 @@ public class CommaExpressionTest extends AbstractBinaryExpressionTest {
                 )
         );
         e.accept(visitor);
-        boolean result = qres.pop().toString().equals("struct(0=1,1=3)");
+        boolean result = qres.pop().toString().equals("struct(1,3)");
 
-        assertEquals(true,result);
+        assertEquals(result,true);
     }
 }

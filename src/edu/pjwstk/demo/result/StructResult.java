@@ -19,13 +19,11 @@ public class StructResult extends SingleResult implements IStructResult {
     @Override
     public String toString() {
         String textResult = "struct(";
-        int index=0;
         for (IAbstractQueryResult innerResult : elementsOfStruct){
             if (textResult.length()>7) {
                 textResult += ",";
             }
-            textResult += index + "=" + innerResult;
-            index++;
+            textResult += innerResult;
         }
         textResult += ")";
         return textResult;
