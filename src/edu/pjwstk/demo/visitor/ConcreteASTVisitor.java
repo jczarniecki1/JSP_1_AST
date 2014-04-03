@@ -52,7 +52,6 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitAsExpression(IAsExpression expr) {
-        // TODO dodać obsługę bagów
 
         expr.getInnerExpression().accept(this);
         IAbstractQueryResult result = qres.pop();
@@ -72,7 +71,11 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitGroupAsExpression(IGroupAsExpression expr) {
-
+        // TODO Zaimplementować GroupAS
+        expr.getInnerExpression().accept(this);
+        IAbstractQueryResult result = qres.pop();
+        String name = expr.getAuxiliaryName();
+        qres.push(new BinderResult(result, name));
     }
 
     // All() jako odwrócone Any()

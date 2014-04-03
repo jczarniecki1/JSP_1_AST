@@ -71,13 +71,14 @@ public class BagExpressionTest extends AbstractExpressionTest {
                 );
 
         e.accept(visitor);
-        boolean result = qres.pop().toString().equals("bag(0=1,1=2,2=3)");
 
-        assertEquals(true,result);
+        assertEquals("bag(0=1,1=2,2=3)",qres.pop().toString());
+
     }
 
     @Test
     public void shoudBeReturnOneBagFromTwoBagResults() throws Exception {
+        // bag(1,bag(2,2+1))
         Expression e =
                new BagExpression(
                new CommaExpression(
@@ -94,8 +95,7 @@ public class BagExpressionTest extends AbstractExpressionTest {
                ) );
 
         e.accept(visitor);
-        boolean result = qres.pop().toString().equals("bag(0=1,1=2,2=3)");
+        assertEquals("bag(0=struct(1,2),1=struct(1,3))",qres.pop().toString());
 
-        assertEquals(true,result);
     }
 }

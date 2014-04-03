@@ -5,6 +5,7 @@ import edu.pjwstk.demo.datastore.SBAStore;
 import edu.pjwstk.demo.datastore.StoreRepository;
 import edu.pjwstk.demo.expression.Expression;
 import edu.pjwstk.demo.expression.auxname.AsExpression;
+import edu.pjwstk.demo.expression.auxname.GroupAsExpression;
 import edu.pjwstk.demo.expression.binary.*;
 import edu.pjwstk.demo.expression.terminal.*;
 import edu.pjwstk.demo.expression.unary.AvgExpression;
@@ -35,11 +36,15 @@ public class Demo {
 
         // QRES
 
-        // 1.  (struct(1, 2+1), (bag("test", „Ala”) as nazwa));
+        // 1. (struct(1, 2+1), (bag("test", „Ala”) as nazwa));
         SolveQRESQuery1();
 
-        // 2.  (bag("ala"+" ma"+" kota"), bag(8*10, false));
+        // 2. (bag("ala"+" ma"+" kota"), bag(8*10, false));
         SolveQRESQuery2();
+
+        // 3. ((bag(1, 2) groupas x), bag(3, 4), 5);
+
+        SolveQRESQuery3();
 
         // 1. Firma where (avg(zatrudnia.pensja) > 2550.50)
         SolveQuery1();
@@ -247,7 +252,37 @@ public class Demo {
         );
         expression.accept(visitor);
 
-        Log("Result from QRESQuery1:  (bag(\"ala\"+\" ma\"+\" kota\"), bag(8*10, false)); ");
+        Log("Result from QRESQuery2:  (bag(\"ala\"+\" ma\"+\" kota\"), bag(8*10, false)); ");
+        Log(qres.pop());
+    }
+
+    //    ( (bag(1, 2) groupas x), bag(3, 4), 5);
+    private static void SolveQRESQuery3(){
+
+        Expression expression =
+                new CommaExpression(
+                    new GroupAsExpression(
+                        new BagExpression(
+                                new CommaExpression(
+                                    new IntegerExpression(1),
+                                    new IntegerExpression(2)
+                                )
+                        )
+                        ,"x"
+                    ),
+                    new CommaExpression(
+                        new BagExpression(
+                            new CommaExpression(
+                                new IntegerExpression(3),
+                                new IntegerExpression(4)
+                            )
+                        ),
+                        new IntegerExpression(5)
+                    )
+        );
+        expression.accept(visitor);
+
+        Log("Result from QRESQuery3:  ((bag(1, 2) groupas x), bag(3, 4), 5);");
         Log(qres.pop());
     }
 

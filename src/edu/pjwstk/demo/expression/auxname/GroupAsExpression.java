@@ -5,9 +5,11 @@ import edu.pjwstk.jps.ast.auxname.IGroupAsExpression;
 import edu.pjwstk.jps.visitor.ASTVisitor;
 
 public class GroupAsExpression extends AuxiliaryNameExpression implements IGroupAsExpression {
+
     public GroupAsExpression(IExpression expression, String auxiliaryName) {
         super(expression, auxiliaryName);
     }
+
 
     @Override
     public void accept(ASTVisitor visitor) {
