@@ -46,7 +46,6 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
     }
 
     @Test
-
     public void shouldBindElementsInBag() throws Exception {
         //bag(1,2) as num
         Expression e = new AsExpression(
@@ -61,6 +60,25 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
         e.accept(visitor);
         IAbstractQueryResult result = qres.pop();
         assertEquals("bag(0=binder(name=\"num\",value=\"1\"),1=binder(name=\"num\",value=\"2\"))", result.toString());
+
+    }
+
+    @Test
+
+    public void shouldBindElementsInBag2() throws Exception {
+        //bag(1,2) as num
+        Expression e = new AsExpression(
+                new BagExpression(
+                        new CommaExpression(
+                                new StringExpression("test"),
+                                new StringExpression("Ala")
+                        )
+                ),
+                "nazwa"
+        );
+        e.accept(visitor);
+        IAbstractQueryResult result = qres.pop();
+        assertEquals("bag(0=binder(name=\"nazwa\",value=\"test\"),1=binder(name=\"nazwa\",value=\"Ala\"))", result.toString());
 
     }
 

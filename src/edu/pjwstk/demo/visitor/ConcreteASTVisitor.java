@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
     TODO:
      * rzutowanie (... as ...)
-     * Struct, OrderBy, Exists
+     * OrderBy, Exists
      * poprawka w CommaExpression
 
     Uwaga:
@@ -206,7 +206,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
                         for (ISingleResult bagElement : leftBag.getElements()) {
                             List<ISingleResult> bagStruct = new ArrayList<>();
 
-                            if (bagElement instanceof ISimpleResult) {
+                            if (bagElement instanceof ISingleResult) {
                                 bagStruct.add(bagElement);
                                 bagStruct.add((ISingleResult) rightResult);
                             }
@@ -235,7 +235,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
                         for (ISingleResult bagElement : rightBag.getElements()) {
                             List<ISingleResult> bagStruct = new ArrayList<>();
 
-                            if (bagElement instanceof ISimpleResult) {
+                            if (bagElement instanceof ISingleResult) {
                                 bagStruct.addAll(((IStructResult) leftResult).elements());
                                 bagStruct.add(bagElement);
                             }
@@ -243,16 +243,16 @@ public class ConcreteASTVisitor implements ASTVisitor {
                         }
 
                     } else {
-
+                        // z lewej IReference lub IBinder lub ISimple
                         for (ISingleResult bagElement : rightBag.getElements()) {
                             List<ISingleResult> bagStruct = new ArrayList<>();
 
-                            if (bagElement instanceof ISimpleResult) {
+                            if (bagElement instanceof ISingleResult) {
                                 bagStruct.add((ISingleResult) leftResult);
                                 bagStruct.add(bagElement);
                             }
                             list.add(new StructResult(bagStruct));
-                    }
+                        }
                     }
                 }
             }

@@ -48,10 +48,10 @@ public class GroupAsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
                         new IntegerExpression(2)
                     )
                 ),
-                "num"
+                "x"
         );
         e.accept(visitor);
-        assertEquals("binder(name=\"num\",value=\"bag(0=1,1=2)\")",qres.pop().toString());
+        assertEquals("binder(name=\"x\",value=\"bag(0=1,1=2)\")",qres.pop().toString());
 
     }
 

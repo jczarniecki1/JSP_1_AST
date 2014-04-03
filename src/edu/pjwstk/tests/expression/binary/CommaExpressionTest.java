@@ -1,9 +1,11 @@
 package edu.pjwstk.tests.expression.binary;
 
 import edu.pjwstk.demo.expression.Expression;
+import edu.pjwstk.demo.expression.auxname.AsExpression;
 import edu.pjwstk.demo.expression.binary.CommaExpression;
 import edu.pjwstk.demo.expression.binary.PlusExpression;
 import edu.pjwstk.demo.expression.terminal.IntegerExpression;
+import edu.pjwstk.demo.expression.terminal.StringExpression;
 import edu.pjwstk.demo.expression.unary.BagExpression;
 import edu.pjwstk.demo.expression.unary.StructExpression;
 import org.junit.Test;
@@ -109,6 +111,8 @@ public class CommaExpressionTest extends AbstractBinaryExpressionTest {
         assertEquals("bag(0=struct(1,3),1=struct(1,4),2=struct(2,3),3=struct(2,4))",qres.pop().toString());
     }
 
+
+
     @Test
     public void shoudGiveBagOfStructsFromBagAndStruct() throws Exception {
         Expression e = new CommaExpression(
@@ -132,7 +136,7 @@ public class CommaExpressionTest extends AbstractBinaryExpressionTest {
     }
 
     @Test
-    public void shoudGiveBagOfStructsFromStructAndBag() throws Exception {
+    public void shoudGiveBagOfStructsFromStructAndBag2() throws Exception {
         Expression e = new CommaExpression(
                 new StructExpression(
                         new CommaExpression(
@@ -142,15 +146,22 @@ public class CommaExpressionTest extends AbstractBinaryExpressionTest {
                 ),
                 new BagExpression(
                         new CommaExpression(
-                                new IntegerExpression(3),
-                                new IntegerExpression(4)
+                                new AsExpression(
+                                    new StringExpression("test"),
+                                    "nazwa"
+                                ),
+                                new AsExpression(
+                                   new StringExpression("Ala"),
+                                   "nazwa"
+                                )
                         )
-                )
+               )
 
         );
 
         e.accept(visitor);
-        assertEquals("bag(0=struct(1,2,3),1=struct(1,2,4))",qres.pop().toString());
+        assertEquals("bag(0=struct(1,2,binder(name=\"nazwa\",value=\"test\")),1=struct(1,2,binder(name=\"nazwa\",value=\"Ala\")))",qres.pop().toString());
     }
+
 
 }
