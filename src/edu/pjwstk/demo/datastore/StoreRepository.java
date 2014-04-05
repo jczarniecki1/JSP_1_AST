@@ -12,7 +12,10 @@ import edu.pjwstk.jps.result.IBagResult;
 import edu.pjwstk.jps.result.IReferenceResult;
 import edu.pjwstk.jps.result.ISingleResult;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /*
@@ -56,18 +59,17 @@ public class StoreRepository implements IStoreRepository {
         return new BagResult(ids);
     }
 
+    @Override
+    public Object get(IReferenceResult reference) {
+        return toResult(store.retrieve(reference.getOIDValue()));
+    }
+
     private IAbstractQueryResult valuesByName(IComplexObject object, String fieldName) {
         List<ISingleResult> list = object.getChildOIDs()
                 .stream()
-                .map(x -> store.retrieve(x))
+                .map(store::retrieve)
                 .filter(x -> x.getName().equals(fieldName))
-                .map(o -> {
-                         if (o instanceof StringObject) return new StringResult(((StringObject) o).getValue());
-                    else if (o instanceof IntegerObject) return new IntegerResult(((IntegerObject) o).getValue());
-                    else if (o instanceof DoubleObject) return new DoubleResult(((DoubleObject) o).getValue());
-                    else if (o instanceof BooleanObject) return new BooleanResult(((BooleanObject) o).getValue());
-                    else return new ReferenceResult(o.getOID());
-                })
+                .map(this::toResult)
                 .collect(Collectors.toList());
         if (list.size() > 1) return new BagResult(list);
         else return list.iterator().next();
@@ -77,15 +79,9 @@ public class StoreRepository implements IStoreRepository {
     private Optional<ISingleResult> singleValueByName(IComplexObject object, String fieldName) {
         return object.getChildOIDs()
                 .stream()
-                .map(x -> store.retrieve(x))
+                .map(store::retrieve)
                 .filter(x -> x.getName().equals(fieldName))
-                .map(o -> {
-                         if (o instanceof StringObject) return new StringResult(((StringObject) o).getValue());
-                    else if (o instanceof IntegerObject) return new IntegerResult(((IntegerObject) o).getValue());
-                    else if (o instanceof DoubleObject) return new DoubleResult(((DoubleObject) o).getValue());
-                    else if (o instanceof BooleanObject) return new BooleanResult(((BooleanObject) o).getValue());
-                    else return new ReferenceResult(o.getOID());
-                })
+                .map(this::toResult)
                 .findFirst();
     }
 
@@ -114,5 +110,13 @@ public class StoreRepository implements IStoreRepository {
             }
         }
         return children;
+    }
+
+    private ISingleResult toResult(ISBAObject o){
+             if (o instanceof StringObject)  return new StringResult(((StringObject) o).getValue());
+        else if (o instanceof IntegerObject) return new IntegerResult(((IntegerObject) o).getValue());
+        else if (o instanceof DoubleObject)  return new DoubleResult(((DoubleObject) o).getValue());
+        else if (o instanceof BooleanObject) return new BooleanResult(((BooleanObject) o).getValue());
+        else return new ReferenceResult(o.getOID());
     }
 }

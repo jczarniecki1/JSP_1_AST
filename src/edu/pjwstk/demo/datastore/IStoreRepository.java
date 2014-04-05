@@ -12,4 +12,5 @@ public interface IStoreRepository {
     public IAbstractQueryResult getFields(IReferenceResult reference, String fieldName);
     public Collection<ISingleResult> getCollection(String name);
     public IBagResult getCollectionAsBag(IReferenceResult reference);
+    public Object get(IReferenceResult reference);
 }
