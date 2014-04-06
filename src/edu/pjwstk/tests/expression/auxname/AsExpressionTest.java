@@ -10,6 +10,7 @@ import edu.pjwstk.demo.expression.terminal.StringExpression;
 import edu.pjwstk.demo.expression.unary.BagExpression;
 import edu.pjwstk.demo.model.Address;
 import edu.pjwstk.demo.model.Person;
+import edu.pjwstk.demo.result.StringResult;
 import edu.pjwstk.jps.result.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -127,6 +128,25 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
     } */
 
     @Test
+    public void shouldBeAbleToUseBinding_SimpleExample() throws Exception {
+
+        Expression e =
+            new DotExpression(
+                new AsExpression(
+                    new IntegerExpression(1),
+                    "n"
+                ),
+                new NameExpression("n")
+            );
+
+        e.accept(visitor);
+        StringResult result = (StringResult)qres.pop();
+
+        assertEquals(1, result.getValue());
+    }
+
+
+    @Test
     public void shouldBeAbleToUseBinding_1() throws Exception {
 
         Expression e =
@@ -169,12 +189,12 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
                         new BagExpression(
                             new CommaExpression(
                                 new AsExpression(
-                                    new IntegerExpression(29),
-                                    "Age"
+                                    new StringExpression("Zuzanna"),
+                                    "FirstName"
                                 ),
                                 new AsExpression(
-                                    new StringExpression("Nowakowska"),
-                                    "LastName"
+                                    new IntegerExpression(29),
+                                    "Age"
                                 )
                             )
                         )
