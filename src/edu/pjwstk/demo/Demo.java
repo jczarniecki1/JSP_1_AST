@@ -285,6 +285,7 @@ public class Demo {
         Log("Result from QRESQuery3:  ((bag(1, 2) groupas x), bag(3, 4), 5);");
         Log(qres.pop());
     }
+    //    ( (bag(1, 2) groupas x), bag(3, 4), 5);
 
     private static void LoadData() {
         ExampleData data = new ExampleData();

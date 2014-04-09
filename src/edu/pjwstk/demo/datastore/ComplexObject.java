@@ -19,4 +19,22 @@ public class ComplexObject extends SBAObject implements IComplexObject {
     public List<IOID> getChildOIDs() {
         return children;
     }
+
+    @Override
+    public String toString() {
+        // np. <i2, osoba, {i3,i4,i5,i6,i7,i11}
+        int index = 0;
+        String s = "<";
+        s = s +  getOID().toString();
+        s = s + ", " + getName()+ ", {";
+        for (IOID child : children) {
+            s = s + child.toString();
+            index =+ 1;
+            if (index < children.size()) {
+                s = s + ",";
+            }
+        }
+        s = s + "}>";
+        return s;
+    }
 }

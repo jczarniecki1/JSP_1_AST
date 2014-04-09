@@ -2,6 +2,7 @@ package edu.pjwstk.tests.expression.binary;
 
 import edu.pjwstk.demo.expression.Expression;
 import edu.pjwstk.demo.expression.binary.PlusExpression;
+import edu.pjwstk.demo.expression.terminal.BooleanExpression;
 import edu.pjwstk.demo.expression.terminal.DoubleExpression;
 import edu.pjwstk.demo.expression.terminal.IntegerExpression;
 import edu.pjwstk.demo.expression.terminal.StringExpression;
@@ -48,6 +49,18 @@ public class PlusExpressionTest extends AbstractBinaryExpressionTest {
         StringResult result = (StringResult)qres.pop();
 
         assertEquals(result.getValue(),"zł 2.55");
+    }
+
+    @Test
+    public void shouldGiveStringForBooleanAndString() throws Exception {
+        Expression e = new PlusExpression(
+                new BooleanExpression(true),
+                new StringExpression("Ala")
+        );
+        e.accept(visitor);
+        StringResult result = (StringResult)qres.pop();
+
+        assertEquals(result.getValue(),"trueAla");
     }
 
     @Test

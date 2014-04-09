@@ -15,4 +15,18 @@ public abstract class SimpleObject<T> extends SBAObject implements ISimpleObject
     public T getValue() {
         return value;
     }
+
+
+    @Override
+    public String toString() {
+        return "<" + getOID() + ", " + getName() + "," + getValueString() + ">";
+    }
+
+    private String getValueString() {
+        if (value instanceof String) {
+            return "„" + getValue() + "”";
+        } else {
+            return value.toString();
+        }
+    }
 }

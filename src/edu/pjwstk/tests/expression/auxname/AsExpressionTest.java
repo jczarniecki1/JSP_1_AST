@@ -148,7 +148,7 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
 
     @Test
     public void shouldBeAbleToUseBinding_1() throws Exception {
-
+    // Bag(FirstName As Zuzanna, LastName As Nowakowska)
         Expression e =
             new DotExpression(
                 new JoinExpression(
