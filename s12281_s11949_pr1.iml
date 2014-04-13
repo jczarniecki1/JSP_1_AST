@@ -1,20 +1,3 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
-    <exclude-output />
-    <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/src/demo" />
-    </content>
-    <orderEntry type="inheritedJdk" />
-    <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="sbql4j_0.95_xml" level="project" />
-    <orderEntry type="library" name="db4o_sbql4j_20111011" level="project" />
-    <orderEntry type="library" name="java-cup-11a" level="project" />
-    <orderEntry type="library" name="jps-api_1.0.4" level="project" />
-    <orderEntry type="library" name="junit-4.11" level="project" />
-    <orderEntry type="library" name="junit-4.11 (2)" level="project" />
-    <orderEntry type="library" name="hamcrest-core-1.3" level="project" />
-  </component>
-</module>
+<module classpath="eclipse" classpath-dir="$MODULE_DIR$" type="JAVA_MODULE" version="4" />
 

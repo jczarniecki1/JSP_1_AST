@@ -1,16 +1,16 @@
 package edu.pjwstk.tests.expression;
 
-import edu.pjwstk.demo.common.lambda.Selector;
-import edu.pjwstk.demo.datastore.IStoreRepository;
-import edu.pjwstk.demo.datastore.SBAStore;
-import edu.pjwstk.demo.datastore.StoreRepository;
-import edu.pjwstk.demo.expression.Expression;
-import edu.pjwstk.demo.interpreter.qres.QResStack;
-import edu.pjwstk.demo.result.BooleanResult;
-import edu.pjwstk.demo.result.DoubleResult;
-import edu.pjwstk.demo.result.IntegerResult;
-import edu.pjwstk.demo.result.StringResult;
-import edu.pjwstk.demo.visitor.ConcreteASTVisitor;
+import edu.pjwstk.mt_jc.common.lambda.Selector;
+import edu.pjwstk.mt_jc.datastore.IStoreRepository;
+import edu.pjwstk.mt_jc.datastore.SBAStore;
+import edu.pjwstk.mt_jc.datastore.StoreRepository;
+import edu.pjwstk.mt_jc.expression.Expression;
+import edu.pjwstk.mt_jc.interpreter.qres.QResStack;
+import edu.pjwstk.mt_jc.result.BooleanResult;
+import edu.pjwstk.mt_jc.result.DoubleResult;
+import edu.pjwstk.mt_jc.result.IntegerResult;
+import edu.pjwstk.mt_jc.result.StringResult;
+import edu.pjwstk.mt_jc.visitor.ConcreteASTVisitor;
 import edu.pjwstk.jps.interpreter.qres.IQResStack;
 import edu.pjwstk.jps.result.IBagResult;
 import edu.pjwstk.jps.result.ISingleResult;

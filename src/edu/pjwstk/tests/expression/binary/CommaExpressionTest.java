@@ -1,13 +1,13 @@
 package edu.pjwstk.tests.expression.binary;
 
-import edu.pjwstk.demo.expression.Expression;
-import edu.pjwstk.demo.expression.auxname.AsExpression;
-import edu.pjwstk.demo.expression.binary.CommaExpression;
-import edu.pjwstk.demo.expression.binary.PlusExpression;
-import edu.pjwstk.demo.expression.terminal.IntegerExpression;
-import edu.pjwstk.demo.expression.terminal.StringExpression;
-import edu.pjwstk.demo.expression.unary.BagExpression;
-import edu.pjwstk.demo.expression.unary.StructExpression;
+import edu.pjwstk.mt_jc.expression.Expression;
+import edu.pjwstk.mt_jc.expression.auxname.AsExpression;
+import edu.pjwstk.mt_jc.expression.binary.CommaExpression;
+import edu.pjwstk.mt_jc.expression.binary.PlusExpression;
+import edu.pjwstk.mt_jc.expression.terminal.IntegerExpression;
+import edu.pjwstk.mt_jc.expression.terminal.StringExpression;
+import edu.pjwstk.mt_jc.expression.unary.BagExpression;
+import edu.pjwstk.mt_jc.expression.unary.StructExpression;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

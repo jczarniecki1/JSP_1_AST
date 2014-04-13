@@ -1,8 +1,8 @@
 package edu.pjwstk.tests.expression.binary;
 
-import edu.pjwstk.demo.expression.Expression;
-import edu.pjwstk.demo.expression.binary.MinusExpression;
-import edu.pjwstk.demo.expression.terminal.IntegerExpression;
+import edu.pjwstk.mt_jc.expression.Expression;
+import edu.pjwstk.mt_jc.expression.binary.MinusExpression;
+import edu.pjwstk.mt_jc.expression.terminal.IntegerExpression;
 import edu.pjwstk.jps.result.IDoubleResult;
 import org.junit.Test;
 

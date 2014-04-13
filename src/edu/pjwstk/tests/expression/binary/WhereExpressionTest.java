@@ -1,11 +1,11 @@
 package edu.pjwstk.tests.expression.binary;
 
-import edu.pjwstk.demo.expression.Expression;
-import edu.pjwstk.demo.expression.binary.DotExpression;
-import edu.pjwstk.demo.expression.binary.WhereExpression;
-import edu.pjwstk.demo.expression.terminal.NameExpression;
-import edu.pjwstk.demo.model.Address;
-import edu.pjwstk.demo.model.Person;
+import edu.pjwstk.mt_jc.expression.Expression;
+import edu.pjwstk.mt_jc.expression.binary.DotExpression;
+import edu.pjwstk.mt_jc.expression.binary.WhereExpression;
+import edu.pjwstk.mt_jc.expression.terminal.NameExpression;
+import edu.pjwstk.mt_jc.model.Address;
+import edu.pjwstk.mt_jc.model.Person;
 import edu.pjwstk.jps.result.ISingleResult;
 import org.junit.Before;
 import org.junit.Test;

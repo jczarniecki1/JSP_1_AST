@@ -1,14 +1,14 @@
 package edu.pjwstk.tests.expression.unary;
 
-import edu.pjwstk.demo.expression.Expression;
-import edu.pjwstk.demo.expression.binary.CommaExpression;
-import edu.pjwstk.demo.expression.binary.DotExpression;
-import edu.pjwstk.demo.expression.terminal.IntegerExpression;
-import edu.pjwstk.demo.expression.terminal.NameExpression;
-import edu.pjwstk.demo.expression.unary.BagExpression;
-import edu.pjwstk.demo.expression.unary.SumExpression;
-import edu.pjwstk.demo.model.Address;
-import edu.pjwstk.demo.model.Person;
+import edu.pjwstk.mt_jc.expression.Expression;
+import edu.pjwstk.mt_jc.expression.binary.CommaExpression;
+import edu.pjwstk.mt_jc.expression.binary.DotExpression;
+import edu.pjwstk.mt_jc.expression.terminal.IntegerExpression;
+import edu.pjwstk.mt_jc.expression.terminal.NameExpression;
+import edu.pjwstk.mt_jc.expression.unary.BagExpression;
+import edu.pjwstk.mt_jc.expression.unary.SumExpression;
+import edu.pjwstk.mt_jc.model.Address;
+import edu.pjwstk.mt_jc.model.Person;
 import edu.pjwstk.jps.result.IIntegerResult;
 import edu.pjwstk.tests.expression.AbstractExpressionTest;
 import org.junit.Before;

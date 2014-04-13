@@ -1,16 +1,16 @@
 package edu.pjwstk.tests.expression.auxname;
 
 
-import edu.pjwstk.demo.expression.Expression;
-import edu.pjwstk.demo.expression.auxname.AsExpression;
-import edu.pjwstk.demo.expression.binary.*;
-import edu.pjwstk.demo.expression.terminal.IntegerExpression;
-import edu.pjwstk.demo.expression.terminal.NameExpression;
-import edu.pjwstk.demo.expression.terminal.StringExpression;
-import edu.pjwstk.demo.expression.unary.BagExpression;
-import edu.pjwstk.demo.model.Address;
-import edu.pjwstk.demo.model.Person;
-import edu.pjwstk.demo.result.StringResult;
+import edu.pjwstk.mt_jc.expression.Expression;
+import edu.pjwstk.mt_jc.expression.auxname.AsExpression;
+import edu.pjwstk.mt_jc.expression.binary.*;
+import edu.pjwstk.mt_jc.expression.terminal.IntegerExpression;
+import edu.pjwstk.mt_jc.expression.terminal.NameExpression;
+import edu.pjwstk.mt_jc.expression.terminal.StringExpression;
+import edu.pjwstk.mt_jc.expression.unary.BagExpression;
+import edu.pjwstk.mt_jc.model.Address;
+import edu.pjwstk.mt_jc.model.Person;
+import edu.pjwstk.mt_jc.result.StringResult;
 import edu.pjwstk.jps.result.*;
 import org.junit.Before;
 import org.junit.Test;
