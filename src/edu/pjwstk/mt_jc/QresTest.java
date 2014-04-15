@@ -14,6 +14,8 @@ public class QresTest {
     public static void main(String[] args){
 
         SolveQRESQuery1();
+
+        SolveQRESQuery3();
     }
 
 
@@ -82,6 +84,84 @@ public class QresTest {
         Log("Result from QRESQuery1:  (struct(1, 2+1), (bag(\"test\", „Ala”) as nazwa)); ");
         Log(qres.pop());
     }
+
+    //    ( (bag(1, 2) groupas x), bag(3, 4), 5);
+    private static void SolveQRESQuery3(){
+
+        QResStack qres = new QResStack();
+
+        qres.push(new IntegerResult(1)); // 1
+        qres.push(new IntegerResult(2)); // 2
+
+        IntegerResult bagRight = (IntegerResult)qres.pop();
+        IntegerResult bagLeft = (IntegerResult) qres.pop();
+        List bagList = new ArrayList<>();
+        bagList.add(bagLeft);
+        bagList.add(bagRight);
+        BagResult bagRes = new BagResult(bagList); // bag(1, 2)
+        qres.push(bagRes);
+
+        qres.push(new StringResult("x")); // "x"
+
+        StringResult groupAsRight = (StringResult) qres.pop();
+        BagResult groupAsLeft = (BagResult) qres.pop();
+
+        BinderResult groupAsRes = new BinderResult(groupAsLeft, groupAsRight.getValue());
+        qres.push(groupAsRes); // (bag(1, 2) groupas x)
+
+        qres.push(new IntegerResult(3)); // 3
+        qres.push(new IntegerResult(4)); // 4
+
+        IntegerResult bag2Right = (IntegerResult) qres.pop();
+        IntegerResult bag2Left = (IntegerResult) qres.pop();
+
+        bagList = new ArrayList<>();
+        bagList.add(bag2Left);
+        bagList.add(bag2Right);
+
+        BagResult bag2Res = new BagResult(bagList); // bag(3, 4)
+
+        qres.push(bag2Res);
+
+        qres.push(new IntegerResult(5)); // 5
+
+        IntegerResult commaRight = (IntegerResult) qres.pop();
+        BagResult commaLeft = (BagResult) qres.pop();
+
+
+        bagList = new ArrayList<>();
+
+        for (ISingleResult b : commaLeft.getElements()) {
+            List structList = new ArrayList<>();
+            structList.add(b);
+            structList.add(commaRight);
+            bagList.add(new StructResult(structList));
+        }
+
+        BagResult commaRes = new BagResult(bagList);
+        qres.push(commaRes);
+
+        BagResult comma2Right = (BagResult) qres.pop();
+        BinderResult comma2Left = (BinderResult) qres.pop();
+
+        bagList = new ArrayList<>();
+
+        for (ISingleResult b: comma2Right.getElements()) {
+            List structList = new ArrayList<>();
+            structList.add(comma2Left);
+            structList.add(b);
+            bagList.add(new StructResult(structList));
+        }
+
+        BagResult bag3Res = new BagResult(bagList);
+        qres.push(bag3Res);
+
+        Log("Result from QRESQuery3:  ((bag(1, 2) groupas x), bag(3, 4), 5);");
+        // bag(0=struct(binder(name="x",value="bag(0=1,1=2)"),struct(3,5)),1=struct(binder(name="x",value="bag(0=1,1=2)"),struct(4,5)))
+        Log(qres.pop());
+    }
+
+
 
     public static void Log(Object o){
         System.out.println(o);
