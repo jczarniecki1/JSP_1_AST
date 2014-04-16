@@ -22,7 +22,7 @@ public class ComplexObject extends SBAObject implements IComplexObject {
 
     @Override
     public String toString() {
-        // np. <i2, osoba, {i3,i4,i5,i6,i7,i11}
+        // np. <i2, osoba, {i3,i4,i5,i6,i7,i11}>
         int index = 0;
         String s = "<";
         s = s +  getOID().toString();
