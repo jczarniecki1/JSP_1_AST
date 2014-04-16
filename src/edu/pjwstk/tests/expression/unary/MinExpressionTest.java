@@ -1,10 +1,10 @@
 package edu.pjwstk.tests.expression.unary;
 
-import edu.pjwstk.mt_jc.expression.Expression;
-import edu.pjwstk.mt_jc.expression.binary.CommaExpression;
-import edu.pjwstk.mt_jc.expression.terminal.IntegerExpression;
-import edu.pjwstk.mt_jc.expression.unary.BagExpression;
-import edu.pjwstk.mt_jc.expression.unary.MinExpression;
+import edu.pjwstk.demo.expression.Expression;
+import edu.pjwstk.demo.expression.binary.CommaExpression;
+import edu.pjwstk.demo.expression.terminal.IntegerExpression;
+import edu.pjwstk.demo.expression.unary.BagExpression;
+import edu.pjwstk.demo.expression.unary.MinExpression;
 import edu.pjwstk.jps.result.IIntegerResult;
 import edu.pjwstk.tests.expression.AbstractExpressionTest;
 import org.junit.Test;

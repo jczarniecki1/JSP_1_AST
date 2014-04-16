@@ -1,12 +1,12 @@
 package edu.pjwstk.tests.expression.binary;
 
-import edu.pjwstk.mt_jc.expression.Expression;
-import edu.pjwstk.mt_jc.expression.binary.PlusExpression;
-import edu.pjwstk.mt_jc.expression.terminal.BooleanExpression;
-import edu.pjwstk.mt_jc.expression.terminal.DoubleExpression;
-import edu.pjwstk.mt_jc.expression.terminal.IntegerExpression;
-import edu.pjwstk.mt_jc.expression.terminal.StringExpression;
-import edu.pjwstk.mt_jc.result.StringResult;
+import edu.pjwstk.demo.expression.Expression;
+import edu.pjwstk.demo.expression.binary.PlusExpression;
+import edu.pjwstk.demo.expression.terminal.BooleanExpression;
+import edu.pjwstk.demo.expression.terminal.DoubleExpression;
+import edu.pjwstk.demo.expression.terminal.IntegerExpression;
+import edu.pjwstk.demo.expression.terminal.StringExpression;
+import edu.pjwstk.demo.result.StringResult;
 import edu.pjwstk.jps.result.IDoubleResult;
 import edu.pjwstk.jps.result.IIntegerResult;
 import org.junit.Test;
