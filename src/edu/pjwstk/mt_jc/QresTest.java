@@ -15,6 +15,12 @@ public class QresTest {
 
         SolveQRESQuery1();
 
+        Log("\n");
+
+        SolveQRESQuery2();
+
+        Log("\n");
+
         SolveQRESQuery3();
     }
 
@@ -22,8 +28,6 @@ public class QresTest {
     //  (struct(1, 2+1), (bag("test", „Ala”) as nazwa));
     private static void SolveQRESQuery1(){
         QResStack qres = new QResStack();
-
-
 
         qres.push(new IntegerResult(2));
         qres.push(new IntegerResult(1));
@@ -84,6 +88,72 @@ public class QresTest {
         Log("Result from QRESQuery1:  (struct(1, 2+1), (bag(\"test\", „Ala”) as nazwa)); ");
         Log(qres.pop());
     }
+
+    //   (bag("ala"+" ma"+" kota"), bag(8*10, false));
+    private static void SolveQRESQuery2(){
+
+        QResStack qres = new QResStack();
+
+        qres.push(new StringResult("ala")); // "ala"
+        qres.push(new StringResult(" ma")); // " ma"
+        qres.push(new StringResult(" kota")); // " kota"
+
+        StringResult plusRight = (StringResult) qres.pop();
+        StringResult plusLeft = (StringResult) qres.pop();
+
+        StringResult plusRes = new StringResult(plusLeft.getValue() + plusRight.getValue());
+        qres.push(plusRes); // " ma" + " kota"
+
+        StringResult plus2Right = (StringResult) qres.pop();
+        StringResult plus2Left = (StringResult) qres.pop();
+
+        StringResult plus2Res = new StringResult(plus2Left.getValue() + plus2Right.getValue()); //"ala" + " ma" + " kota"
+        List bagList = new ArrayList<>();
+        bagList.add(plus2Res);
+        qres.push(new BagResult(bagList)); // bag("ala" + " ma" + " kota")
+
+        qres.push(new IntegerResult(8)); // 8
+        qres.push(new IntegerResult(10)); // 10
+
+        IntegerResult multiRight = (IntegerResult) qres.pop();
+        IntegerResult multiLeft = (IntegerResult) qres.pop();
+
+        IntegerResult multiRes = new IntegerResult(multiLeft.getValue() * multiRight.getValue());
+        qres.push(multiRes);  // 8*10
+
+        qres.push(new BooleanResult(true)); // true
+
+        BooleanResult bagRight = (BooleanResult) qres.pop();
+        IntegerResult bagLeft = (IntegerResult) qres.pop();
+
+        List bag2List = new ArrayList<>();
+
+        bag2List.add(bagLeft);
+        bag2List.add(bagRight);
+
+        BagResult bagRes = new BagResult(bag2List);
+
+        qres.push(bagRes); // bag(8*10, false)
+
+        BagResult commaRight = (BagResult) qres.pop();
+        BagResult commaLeft = (BagResult) qres.pop();
+
+
+        bagList = new ArrayList<>();
+        for (ISingleResult br: commaRight.getElements()) {
+            for (ISingleResult bl: commaLeft.getElements()) {
+                List structList = new ArrayList<>();
+                structList.add(bl);
+                structList.add(br);
+                bagList.add(new StructResult(structList));
+            }
+        }
+        qres.push(new BagResult(bagList));
+
+        Log("Result from QRESQuery2:  (bag(\"ala\"+\" ma\"+\" kota\"), bag(8*10, false)); ");
+        Log(qres.pop());
+    }
+
 
     //    ( (bag(1, 2) groupas x), bag(3, 4), 5);
     private static void SolveQRESQuery3(){
