@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by Małgorzata on 15.04.14.
  */
-public class QresTest {
+public class _2_QRES_Test {
 
     public static void main(String[] args){
 
@@ -153,7 +153,6 @@ public class QresTest {
         Log("Result from QRESQuery2:  (bag(\"ala\"+\" ma\"+\" kota\"), bag(8*10, false)); ");
         Log(qres.pop());
     }
-
 
     //    ( (bag(1, 2) groupas x), bag(3, 4), 5);
     private static void SolveQRESQuery3(){

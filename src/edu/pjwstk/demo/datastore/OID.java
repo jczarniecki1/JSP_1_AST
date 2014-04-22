@@ -24,6 +24,6 @@ public class OID implements IOID {
 
     @Override
     public String toString(){
-        return "OID[" + id + "]";
+        return "i" + id;
     }
 }

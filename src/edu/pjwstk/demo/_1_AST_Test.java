@@ -18,7 +18,7 @@ import edu.pjwstk.jps.datastore.ISBAStore;
 import edu.pjwstk.jps.visitor.ASTVisitor;
 
 
-public class Demo {
+public class _1_AST_Test {
 
     private static QResStack qres = new QResStack();
     private static ISBAStore store = new SBAStore();
