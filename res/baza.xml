@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<BAZA>    
+    <CD>
+        <ID>1</ID>
+        <TYTUL>Empire Burlesque</TYTUL>
+        <WYKONAWCA>Bob Dylan</WYKONAWCA>
+        <KRAJ>USA</KRAJ>
+        <WYTWORNIA>Columbia</WYTWORNIA>
+        <CENA>10.90</CENA>
+        <ROK>1985</ROK>
+        <TRANSAKCJA>
+            <DATA>12-10-2010</DATA>
+            <ILOSC>1</ILOSC>
+            <CENA_SPRZEDAZY>11.15</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>03-12-2011</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>11.45</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>22-03-2012</DATA>
+            <ILOSC>3</ILOSC>
+            <CENA_SPRZEDAZY>10.34</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>2</ID>
+        <TYTUL>Hide your heart</TYTUL>
+        <WYKONAWCA>Bonnie Tyler</WYKONAWCA>
+        <KRAJ>UK</KRAJ>
+        <WYTWORNIA>CBS Records</WYTWORNIA>
+        <CENA>9.90</CENA>
+        <ROK>1988</ROK>
+        <TRANSAKCJA>
+            <DATA>10-10-2010</DATA>
+            <ILOSC>5</ILOSC>
+            <CENA_SPRZEDAZY>9.12</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-11-2011</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>9.99</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-03-2012</DATA>
+            <ILOSC>3</ILOSC>
+            <CENA_SPRZEDAZY>9.05</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>3</ID>
+        <TYTUL>Greatest Hits</TYTUL>
+        <WYKONAWCA>Dolly Parton</WYKONAWCA>
+        <KRAJ>USA</KRAJ>
+        <WYTWORNIA>RCA</WYTWORNIA>
+        <CENA>9.90</CENA>
+        <ROK>1982</ROK>
+        <TRANSAKCJA>
+            <DATA>10-08-2010</DATA>
+            <ILOSC>5</ILOSC>
+            <CENA_SPRZEDAZY>9.98</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-06-2011</DATA>
+            <ILOSC>4</ILOSC>
+            <CENA_SPRZEDAZY>9.09</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>4</ID>
+        <TYTUL>Still got the blues</TYTUL>
+        <WYKONAWCA>Gary Moore</WYKONAWCA>
+        <KRAJ>UK</KRAJ>
+        <WYTWORNIA>Virgin records</WYTWORNIA>
+        <CENA>10.20</CENA>
+        <ROK>1990</ROK>
+        <TRANSAKCJA>
+            <DATA>15-10-2010</DATA>
+            <ILOSC>5</ILOSC>
+            <CENA_SPRZEDAZY>10.12</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>04-11-2011</DATA>
+            <ILOSC>6</ILOSC>
+            <CENA_SPRZEDAZY>10.15</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>10-05-2012</DATA>
+            <ILOSC>5</ILOSC>
+            <CENA_SPRZEDAZY>9.99</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-11-2012</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>10.55</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>5</ID>
+        <TYTUL>Eros</TYTUL>
+        <WYKONAWCA>Eros Ramazzotti</WYKONAWCA>
+        <KRAJ>EU</KRAJ>
+        <WYTWORNIA>BMG</WYTWORNIA>
+        <CENA>9.90</CENA>
+        <ROK>1997</ROK>
+        <TRANSAKCJA>
+            <DATA>01-10-2010</DATA>
+            <ILOSC>4</ILOSC>
+            <CENA_SPRZEDAZY>9.17</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-10-2011</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>9.88</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-12-2011</DATA>
+            <ILOSC>5</ILOSC>
+            <CENA_SPRZEDAZY>9.99</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>6</ID>
+        <TYTUL>One night only</TYTUL>
+        <WYKONAWCA>Bee Gees</WYKONAWCA>
+        <KRAJ>UK</KRAJ>
+        <WYTWORNIA>Polydor</WYTWORNIA>
+        <CENA>10.90</CENA>
+        <ROK>1998</ROK>
+        <TRANSAKCJA>
+            <DATA>02-05-2011</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>10.11</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-06-2011</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>10.14</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>05-07-2011</DATA>
+            <ILOSC>8</ILOSC>
+            <CENA_SPRZEDAZY>10.04</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>7</ID>
+        <TYTUL>Sylvias Mother</TYTUL>
+        <WYKONAWCA>Dr.Hook</WYKONAWCA>
+        <KRAJ>UK</KRAJ>
+        <WYTWORNIA>CBS</WYTWORNIA>
+        <CENA>8.10</CENA>
+        <ROK>1973</ROK>
+        <TRANSAKCJA>
+            <DATA>02-09-2011</DATA>
+            <ILOSC>5</ILOSC>
+            <CENA_SPRZEDAZY>8.05</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>03-10-2011</DATA>
+            <ILOSC>1</ILOSC>
+            <CENA_SPRZEDAZY>8.12</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>8</ID>
+        <TYTUL>Maggie May</TYTUL>
+        <WYKONAWCA>Rod Stewart</WYKONAWCA>
+        <KRAJ>UK</KRAJ>
+        <WYTWORNIA>Pickwick</WYTWORNIA>
+        <CENA>8.50</CENA>
+        <ROK>1990</ROK>
+        <TRANSAKCJA>
+            <DATA>02-01-2012</DATA>
+            <ILOSC>3</ILOSC>
+            <CENA_SPRZEDAZY>8.40</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>05-01-2012</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>8.40</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-02-2012</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>8.45</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>9</ID>
+        <TYTUL>Romanza</TYTUL>
+        <WYKONAWCA>Andrea Bocelli</WYKONAWCA>
+        <KRAJ>EU</KRAJ>
+        <WYTWORNIA>Polydor</WYTWORNIA>
+        <CENA>10.80</CENA>
+        <ROK>1996</ROK>
+        <TRANSAKCJA>
+            <DATA>02-01-2012</DATA>
+            <ILOSC>3</ILOSC>
+            <CENA_SPRZEDAZY>10.50</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>08-01-2012</DATA>
+            <ILOSC>8</ILOSC>
+            <CENA_SPRZEDAZY>10.50</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>11-01-2012</DATA>
+            <ILOSC>3</ILOSC>
+            <CENA_SPRZEDAZY>10.40</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>04-02-2012</DATA>
+            <ILOSC>5</ILOSC>
+            <CENA_SPRZEDAZY>10.90</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>10</ID>
+        <TYTUL>When a man loves a woman</TYTUL>
+        <WYKONAWCA>Percy Sledge</WYKONAWCA>
+        <KRAJ>USA</KRAJ>
+        <WYTWORNIA>Atlantic</WYTWORNIA>
+        <CENA>8.70</CENA>
+        <ROK>1987</ROK>
+        <TRANSAKCJA>
+            <DATA>05-01-2012</DATA>
+            <ILOSC>3</ILOSC>
+            <CENA_SPRZEDAZY>8.55</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-02-2012</DATA>
+            <ILOSC>7</ILOSC>
+            <CENA_SPRZEDAZY>8.65</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+
+    <CD>
+        <ID>11</ID>
+        <TYTUL>Black angel</TYTUL>
+        <WYKONAWCA>Savage Rose</WYKONAWCA>
+        <KRAJ>EU</KRAJ>
+        <WYTWORNIA>Mega</WYTWORNIA>
+        <CENA>10.90</CENA>
+        <ROK>1995</ROK>
+        <TRANSAKCJA>
+            <DATA>06-01-2012</DATA>
+            <ILOSC>4</ILOSC>
+            <CENA_SPRZEDAZY>10.40</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>06-02-2012</DATA>
+            <ILOSC>4</ILOSC>
+            <CENA_SPRZEDAZY>10.45</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>12</ID>
+        <TYTUL>1999 Grammy Nominees</TYTUL>
+        <WYKONAWCA>Many</WYKONAWCA>
+        <KRAJ>USA</KRAJ>
+        <WYTWORNIA>Grammy</WYTWORNIA>
+        <CENA>10.20</CENA>
+        <ROK>1999</ROK>
+        <TRANSAKCJA>
+            <DATA>05-01-2012</DATA>
+            <ILOSC>3</ILOSC>
+            <CENA_SPRZEDAZY>10.20</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>03-02-2012</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>10.25</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>13</ID>
+        <TYTUL>For the good times</TYTUL>
+        <WYKONAWCA>Kenny Rogers</WYKONAWCA>
+        <KRAJ>UK</KRAJ>
+        <WYTWORNIA>Mucik Master</WYTWORNIA>
+        <CENA>8.70</CENA>
+        <ROK>1995</ROK>
+        <TRANSAKCJA>
+            <DATA>05-01-2012</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>8.70</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-02-2012</DATA>
+            <ILOSC>6</ILOSC>
+            <CENA_SPRZEDAZY>8.75</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>14</ID>
+        <TYTUL>Big Willie style</TYTUL>
+        <WYKONAWCA>Will Smith</WYKONAWCA>
+        <KRAJ>USA</KRAJ>
+        <WYTWORNIA>Columbia</WYTWORNIA>
+        <CENA>9.90</CENA>
+        <ROK>1997</ROK>
+        <TRANSAKCJA>
+            <DATA>05-03-2012</DATA>
+            <ILOSC>3</ILOSC>
+            <CENA_SPRZEDAZY>9.94</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-04-2012</DATA>
+            <ILOSC>5</ILOSC>
+            <CENA_SPRZEDAZY>9.45</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>15</ID>
+        <TYTUL>Tupelo Honey</TYTUL>
+        <WYKONAWCA>Van Morrison</WYKONAWCA>
+        <KRAJ>UK</KRAJ>
+        <WYTWORNIA>Polydor</WYTWORNIA>
+        <CENA>8.20</CENA>
+        <ROK>1971</ROK>
+        <TRANSAKCJA>
+            <DATA>05-05-2012</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>8.20</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-06-2012</DATA>
+            <ILOSC>12</ILOSC>
+            <CENA_SPRZEDAZY>8.25</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>16</ID>
+        <TYTUL>Soulsville</TYTUL>
+        <WYKONAWCA>Jorn Hoel</WYKONAWCA>
+        <KRAJ>Norway</KRAJ>
+        <WYTWORNIA>WEA</WYTWORNIA>
+        <CENA>7.90</CENA>
+        <ROK>1996</ROK>
+        <TRANSAKCJA>
+            <DATA>05-07-2012</DATA>
+            <ILOSC>3</ILOSC>
+            <CENA_SPRZEDAZY>7.40</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-08-2012</DATA>
+            <ILOSC>3</ILOSC>
+            <CENA_SPRZEDAZY>8.11</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>17</ID>
+        <TYTUL>The very best of</TYTUL>
+        <WYKONAWCA>Cat Stevens</WYKONAWCA>
+        <KRAJ>UK</KRAJ>
+        <WYTWORNIA>Island</WYTWORNIA>
+        <CENA>8.90</CENA>
+        <ROK>1990</ROK>
+        <TRANSAKCJA>
+            <DATA>02-07-2012</DATA>
+            <ILOSC>4</ILOSC>
+            <CENA_SPRZEDAZY>8.90</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-08-2012</DATA>
+            <ILOSC>3</ILOSC>
+            <CENA_SPRZEDAZY>8.78</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>18</ID>
+        <TYTUL>Stop</TYTUL>
+        <WYKONAWCA>Sam Brown</WYKONAWCA>
+        <KRAJ>UK</KRAJ>
+        <WYTWORNIA>A and M</WYTWORNIA>
+        <CENA>8.90</CENA>
+        <ROK>1988</ROK>
+        <TRANSAKCJA>
+            <DATA>05-08-2012</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>8.49</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-09-2012</DATA>
+            <ILOSC>5</ILOSC>
+            <CENA_SPRZEDAZY>8.88</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>19</ID>
+        <TYTUL>Bridge of Spies</TYTUL>
+        <WYKONAWCA>T'Pau</WYKONAWCA>
+        <KRAJ>UK</KRAJ>
+        <WYTWORNIA>Siren</WYTWORNIA>
+        <CENA>7.90</CENA>
+        <ROK>1987</ROK>
+        <TRANSAKCJA>
+            <DATA>05-08-2012</DATA>
+            <ILOSC>5</ILOSC>
+            <CENA_SPRZEDAZY>7.40</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-09-2012</DATA>
+            <ILOSC>4</ILOSC>
+            <CENA_SPRZEDAZY>8.00</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>05-11-2012</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>8.40</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-12-2012</DATA>
+            <ILOSC>5</ILOSC>
+            <CENA_SPRZEDAZY>8.45</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>20</ID>
+        <TYTUL>Private Dancer</TYTUL>
+        <WYKONAWCA>Tina Turner</WYKONAWCA>
+        <KRAJ>UK</KRAJ>
+        <WYTWORNIA>Capitol</WYTWORNIA>
+        <CENA>8.90</CENA>
+        <ROK>1983</ROK>
+        <TRANSAKCJA>
+            <DATA>05-01-2013</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>8.90</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-02-2013</DATA>
+            <ILOSC>4</ILOSC>
+            <CENA_SPRZEDAZY>8.95</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>21</ID>
+        <TYTUL>Midt om natten</TYTUL>
+        <WYKONAWCA>Kim Larsen</WYKONAWCA>
+        <KRAJ>EU</KRAJ>
+        <WYTWORNIA>Medley</WYTWORNIA>
+        <CENA>7.80</CENA>
+        <ROK>1983</ROK>
+        <TRANSAKCJA>
+            <DATA>05-09-2013</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>7.40</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-12-2013</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>7.75</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>22</ID>
+        <TYTUL>Pavarotti Gala Concert</TYTUL>
+        <WYKONAWCA>Luciano Pavarotti</WYKONAWCA>
+        <KRAJ>UK</KRAJ>
+        <WYTWORNIA>DECCA</WYTWORNIA>
+        <CENA>9.90</CENA>
+        <ROK>1991</ROK>
+    </CD>
+    <CD>
+        <ID>23</ID>
+        <TYTUL>The dock of the bay</TYTUL>
+        <WYKONAWCA>Otis Redding</WYKONAWCA>
+        <KRAJ>USA</KRAJ>
+        <WYTWORNIA>Atlantic</WYTWORNIA>
+        <CENA>7.90</CENA>
+        <ROK>1987</ROK>
+        <TRANSAKCJA>
+            <DATA>05-01-2012</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>7.40</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-02-2012</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>7.95</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>24</ID>
+        <TYTUL>Picture book</TYTUL>
+        <WYKONAWCA>Simply Red</WYKONAWCA>
+        <KRAJ>EU</KRAJ>
+        <WYTWORNIA>Elektra</WYTWORNIA>
+        <CENA>7.20</CENA>
+        <ROK>1985</ROK>
+    </CD>
+    <CD>
+        <ID>25</ID>
+        <TYTUL>Red</TYTUL>
+        <WYKONAWCA>The Communards</WYKONAWCA>
+        <KRAJ>UK</KRAJ>
+        <WYTWORNIA>London</WYTWORNIA>
+        <CENA>7.80</CENA>
+        <ROK>1987</ROK>
+        <TRANSAKCJA>
+            <DATA>05-11-2013</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>7.88</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-12-2012</DATA>
+            <ILOSC>3</ILOSC>
+            <CENA_SPRZEDAZY>7.81</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+    <CD>
+        <ID>26</ID>
+        <TYTUL>Unchain my heart</TYTUL>
+        <WYKONAWCA>Joe Cocker</WYKONAWCA>
+        <KRAJ>USA</KRAJ>
+        <WYTWORNIA>EMI</WYTWORNIA>
+        <CENA>8.20</CENA>
+        <ROK>1987</ROK>
+        <TRANSAKCJA>
+            <DATA>05-04-2012</DATA>
+            <ILOSC>3</ILOSC>
+            <CENA_SPRZEDAZY>8.40</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-05-2012</DATA>
+            <ILOSC>2</ILOSC>
+            <CENA_SPRZEDAZY>7.95</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>01-06-2012</DATA>
+            <ILOSC>3</ILOSC>
+            <CENA_SPRZEDAZY>7.40</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+        <TRANSAKCJA>
+            <DATA>02-06-2012</DATA>
+            <ILOSC>6</ILOSC>
+            <CENA_SPRZEDAZY>7.95</CENA_SPRZEDAZY>
+        </TRANSAKCJA>
+    </CD>
+</BAZA>
+
