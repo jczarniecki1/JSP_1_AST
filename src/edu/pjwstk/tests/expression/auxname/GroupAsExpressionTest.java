@@ -2,7 +2,7 @@ package edu.pjwstk.tests.expression.auxname;
 
 import edu.pjwstk.demo.expression.Expression;
 import edu.pjwstk.demo.expression.auxname.GroupAsExpression;
-import edu.pjwstk.demo.expression.binary.*;
+import edu.pjwstk.demo.expression.binary.CommaExpression;
 import edu.pjwstk.demo.expression.terminal.IntegerExpression;
 import edu.pjwstk.demo.expression.terminal.NameExpression;
 import edu.pjwstk.demo.expression.unary.BagExpression;
@@ -17,7 +17,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -49,7 +48,7 @@ public class GroupAsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
                 "x"
         );
         e.accept(visitor);
-        assertEquals("binder(name=\"x\",value=\"bag(0=1,1=2)\")",qres.pop().toString());
+        assertEquals("binder(name=\"x\",value=bag(0=1,1=2))",qres.pop().toString());
 
     }
 

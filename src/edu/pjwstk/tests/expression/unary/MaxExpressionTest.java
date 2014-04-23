@@ -7,10 +7,12 @@ import edu.pjwstk.demo.expression.unary.BagExpression;
 import edu.pjwstk.demo.expression.unary.MaxExpression;
 import edu.pjwstk.jps.result.IIntegerResult;
 import edu.pjwstk.tests.expression.AbstractExpressionTest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 public class MaxExpressionTest extends AbstractExpressionTest {
 
     @Test
