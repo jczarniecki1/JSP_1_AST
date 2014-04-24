@@ -513,7 +513,15 @@ public class ConcreteASTVisitor implements ASTVisitor {
          && rightValue instanceof IntegerResult) {
             qres.push(new IntegerResult(((IntegerResult) leftValue).getValue()+((IntegerResult) rightValue).getValue()));
         } else if (leftValue instanceof StringResult || rightValue instanceof StringResult) {
-            qres.push(new StringResult(leftValue.toString() + rightValue.toString()));
+            if (!(rightValue instanceof StringResult)) {
+                qres.push(new StringResult(((StringResult)leftValue).getValue() + rightValue.toString()));
+            }
+            else if (!(leftValue instanceof StringResult)) {
+                qres.push(new StringResult(leftValue.toString() + ((StringResult)rightValue).getValue() ));
+            } else {
+                qres.push(new StringResult(((StringResult)leftValue).getValue() + ((StringResult)rightValue).getValue()));
+            }
+
         } else {
             qres.push(new DoubleResult(getDouble(leftValue) + getDouble(rightValue)));
         }

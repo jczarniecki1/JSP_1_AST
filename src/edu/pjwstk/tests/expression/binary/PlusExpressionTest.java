@@ -24,7 +24,7 @@ public class PlusExpressionTest extends AbstractBinaryExpressionTest {
         e.accept(visitor);
         StringResult result = (StringResult)qres.pop();
 
-        assertEquals(result.getValue(),"Dzień dobry");
+        assertEquals("Dzień dobry", result.getValue());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class PlusExpressionTest extends AbstractBinaryExpressionTest {
         e.accept(visitor);
         StringResult result = (StringResult)qres.pop();
 
-        assertEquals(result.getValue(),"trueAla");
+        assertEquals("trueAla", result.getValue());
     }
 
     @Test
