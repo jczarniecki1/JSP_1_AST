@@ -1,22 +1,16 @@
 package edu.pjwstk.demo.datastore;
 
-import edu.pjwstk.demo.common.Query;
-import edu.pjwstk.demo.common.lambda.Predicate;
 import edu.pjwstk.demo.result.*;
 import edu.pjwstk.jps.datastore.IComplexObject;
 import edu.pjwstk.jps.datastore.IOID;
 import edu.pjwstk.jps.datastore.ISBAObject;
 import edu.pjwstk.jps.datastore.ISBAStore;
-import edu.pjwstk.jps.result.IAbstractQueryResult;
-import edu.pjwstk.jps.result.IBagResult;
 import edu.pjwstk.jps.result.IReferenceResult;
 import edu.pjwstk.jps.result.ISingleResult;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*
     Ukrywa niskopoziomowe operacja odczytu z bazy
@@ -30,18 +24,10 @@ public class StoreRepository implements IStoreRepository {
     }
 
     @Override
-    public IAbstractQueryResult getFields(IReferenceResult reference, String fieldName) {
+    public Stream<ISingleResult> getField(IReferenceResult reference, String fieldName) {
 
         IComplexObject object = getComplexObject(reference);
-        return valuesByName(object, fieldName);
-    }
-
-    @Override
-    public ISingleResult getField(IReferenceResult reference, String fieldName) {
-
-        IComplexObject object = getComplexObject(reference);
-        Optional<ISingleResult> optionalResult = singleValueByName(object, fieldName);
-        return optionalResult.isPresent() ? optionalResult.get() : null;
+        return valuesByName2(object, fieldName);
     }
 
     // TODO: Obsługa binderów
@@ -52,53 +38,22 @@ public class StoreRepository implements IStoreRepository {
     }
 
     @Override
-    public IBagResult getCollectionAsBag(IReferenceResult reference) {
-        IComplexObject object = getComplexObject(reference);
-        List<ISingleResult> ids = Query.select(object.getChildOIDs(),
-                x -> new ReferenceResult(x));
-        return new BagResult(ids);
-    }
-
-    @Override
     public Object get(IReferenceResult reference) {
         return toResult(store.retrieve(reference.getOIDValue()));
     }
 
-    private IAbstractQueryResult valuesByName(IComplexObject object, String fieldName) {
-        List<ISingleResult> list = object.getChildOIDs()
-                .stream()
-                .map(store::retrieve)
-                .filter(x -> x.getName().equals(fieldName))
-                .map(this::toResult)
-                .collect(Collectors.toList());
-        if (list.size() > 1) return new BagResult(list);
-        else return list.iterator().next();
-    }
-
-
-    private Optional<ISingleResult> singleValueByName(IComplexObject object, String fieldName) {
+    private Stream<ISingleResult> valuesByName2(IComplexObject object, String fieldName) {
         return object.getChildOIDs()
                 .stream()
                 .map(store::retrieve)
                 .filter(x -> x.getName().equals(fieldName))
-                .map(this::toResult)
-                .findFirst();
+                .map(this::toResult);
     }
 
     private IComplexObject getComplexObject(IReferenceResult reference) {
         IOID id = reference.getOIDValue();
         ISBAObject object = store.retrieve(id);
         return  (IComplexObject) object;
-    }
-
-    private ISBAObject firstChild(IComplexObject object, Predicate<ISBAObject> predicate){
-        for (IOID id : object.getChildOIDs()) {
-            ISBAObject child = store.retrieve(id);
-            if (predicate.apply(child)) {
-                return child;
-            }
-        }
-        return null;
     }
 
     private Collection<ISingleResult> childrenByName(IComplexObject object, String name){

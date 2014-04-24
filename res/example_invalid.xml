@@ -1,0 +1,19 @@
+<baza>
+  <liczbaTestowa>10</liczbaTestowa>
+  <osoba>
+    <numer>s0000</numer>
+    <imie>Anna</imie>
+    <nazwisko>Kowalska</nazwisko>
+    <pensja>4050.35</pensja>
+    <ubezpieczenie>true</ubezpieczenie>
+    <adres>
+      <ulica>Jerozolimskie</ulica>
+      <kod>00-000</kod>
+      <miasto>Warszawa</miasto>
+    </adres>
+    <ksiazka>
+      <autor>Adam Mickiewicz</autor>
+      <tytul>Pan Tadeusz</tytul>
+    </ksiazka></ksiazka>
+  </osoba>
+</baza>

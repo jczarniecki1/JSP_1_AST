@@ -4,29 +4,27 @@ import edu.pjwstk.demo.datastore.ComplexObject;
 import edu.pjwstk.demo.datastore.SBAStore;
 import edu.pjwstk.jps.datastore.IOID;
 import edu.pjwstk.jps.datastore.ISBAObject;
+import edu.pjwstk.jps.datastore.ISBAStore;
 
 import java.util.List;
 
 public class _3_DataStore_Test {
 
-    private static SBAStore store;
+    private static ISBAStore store = new SBAStore();
 
     public static void main(String[] args){
 
-        store = new SBAStore();
-
-
-//        ExampleData data = new ExampleData();
-//        store.addJavaCollection(data.getPersons(), "Person");
-//        store.addJavaCollection(data.getCompanies(), "Company");
-//
         Log("Wczytywanie danych,,,");
 
-        store.loadXML("res/example.xml");
+        store.loadXML("res/baza.xml");
 
+        Log("Wczytywanie zakończono,");
+        Log("\n");
+        Log("Zawartość bazy:");
         Log("\n");
 
         PrintDatabase();
+
     }
 
     private static void PrintDatabase() {

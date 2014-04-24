@@ -50,8 +50,16 @@ public class SBAStore implements ISBAStore {
         return entryOID;
     }
 
+    //
+    // Wczytywanie do bazy z plików XML
+    // TODO: Upewnić się, czy próba wczytania ma czyścić poprzednią zawartość
+    // ( i jeśli nie, to czym zastąpić blok finally{..} ? )
+    //
     @Override
     public void loadXML(String filePath) {
+        boolean finishedSuccessfully = false;
+        clearDatabase();
+
         try {
             DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
@@ -62,6 +70,8 @@ public class SBAStore implements ISBAStore {
 
             loadNode(root, true);
 
+            finishedSuccessfully = true;
+
         } catch (SAXParseException err) {
             System.out.println ("** Parsing error" + ", line " + err.getLineNumber () + ", uri " + err.getSystemId ());
             System.out.println(" " + err.getMessage ());
@@ -71,7 +81,22 @@ public class SBAStore implements ISBAStore {
         } catch (Throwable t) {
             t.printStackTrace ();
         }
+        finally {
+            if (! finishedSuccessfully){
+                clearDatabase();
+            }
+        }
 
+    }
+
+    //
+    // Czyszczenie bazy danych - ustawia nowe "entry"
+    //
+    private void clearDatabase() {
+        hash.clear();
+        lastGeneratedId = 0;
+        entryOID = null;
+        getRootObject();
     }
 
     @Override

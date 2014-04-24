@@ -292,18 +292,21 @@ public class ConcreteASTVisitor implements ASTVisitor {
             collection
                 .getElements()
                 .stream()
-                .map(x -> {
+                .flatMap(x -> {
                     qres.push(x);
                     selection.accept(this);
                     IAbstractQueryResult result = qres.pop();
-                    if (result instanceof IBagResult) {
-                        Collection<ISingleResult> elements = ((IBagResult) result).getElements();
-                        return elements.size() > 0
-                            ? elements.iterator().next()
-                            : null;
+
+                    if (result instanceof IBagResult)
+                    {
+                        return ((IBagResult) result).getElements().stream();
                     }
                     else
-                        return (ISingleResult) result;
+                    {
+                        List<ISingleResult> elements = new ArrayList<>();
+                        elements.add((ISingleResult) result);
+                        return elements.stream();
+                    }
                 })
                 .filter(x -> x != null)
                 .collect(Collectors.toList())
@@ -607,15 +610,25 @@ public class ConcreteASTVisitor implements ASTVisitor {
         else
         {
             IAbstractQueryResult input = lastValue;
+            List<ISingleResult> values;
             if (input instanceof IBagResult)
             {
-                Collection collection = ((IBagResult) input).getElements();
-                List values = Query.select(collection, x -> repository.getField((IReferenceResult) x, name));
+                Collection<ISingleResult> collection = ((IBagResult) input).getElements();
+                values = collection
+                    .stream()
+                    .flatMap(x -> repository.getField((IReferenceResult) x, name))
+                    .collect(Collectors.toList());
+
                 result = new BagResult(values);
             }
             else
             {
-                result = repository.getFields(((IReferenceResult) input), name);
+                values = repository.getField(((IReferenceResult) input), name)
+                    .collect(Collectors.toList());
+
+                result = (values.size() == 1)
+                    ? values.get(0)
+                    : new BagResult(values);
             }
             qres.push(result);
         }
