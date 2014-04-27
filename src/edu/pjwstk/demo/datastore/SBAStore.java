@@ -20,10 +20,6 @@ import java.util.stream.Collectors;
 
 /*
     Implementacja bazy danych
-
-    TODO:
-      - zastąpienie wczytywania obiektów typu Person
-        uniwersalnym rozwiazaniem opartym na refleksji (CW3-DataStore.pdf)
 */
 public class SBAStore implements ISBAStore {
 
@@ -106,7 +102,7 @@ public class SBAStore implements ISBAStore {
         else if (o instanceof Double)  hash.put(id,new DoubleObject (id, name, (Double) o));
         else if (o instanceof Boolean) hash.put(id,new BooleanObject(id, name, (Boolean)o));
         else if (o instanceof IOID[])  hash.put(id,new ComplexObject(id, name, Arrays.asList((IOID[]) o)));
-        else visit(o, name);
+        else addOtherType(o, name);
     }
 
     @Override
@@ -149,7 +145,7 @@ public class SBAStore implements ISBAStore {
     //
     // TODO: To sie przestało robić czytelne. Trzeba rozdzielić metodę na kilka mniejszych.
     //
-    public void visit(Object o, String name) {
+    public void addOtherType(Object o, String name) {
         Class<?> type = o.getClass();
 
         try {
