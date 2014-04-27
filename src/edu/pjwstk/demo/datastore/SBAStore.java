@@ -140,8 +140,15 @@ public class SBAStore implements ISBAStore {
         return lastOID;
     }
 
-    // Do usunięcia
-    @Deprecated
+    //
+    // Dodawanie obiektów Javy
+    // - rekurencja nie jest oczywista: do visit() trafiamy, jeśli argumentem addJavaObject() nie jest typ prosty.
+    //   Pobieramy listę pól publicznych i iterujemy po nich dodając kolejne obiekty do bazy.
+    //   Warunkiem wejścia "głębiej" w rekurencji jest posiadanie w obiekcie pola, które nie jest typem prostym.
+    //   Na koniec dodajemy sam obiekt jako ComplexObject - czyli lista identyfikatorów obiektów wewnętrznych.
+    //
+    // TODO: To sie przestało robić czytelne. Trzeba rozdzielić metodę na kilka mniejszych.
+    //
     public void visit(Object o, String name) {
         Class<?> type = o.getClass();
 
@@ -151,18 +158,29 @@ public class SBAStore implements ISBAStore {
                 .stream()
                 .flatMap(x -> {
                     try {
+                        String fieldName = x.getName();
                         Object fieldValue = x.get(o);
-                        if (fieldValue.getClass().isArray() && fieldValue != null) {
+                        if (fieldValue == null) return null;
+
+                        if (fieldValue instanceof Collection) {
+                            List<IOID> innerIds = new ArrayList<>();
+                            Collection collection = (Collection) fieldValue;
+                            for (Object y : collection) {
+                                innerIds.add(importObject(y, fieldName));
+                            }
+                            return innerIds.stream();
+                        }
+                        else if (fieldValue.getClass().isArray()) {
                             int arraySize = Array.getLength(fieldValue);
                             List<IOID> innerIds = new ArrayList<>();
                             for (int i = 0; i < arraySize; i++) {
                                 Object arrayField = Array.get(fieldValue, i);
-                                innerIds.add(importObject(arrayField, x.getName()));
+                                innerIds.add(importObject(arrayField, fieldName));
                             }
                             return innerIds.stream();
                         } else {
                             ArrayList<IOID> list = new ArrayList<>();
-                            list.add(importObject(fieldValue, x.getName()));
+                            list.add(importObject(fieldValue, fieldName));
                             return list.stream();
                         }
                     } catch (IllegalAccessException e) {
@@ -176,11 +194,6 @@ public class SBAStore implements ISBAStore {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-
-    public static void Log(Object o){
-        System.out.println(o);
     }
 
     //
