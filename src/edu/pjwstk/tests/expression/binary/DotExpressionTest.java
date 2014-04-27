@@ -33,7 +33,7 @@ public class DotExpressionTest extends AbstractBinaryExpressionTest {
     public void shouldGiveCorrectField() throws Exception {
         Expression e = new DotExpression(
                 new NameExpression("Person"),
-                new NameExpression("FirstName")
+                new NameExpression("firstName")
             );
 
         ISingleResult[] results = getResultsFromBag(e);

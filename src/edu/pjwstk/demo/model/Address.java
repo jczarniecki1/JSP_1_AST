@@ -1,7 +1,7 @@
 package edu.pjwstk.demo.model;
 
 public class Address {
-    private String city;
+    public String city;
 
     public Address(String city) {
         super();
@@ -11,12 +11,5 @@ public class Address {
     @Override
     public String toString() {
         return "Address[city="+city+"]";
-    }
-
-    public String getCity() {
-        return city;
-    }
-    public void setCity(String city) {
-        this.city = city;
     }
 }

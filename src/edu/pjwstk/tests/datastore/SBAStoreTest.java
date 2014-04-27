@@ -1,5 +1,6 @@
 package edu.pjwstk.tests.datastore;
 
+import edu.pjwstk.demo.DatastorePrinter;
 import edu.pjwstk.demo.datastore.ComplexObject;
 import edu.pjwstk.demo.datastore.IStoreRepository;
 import edu.pjwstk.demo.datastore.SBAStore;
@@ -26,19 +27,23 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.fail;
 
 public class SBAStoreTest {
 
     private static QResStack qres = new QResStack();
-    private static ISBAStore store = new SBAStore();
+    private static ISBAStore store;
     private static ASTVisitor visitor;
-    private static List<CD> cds = new ArrayList<CD>();
-    private static List<Wytwornia> wytwornie = new ArrayList<Wytwornia>();
+    private static List<CD> cds;
+    private static List<Wytwornia> wytwornie;
 
     private void createCollection() {
         Wytwornia wytwornia;
+
+        cds = new ArrayList<>();
+        wytwornie = new ArrayList<>();
+
         CD cd;
         wytwornia = new Wytwornia("Universal Music Group", "USA");
         wytwornie.add(wytwornia);
@@ -79,42 +84,19 @@ public class SBAStoreTest {
         cd.addTransakcja(new Transakcja("18-04-2014",2,62.88));
         cds.add(cd);
 
-        cd = new CD(wytwornia,"Erotica","Madonna",1992, 28.99,7);
-        cd.addTransakcja(new Transakcja("15-02-2014",3,28.50));
-        cd.addTransakcja(new Transakcja("13-04-2014",4,28.99));
-        cd.addTransakcja(new Transakcja("15-04-2014",2,29.88));
-        cd.addTransakcja(new Transakcja("16-04-2014",4,28.50));
-        cds.add(cd);
+    }
 
-        cd = new CD(wytwornia,"It's Time","Michael Buble",2004, 60.99,8);
-        cd.addTransakcja(new Transakcja("15-02-2014",3,60.50));
-        cd.addTransakcja(new Transakcja("13-04-2014",4,60.99));
-        cd.addTransakcja(new Transakcja("15-04-2014",2,60.88));
-        cd.addTransakcja(new Transakcja("16-04-2014",4,60.50));
-        cds.add(cd);
-
-        cd = new CD(wytwornia,"Renovatio","Edyta Bartosiewicz",2013, 34.99,9);
-        cd.addTransakcja(new Transakcja("15-02-2014",3,34.50));
-        cd.addTransakcja(new Transakcja("10-03-2014",4,34.99));
-        cd.addTransakcja(new Transakcja("11-04-2014",8,30.88));
-        cd.addTransakcja(new Transakcja("12-04-2014",8,30.50));
-        cds.add(cd);
-
-
-        cd = new CD(wytwornia,"Birdy","Birdy",2012, 62.99,10);
-        cd.addTransakcja(new Transakcja("15-02-2014",1,64.50));
-        cd.addTransakcja(new Transakcja("10-03-2014",1,64.99));
-        cd.addTransakcja(new Transakcja("11-04-2014",8,60.88));
-        cd.addTransakcja(new Transakcja("12-04-2014",8,60.50));
-        cds.add(cd);
-
+    public void SetNewContext() {
+        store = new SBAStore();
+        IStoreRepository repository = new StoreRepository(store);
+        visitor = new ConcreteASTVisitor(qres, repository);
     }
 
     @Before
-    public void Context() {
+    public void Context(){
+        store = new SBAStore();
         IStoreRepository repository = new StoreRepository(store);
         visitor = new ConcreteASTVisitor(qres, repository);
-        createCollection();
     }
 
     @Test
@@ -163,5 +145,45 @@ public class SBAStoreTest {
         assertEquals(9.386666, result.getValue(), 0.000001);
     }
 
+    @Test
+    public void shouldBeAbleToLoadCollectionOfJavaObjectsWithoutFailure() throws Exception {
 
+        SetNewContext();
+        createCollection();
+        try {
+            store.addJavaCollection(cds, "cds");
+
+        } catch (Exception e){
+            fail("expected: no exceptions");
+        }
+        DatastorePrinter.PrintDatabase(store);
+    }
+
+    @Test
+    public void javaCollectionLoadedToDatabaseShouldBeQueryable() throws Exception {
+        SetNewContext();
+        createCollection();
+        store.addJavaCollection(cds, "CD");
+
+        IExpression ex = new AvgExpression(
+            new DotExpression(
+                new DotExpression(
+                    new WhereExpression(
+                        new NameExpression("CD"),
+                        new EqualsExpression(
+                            new NameExpression("id"),
+                            new IntegerExpression(2)
+                        )
+                    ),
+                    new NameExpression("sprzedaz")
+                ),
+                new NameExpression("cenaSprzedazy")
+            )
+        );
+
+        ex.accept(visitor);
+        DoubleResult result = (DoubleResult) qres.pop();
+
+        assertEquals(35.77, result.getValue(), 0.000002);
+    }
 }

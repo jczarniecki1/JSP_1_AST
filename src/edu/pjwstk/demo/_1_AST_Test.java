@@ -30,23 +30,6 @@ public class _1_AST_Test {
         IStoreRepository repository = new StoreRepository(store);
         visitor = new ConcreteASTVisitor(qres, repository);
 
-        SolveDemoQuery();
-
-        // CW_QRES1
-
-        // 1. (struct(1, 2+1), (bag("test", „Ala”) as nazwa));
-        SolveQRESQuery1();
-
-        // 2. (bag("ala"+" ma"+" kota"), bag(8*10, false));
-        SolveQRESQuery2();
-
-        // 3. ((bag(1, 2) groupas x), bag(3, 4), 5);
-
-        SolveQRESQuery3();
-
-
-        // CW_AST
-
         // 1. Firma where (avg(zatrudnia.pensja) > 2550.50)
         SolveQuery1();
 
@@ -71,11 +54,11 @@ public class _1_AST_Test {
                     new DotExpression(
                         new WhereExpression(
                             new NameExpression("Person"),
-                            new NameExpression("Married")
+                            new NameExpression("married")
                         ),
-                        new NameExpression("Address")
+                        new NameExpression("address")
                     ),
-                    new NameExpression("City")
+                    new NameExpression("city")
                 )
             );
 
@@ -95,8 +78,8 @@ public class _1_AST_Test {
                 new GreaterThanExpression(
                     new AvgExpression(
                         new DotExpression(
-                            new NameExpression("Employee"),
-                            new NameExpression("Salary")
+                            new NameExpression("employees"),
+                            new NameExpression("salary")
                         )
                     ),
                     new DoubleExpression(2550.50)
@@ -118,8 +101,8 @@ public class _1_AST_Test {
                 new NameExpression("Person"),
                 new InExpression(
                     new DotExpression(
-                        new NameExpression("Address"),
-                        new NameExpression("City")
+                        new NameExpression("address"),
+                        new NameExpression("city")
                     ),
                     new BagExpression(
                         new CommaExpression(
@@ -180,14 +163,14 @@ public class _1_AST_Test {
                 new WhereExpression(
                     new NameExpression("Person"),
                     new EqualsExpression(
-                        new NameExpression("LastName"),
+                        new NameExpression("lastName"),
                         new StringExpression("Kowalski")
                     )
                 ),
                 new WhereExpression(
-                    new NameExpression("Address"),
+                    new NameExpression("address"),
                     new EqualsExpression(
-                        new NameExpression("City"),
+                        new NameExpression("city"),
                         new StringExpression("Łódź")
                     )
                 )

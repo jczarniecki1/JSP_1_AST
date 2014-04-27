@@ -1,20 +1,19 @@
 package edu.pjwstk.demo.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
 
 /**
  * Created by Małgorzata on 24.04.14.
  */
 public class CD {
-    private Wytwornia wytwornia;
-    private Integer id;
-    private String tytul;
-    private String artysta;
-    private Integer rokWydania;
-    private Double cena;
-    private List<Transakcja> sprzedaz = new ArrayList<Transakcja>();
+    public Wytwornia wytwornia;
+    public Integer id;
+    public String tytul;
+    public String artysta;
+    public Integer rokWydania;
+    public Double cena;
+    public Transakcja[] sprzedaz = new Transakcja[0];
 
 
     public CD(Wytwornia wytwornia, String tytul, String artysta, Integer rokWydania, Double cena, Integer id) {
@@ -27,11 +26,9 @@ public class CD {
     }
 
     public void addTransakcja(Transakcja transakcja) {
-        sprzedaz.add(transakcja);
-    }
-
-    public Collections getSprzedaz() {
-        return (Collections) sprzedaz;
+        ArrayList<Transakcja> tempList = new ArrayList<>(Arrays.asList(sprzedaz));
+        tempList.add(transakcja);
+        sprzedaz = tempList.toArray(new Transakcja[tempList.size()]);
     }
 }
 

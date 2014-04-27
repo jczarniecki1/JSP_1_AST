@@ -21,13 +21,13 @@ public class WhereExpressionTest extends AbstractBinaryExpressionTest {
     public void BeforeTest(){
         super.BeforeTest();
 
-        List<Person> persons = new ArrayList<>();
+        List<Person> people = new ArrayList<>();
 
-        persons.add(new Person("Marcin","Lewandowski",  20, false,  new Address("Gdańsk")));
-        persons.add(new Person("Jan","Kowalski",        21, true,  new Address("Łódź")));
-        persons.add(new Person("Piotr","Jankowski",     20, false,  new Address("Gdańsk")));
+        people.add(new Person("Marcin", "Lewandowski", 20, false, new Address("Gdańsk")));
+        people.add(new Person("Jan", "Kowalski", 21, true, new Address("Łódź")));
+        people.add(new Person("Piotr", "Jankowski", 20, false, new Address("Gdańsk")));
 
-        store.addJavaCollection(persons, "Person");
+        store.addJavaCollection(people, "Person");
     }
 
     @Test
@@ -35,9 +35,9 @@ public class WhereExpressionTest extends AbstractBinaryExpressionTest {
         Expression e = new DotExpression(
                 new WhereExpression(
                     new NameExpression("Person"),
-                    new NameExpression("Married")
+                    new NameExpression("married")
                 ),
-                new NameExpression("FirstName")
+                new NameExpression("firstName")
             );
 
         ISingleResult[] results = getResultsFromBag(e);

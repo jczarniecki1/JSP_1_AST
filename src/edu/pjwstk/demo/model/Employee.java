@@ -2,8 +2,8 @@ package edu.pjwstk.demo.model;
 
 public class Employee {
 
-    private String name;
-    private Double salary;
+    public String name;
+    public Double salary;
 
     public Employee(String name, Double salary) {
         this.name = name;
@@ -13,18 +13,5 @@ public class Employee {
     @Override
     public String toString() {
         return "Employee[name="+ name +", salary="+ salary +"]";
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-    public String getName() {
-        return name;
-    }
-    public void setSalary(Double salary) {
-        this.salary = salary;
-    }
-    public Double getSalary() {
-        return salary;
     }
 }

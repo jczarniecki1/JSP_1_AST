@@ -1,10 +1,6 @@
 package edu.pjwstk.demo.datastore;
 
 import edu.pjwstk.demo.common.Query;
-import edu.pjwstk.demo.model.Address;
-import edu.pjwstk.demo.model.Company;
-import edu.pjwstk.demo.model.Employee;
-import edu.pjwstk.demo.model.Person;
 import edu.pjwstk.jps.datastore.IOID;
 import edu.pjwstk.jps.datastore.ISBAObject;
 import edu.pjwstk.jps.datastore.ISBAStore;
@@ -17,7 +13,10 @@ import org.xml.sax.SAXParseException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /*
     Implementacja bazy danych
@@ -107,7 +106,7 @@ public class SBAStore implements ISBAStore {
         else if (o instanceof Double)  hash.put(id,new DoubleObject (id, name, (Double) o));
         else if (o instanceof Boolean) hash.put(id,new BooleanObject(id, name, (Boolean)o));
         else if (o instanceof IOID[])  hash.put(id,new ComplexObject(id, name, Arrays.asList((IOID[]) o)));
-        else visit(o);
+        else visit(o, name);
     }
 
     @Override
@@ -136,59 +135,52 @@ public class SBAStore implements ISBAStore {
         return  ((ComplexObject)retrieve(entryOID));
     }
 
-    // Do usunięcia
-    @Deprecated
-    public IOID visitPerson(Person person) {
-        Address address = person.getAddress();
-        return importComplex("Person",
-            new IOID[]{
-                importObject(person.getFName(), "FirstName"),
-                importObject(person.getLName(), "LastName"),
-                importObject(person.getAge(), "Age"),
-                importObject(person.getMarried(), "Married"),
-                importComplex("Address",
-                    new IOID[]{
-                        importObject(address.getCity(), "City")
-                    })
-            });
-    }
-    // Do usunięcia
-    @Deprecated
-    public IOID visitCompany(Company company) {
-
-        List<IOID> innerIds = Query.select(company.getEmployees(), x -> visitEmployee(x));
-
-        innerIds.add(importObject(company.getName(), "Name"));
-
-        return importComplex("Company", innerIds.toArray(new IOID[innerIds.size()]));
-    }
-
-    // Do usunięcia
-    @Deprecated
-    public IOID visitEmployee(Employee employee) {
-        return importComplex("Employee",
-            new IOID[]{
-                importObject(employee.getName(), "Name"),
-                importObject(employee.getSalary(), "Salary")
-            });
-    }
-
     public IOID importObject(Object o, String name) {
         addJavaObject(o, name);
         return lastOID;
     }
 
-    public IOID importComplex(String name, IOID[] ids) {
-        addJavaObject(ids, name);
-        return lastOID;
-    }
-
     // Do usunięcia
     @Deprecated
-    public void visit(Object o) {
-        if (o instanceof Person) visitPerson((Person)o);
-        else if (o instanceof Company) visitCompany((Company)o);
-        else if (o instanceof Employee) visitEmployee((Employee)o);
+    public void visit(Object o, String name) {
+        Class<?> type = o.getClass();
+
+        try {
+            Field[] publicFields = type.getFields();
+            List<IOID> ids = Arrays.asList(publicFields)
+                .stream()
+                .flatMap(x -> {
+                    try {
+                        Object fieldValue = x.get(o);
+                        if (fieldValue.getClass().isArray() && fieldValue != null) {
+                            int arraySize = Array.getLength(fieldValue);
+                            List<IOID> innerIds = new ArrayList<>();
+                            for (int i = 0; i < arraySize; i++) {
+                                Object arrayField = Array.get(fieldValue, i);
+                                innerIds.add(importObject(arrayField, x.getName()));
+                            }
+                            return innerIds.stream();
+                        } else {
+                            ArrayList<IOID> list = new ArrayList<>();
+                            list.add(importObject(fieldValue, x.getName()));
+                            return list.stream();
+                        }
+                    } catch (IllegalAccessException e) {
+                        return null;
+                    }
+                })
+                .filter(x -> x != null)
+                .collect(Collectors.toList());
+            IOID[] idsArray = ids.toArray(new IOID[ids.size()]);
+            addJavaObject(idsArray, name);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void Log(Object o){
+        System.out.println(o);
     }
 
     //

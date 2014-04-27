@@ -4,8 +4,8 @@ package edu.pjwstk.demo.model;
  * Created by Małgorzata on 24.04.14.
  */
 public class Wytwornia {
-    private String nazwaWytworni;
-    private String kraj;
+    public String nazwaWytworni;
+    public String kraj;
 
 
     public Wytwornia(String nazwaWytworni, String kraj) {
