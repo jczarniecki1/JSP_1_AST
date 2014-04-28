@@ -28,7 +28,7 @@ public class _4_ENVS_Test {
         // 1. ((emp where married) union (emp where lName=”Nowak)).fName
         SolveQuery1();
 
-        // 2. ((emp where exists address) where address.number>20).(street, city)
+        // 2. ((emp where exists address) where address.number>20).address.(street, city)
         SolveQuery2();
 
     }

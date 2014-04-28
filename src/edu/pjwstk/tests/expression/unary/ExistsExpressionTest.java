@@ -19,7 +19,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-@Ignore
+
 public class ExistsExpressionTest extends AbstractExpressionTest {
 
     @Before
@@ -28,9 +28,10 @@ public class ExistsExpressionTest extends AbstractExpressionTest {
 
         List<Person> persons = new ArrayList<>();
 
-        persons.add(new Person("Marcin","Lewandowski",  20, true,  new Address("Gdańsk")));
-        persons.add(new Person("Jan","Kowalski",        21, true,  new Address("Łódź")));
+        persons.add(new Person("Marcin","Lewandowski",  19, true,  new Address("Gdańsk")));
+        persons.add(new Person("Jan","Kowalski",        23, true,  new Address("Łódź")));
         persons.add(new Person("Piotr","Jankowski",     20, true,  new Address("Gdańsk")));
+        persons.add(new Person("Waldemar", "Pawlak",    60, true,  new Address("Warszawa")));
 
         store.addJavaCollection(persons, "Person");
         super.InitVisitor();
@@ -55,6 +56,7 @@ public class ExistsExpressionTest extends AbstractExpressionTest {
 
     @Test
     public void shouldGiveCorrectValue_2() throws Exception {
+
         Expression e =
             new ExistsExpression(
                 new DotExpression(
