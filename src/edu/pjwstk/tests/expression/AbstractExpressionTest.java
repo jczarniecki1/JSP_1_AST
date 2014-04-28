@@ -56,9 +56,12 @@ public class AbstractExpressionTest {
     }
 
     @Before
-    public void BeforeTest() {
-
+    public void InitStore() {
         store = new SBAStore();
+    }
+
+    @Before
+    public void InitVisitor() {
         qres = new QResStack();
 
         repository = new StoreRepository(store);

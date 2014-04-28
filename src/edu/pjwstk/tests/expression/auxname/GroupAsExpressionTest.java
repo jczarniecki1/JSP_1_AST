@@ -25,14 +25,14 @@ public class GroupAsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
 
     @Before
     public void BeforeTest(){
-        super.BeforeTest();
-
+        super.InitStore();
         List<Person> persons = new ArrayList<>();
 
         persons.add(new Person("Marcin","Lewandowski",  20, true,  new Address("Gdańsk")));
         persons.add(new Person("Jan","Kowalski",        21, true,  new Address("Łódź")));
 
         store.addJavaCollection(persons, "Person");
+        super.InitVisitor();
     }
 
     @Test

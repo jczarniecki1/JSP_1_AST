@@ -42,6 +42,11 @@ public class StoreRepository implements IStoreRepository {
         return toResult(store.retrieve(reference.getOIDValue()));
     }
 
+    @Override
+    public ISBAStore getStore() {
+        return store;
+    }
+
     private Stream<ISingleResult> valuesByName2(IComplexObject object, String fieldName) {
         return object.getChildOIDs()
                 .stream()

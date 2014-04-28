@@ -1,5 +1,6 @@
 package edu.pjwstk.demo.datastore;
 
+import edu.pjwstk.jps.datastore.ISBAStore;
 import edu.pjwstk.jps.result.IReferenceResult;
 import edu.pjwstk.jps.result.ISingleResult;
 
@@ -10,4 +11,5 @@ public interface IStoreRepository {
     public Stream<ISingleResult> getField(IReferenceResult reference, String fieldName);
     public Collection<ISingleResult> getCollection(String name);
     public Object get(IReferenceResult reference);
+    public ISBAStore getStore();
 }

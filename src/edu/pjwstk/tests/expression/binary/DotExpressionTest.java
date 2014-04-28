@@ -18,7 +18,7 @@ public class DotExpressionTest extends AbstractBinaryExpressionTest {
 
     @Before
     public void BeforeTest(){
-        super.BeforeTest();
+        super.InitStore();
 
         List<Person> persons = new ArrayList<>();
 
@@ -27,6 +27,7 @@ public class DotExpressionTest extends AbstractBinaryExpressionTest {
         persons.add(new Person("Piotr","Jankowski",     20, true,  new Address("Gdańsk")));
 
         store.addJavaCollection(persons, "Person");
+        super.InitVisitor();
     }
 
     @Test

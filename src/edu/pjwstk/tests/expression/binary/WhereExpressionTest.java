@@ -19,7 +19,7 @@ public class WhereExpressionTest extends AbstractBinaryExpressionTest {
 
     @Before
     public void BeforeTest(){
-        super.BeforeTest();
+        super.InitStore();
 
         List<Person> people = new ArrayList<>();
 
@@ -28,6 +28,7 @@ public class WhereExpressionTest extends AbstractBinaryExpressionTest {
         people.add(new Person("Piotr", "Jankowski", 20, false, new Address("Gdańsk")));
 
         store.addJavaCollection(people, "Person");
+        super.InitVisitor();
     }
 
     @Test

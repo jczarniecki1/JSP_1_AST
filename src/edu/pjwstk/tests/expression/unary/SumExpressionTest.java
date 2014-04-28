@@ -25,7 +25,7 @@ public class SumExpressionTest extends AbstractExpressionTest {
 
     @Before
     public void BeforeTest(){
-        super.BeforeTest();
+        super.InitStore();
 
         List<Person> persons = new ArrayList<>();
 
@@ -34,6 +34,7 @@ public class SumExpressionTest extends AbstractExpressionTest {
         persons.add(new Person("Tomasz","Kowalski",     33, true,  new Address("Łódź")));
 
         store.addJavaCollection(persons, "Person");
+        super.InitVisitor();
     }
 
     @Test

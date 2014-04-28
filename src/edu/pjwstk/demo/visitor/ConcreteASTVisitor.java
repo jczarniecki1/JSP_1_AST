@@ -1,9 +1,10 @@
 package edu.pjwstk.demo.visitor;
 
 import edu.pjwstk.demo.common.Query;
-import edu.pjwstk.demo.datastore.IStoreRepository;
+import edu.pjwstk.demo.datastore.*;
 import edu.pjwstk.demo.expression.binary.EqualsExpression;
 import edu.pjwstk.demo.expression.unary.NotExpression;
+import edu.pjwstk.demo.interpreter.envs.ENVS;
 import edu.pjwstk.demo.result.*;
 import edu.pjwstk.jps.ast.IExpression;
 import edu.pjwstk.jps.ast.auxname.IAsExpression;
@@ -11,6 +12,8 @@ import edu.pjwstk.jps.ast.auxname.IGroupAsExpression;
 import edu.pjwstk.jps.ast.binary.*;
 import edu.pjwstk.jps.ast.terminal.*;
 import edu.pjwstk.jps.ast.unary.*;
+import edu.pjwstk.jps.datastore.ISBAObject;
+import edu.pjwstk.jps.datastore.ISBAStore;
 import edu.pjwstk.jps.interpreter.qres.IQResStack;
 import edu.pjwstk.jps.result.*;
 import edu.pjwstk.jps.visitor.ASTVisitor;
@@ -29,9 +32,7 @@ import java.util.stream.Collectors;
     Postęp: 37/43 (86%)
 
     TODO:
-     * rzutowanie (... as ...)
-     * OrderBy, Exists
-     * poprawka w CommaExpression
+     * OrderBy
 
     Uwaga:
      Implementacje nie muszą uwzględniać różnych typów danych wejściowych.
@@ -40,13 +41,19 @@ import java.util.stream.Collectors;
 
 public class ConcreteASTVisitor implements ASTVisitor {
 
+    private final ENVS envs;
+
     private final IQResStack qres;
     private final IStoreRepository repository;
+    private final ISBAStore store;
 
     public ConcreteASTVisitor(IQResStack qres,
                               IStoreRepository repository) {
         this.qres = qres;
         this.repository = repository;
+        envs = new ENVS();
+        store = repository.getStore();
+        envs.init(store.getEntryOID(), store);
     }
 
     @Override
@@ -284,7 +291,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
             collection = (IBagResult)bagOrReference;
         } else {
             ArrayList<ISingleResult> list = new ArrayList<>();
-            list.add((IReferenceResult) bagOrReference);
+            list.add((ISingleResult)bagOrReference);
             collection = new BagResult(list);
         }
 
@@ -293,10 +300,10 @@ public class ConcreteASTVisitor implements ASTVisitor {
                 .getElements()
                 .stream()
                 .flatMap(x -> {
-                    qres.push(x);
+                    envs.push(envs.nested(x, store));
                     selection.accept(this);
                     IAbstractQueryResult result = qres.pop();
-
+                    envs.pop();
                     if (result instanceof IBagResult)
                     {
                         return ((IBagResult) result).getElements().stream();
@@ -312,7 +319,12 @@ public class ConcreteASTVisitor implements ASTVisitor {
                 .collect(Collectors.toList())
         );
 
-        qres.push(results);
+        if (results.getElements().size() == 1 && ! (bagOrReference instanceof IBagResult)) {
+            qres.push(results.getElements().iterator().next());
+        }else {
+            qres.push(results);
+        }
+
     }
 
     @Override
@@ -523,33 +535,24 @@ public class ConcreteASTVisitor implements ASTVisitor {
             }
 
         } else {
-            qres.push(new DoubleResult(getDouble(leftValue) + getDouble(rightValue)));
+            try {
+                qres.push(new DoubleResult(getDouble(leftValue) + getDouble(rightValue)));
+            } catch (Exception e) {
+                e.printStackTrace();
+                // TODO: Powinniśmy zablokować wykonanie
+            }
         }
     }
 
-    // TODO: A co powinno się stać dla (1, 1, 1, 3) union (2, 2, 4) ? (1, 3, 2, 4) ?
     @Override
     public void visitUnionExpression(IUnionExpression expr) {
-        IBagResult collectionLeft= getBag(expr.getLeftExpression());
+        IBagResult bagLeft= getBag(expr.getLeftExpression());
+        IBagResult bagRight = getBag(expr.getRightExpression());
 
-        IBagResult collectionRight = getBag(expr.getRightExpression());
+        Collection<ISingleResult> results = bagLeft.getElements();
+        results.addAll(bagRight.getElements());
 
-        Collection<ISingleResult> scope = collectionLeft.getElements();
-        Collection<ISingleResult> unionResult = new ArrayList<>(scope);
-        unionResult.addAll(
-                collectionRight.getElements()
-                .stream()
-                .filter(x -> !Query.any(scope, y -> {
-                    Object left = ((ISimpleResult) y).getValue();
-                    Object right = ((ISimpleResult) x).getValue();
-                    if (left instanceof Integer) left = ((Integer)left).doubleValue();
-                    if (right instanceof Integer) right = ((Integer)right).doubleValue();
-                    return left.equals(right);
-                }))
-                .collect(Collectors.toList())
-        );
-
-        qres.push(new BagResult(unionResult));
+        qres.push(new BagResult(results));
     }
 
     // Zachowanie analogiczne do DotExpression, ale kolekcja wynikowa
@@ -564,15 +567,17 @@ public class ConcreteASTVisitor implements ASTVisitor {
             ? (IBagResult) left
             : new BagResult(Arrays.asList((ISingleResult) left));
 
+
         IBagResult results =
             Query.where(collection, x -> {
                 IBooleanResult result;
-                qres.push(x);
+                envs.push(envs.nested(x, store));
                 IAbstractQueryResult queryResult = getResult(condition);
                 if (queryResult instanceof IBagResult) {
                     result = (IBooleanResult)((IBagResult)queryResult).getElements().iterator().next();
                 }
                 else result = (IBooleanResult) queryResult;
+                envs.pop();
                 return result.getValue();
             });
 
@@ -601,45 +606,52 @@ public class ConcreteASTVisitor implements ASTVisitor {
         qres.push(new IntegerResult(expr.getValue()));
     }
 
-    // Jeśli jest coś na stosie, to wybierz obiekty z Bag-a, albo z kolekcji
-    // danej referencją (IReferenceResult)
-    // w przeciwnym wypadku zdobądź obiekty z bazy (repository.getCollection())
     @Override
     public void visitNameTerminal(INameTerminal expr) {
-        IAbstractQueryResult result;
         String name = expr.getName();
+        IBagResult bagFromENVS = envs.bind(name);
+        Collection<ISingleResult> values = bagFromENVS.getElements();
+        IAbstractQueryResult result;
 
-        IAbstractQueryResult lastValue = qres.pop();
-        if (lastValue == null)
-        {
-            result = new BagResult(repository.getCollection(name));
-            qres.push(result);
+        if (values.size() == 0) {
+            result = new BagResult();
         }
-        else
-        {
-            IAbstractQueryResult input = lastValue;
-            List<ISingleResult> values;
-            if (input instanceof IBagResult)
-            {
-                Collection<ISingleResult> collection = ((IBagResult) input).getElements();
-                values = collection
-                    .stream()
-                    .flatMap(x -> repository.getField((IReferenceResult) x, name))
-                    .collect(Collectors.toList());
+        else if (values.size() == 1){
+            ISingleResult firstValue = values.iterator().next();
 
-                result = new BagResult(values);
+            if (firstValue instanceof IBinderResult) {
+                IBinderResult firstBinder = (IBinderResult) firstValue;
+                result = firstBinder.getValue();
             }
-            else
-            {
-                values = repository.getField(((IReferenceResult) input), name)
-                    .collect(Collectors.toList());
-
-                result = (values.size() == 1)
-                    ? values.get(0)
-                    : new BagResult(values);
+            else {
+                IReferenceResult firstReference = (IReferenceResult) firstValue;
+                ISBAObject o = store.retrieve(firstReference.getOIDValue());
+                result = ISBAObjectToIAbstractQueryResult(o);
             }
-            qres.push(result);
         }
+        else {
+            Collection<ISingleResult> collect = values.stream()
+                    .map(x -> {
+                        if (x instanceof IBinderResult){
+                            return (ISingleResult)((IBinderResult)x).getValue();
+                        }
+                        else {
+                            return (ISingleResult) ISBAObjectToIAbstractQueryResult(
+                                    store.retrieve(((IReferenceResult) x).getOIDValue()));
+                        }
+                    })
+                    .collect(Collectors.toList());
+            result = new BagResult(collect);
+        };
+        qres.push(result);
+    }
+
+    private static IAbstractQueryResult ISBAObjectToIAbstractQueryResult(ISBAObject o) {
+             if (o instanceof StringObject)   return new StringResult(((StringObject) o).getValue());
+        else if (o instanceof IntegerObject)  return new IntegerResult(((IntegerObject) o).getValue());
+        else if (o instanceof DoubleObject)   return new DoubleResult(((DoubleObject) o).getValue());
+        else if (o instanceof BooleanObject)  return new BooleanResult(((BooleanObject) o).getValue());
+        else return new ReferenceResult(o.getOID());
     }
 
     @Override
@@ -676,7 +688,21 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitExistsExpression(IExistsExpression expr) {
+        boolean exists = false;
+        try {
+            expr.getInnerExpression().accept(this);
+            IAbstractQueryResult queryResult = qres.pop();
+            if (queryResult instanceof IBagResult) {
+                exists = ((IBagResult)queryResult).getElements().size() > 0;
+            }
+            else if (queryResult != null){
+                exists = true;
+            }
 
+        } catch(Exception e){
+           // TODO: Złapmy tu tylko jakieś własne InvalidNameException
+        }
+        qres.push(new BooleanResult(exists));
     }
 
     @Override
@@ -761,13 +787,27 @@ public class ConcreteASTVisitor implements ASTVisitor {
     // Szybkie wyciąganie wartości z wyrażenia i rzutownie na double
     private double getDouble(IExpression expression) {
         expression.accept(this);
-        return getDouble(qres.pop());
+        try {
+            return getDouble(qres.pop());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+            // TODO: Nie powinniśmy zwracać nic
+        }
     }
 
     // Szybkie wyciąganie wartości z wyrażenia i rzutownie na double
-    private double getDouble(IAbstractQueryResult result) {
-        if (result instanceof IntegerResult) {
-            return ((IntegerResult)result).getValue().doubleValue();
+    private double getDouble(IAbstractQueryResult result) throws Exception {
+        if (result instanceof IIntegerResult) {
+            return ((IIntegerResult)result).getValue().doubleValue();
+        }
+        else if (result instanceof IBagResult) {
+            Collection<ISingleResult> elements = ((IBagResult)result).getElements();
+            if (elements.size() == 1) {
+                return getDouble(elements.iterator().next());
+            } else {
+                throw new Exception("Collection is empty or has more than one element");
+            }
         }
         else {
             return ((DoubleResult)result).getValue();

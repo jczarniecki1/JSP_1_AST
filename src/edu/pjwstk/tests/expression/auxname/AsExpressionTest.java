@@ -29,7 +29,7 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
 
     @Before
     public void BeforeTest(){
-        super.BeforeTest();
+        super.InitStore();
 
         List<Person> persons = new ArrayList<>();
 
@@ -37,6 +37,7 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
         persons.add(new Person("Jan","Kowalski",        21, true,  new Address("Łódź")));
 
         store.addJavaCollection(persons, "Person");
+        super.InitVisitor();
     }
 
     @Test
@@ -131,7 +132,7 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
         assertEquals(resultName, "testName1");
     } */
 
-    @Ignore
+    //@Ignore
     @Test
     public void shouldBeAbleToUseBinding_SimpleExample() throws Exception {
 

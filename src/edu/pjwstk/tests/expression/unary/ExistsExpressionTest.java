@@ -24,7 +24,7 @@ public class ExistsExpressionTest extends AbstractExpressionTest {
 
     @Before
     public void BeforeTest(){
-        super.BeforeTest();
+        super.InitStore();
 
         List<Person> persons = new ArrayList<>();
 
@@ -33,6 +33,7 @@ public class ExistsExpressionTest extends AbstractExpressionTest {
         persons.add(new Person("Piotr","Jankowski",     20, true,  new Address("Gdańsk")));
 
         store.addJavaCollection(persons, "Person");
+        super.InitVisitor();
     }
 
     @Test

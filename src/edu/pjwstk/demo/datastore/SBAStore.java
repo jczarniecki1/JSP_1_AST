@@ -42,6 +42,9 @@ public class SBAStore implements ISBAStore {
 
     @Override
     public IOID getEntryOID() {
+        if (entryOID == null){
+            getRootObject();
+        }
         return entryOID;
     }
 

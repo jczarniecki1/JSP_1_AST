@@ -87,7 +87,6 @@ public class SBAStoreTest {
     }
 
     public void SetNewContext() {
-        store = new SBAStore();
         IStoreRepository repository = new StoreRepository(store);
         visitor = new ConcreteASTVisitor(qres, repository);
     }
@@ -95,8 +94,6 @@ public class SBAStoreTest {
     @Before
     public void Context(){
         store = new SBAStore();
-        IStoreRepository repository = new StoreRepository(store);
-        visitor = new ConcreteASTVisitor(qres, repository);
     }
 
     @Test
@@ -104,6 +101,7 @@ public class SBAStoreTest {
 
         System.out.println("Expected exception in the Test:");
         store.loadXML("res/example_invalid.xml");
+        SetNewContext();
         List<IOID> rootChildren = ((ComplexObject) store.retrieve(store.getEntryOID())).getChildOIDs();
         assertEquals(0, rootChildren.size());
     }
@@ -122,6 +120,7 @@ public class SBAStoreTest {
     public void databaseAfterLoadXMLShouldBeQueryable() throws Exception {
 
         store.loadXML("res/baza.xml");
+        SetNewContext();
 
         IExpression ex = new AvgExpression(
             new DotExpression(
@@ -148,22 +147,23 @@ public class SBAStoreTest {
     @Test
     public void shouldBeAbleToLoadCollectionOfJavaObjectsWithoutFailure() throws Exception {
 
-        SetNewContext();
-        createCollection();
         try {
+            createCollection();
             store.addJavaCollection(cds, "cds");
+            SetNewContext();
+            DatastorePrinter.PrintDatabase(store);
 
         } catch (Exception e){
             fail("expected: no exceptions");
         }
-        DatastorePrinter.PrintDatabase(store);
     }
 
     @Test
     public void javaCollectionLoadedToDatabaseShouldBeQueryable() throws Exception {
-        SetNewContext();
+
         createCollection();
         store.addJavaCollection(cds, "CD");
+        SetNewContext();
 
         IExpression ex = new AvgExpression(
             new DotExpression(
