@@ -71,7 +71,7 @@ public class ENVSFrame implements IENVSFrame {
         newElements.add(
             new ENVSBinder(
                 binder.getName(),
-                binder
+                binder.getValue()
             )
         );
         return newElements;

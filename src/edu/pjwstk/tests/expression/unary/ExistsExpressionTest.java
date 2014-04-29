@@ -11,7 +11,6 @@ import edu.pjwstk.demo.model.Person;
 import edu.pjwstk.jps.result.IBooleanResult;
 import edu.pjwstk.tests.expression.AbstractExpressionTest;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -63,11 +62,11 @@ public class ExistsExpressionTest extends AbstractExpressionTest {
                     new WhereExpression(
                         new NameExpression("Person"),
                         new LessThanExpression(
-                            new NameExpression("Age"),
+                            new NameExpression("age"),
                             new IntegerExpression(20)
                         )
                     ),
-                    new NameExpression("FirstName")
+                    new NameExpression("firstName")
                 )
             );
         e.accept(visitor);
@@ -84,11 +83,11 @@ public class ExistsExpressionTest extends AbstractExpressionTest {
                     new WhereExpression(
                         new NameExpression("Person"),
                         new GreaterThanExpression(
-                            new NameExpression("Age"),
+                            new NameExpression("age"),
                             new IntegerExpression(100)
                         )
                     ),
-                    new NameExpression("FirstName")
+                    new NameExpression("firstName")
                 )
             );
         e.accept(visitor);

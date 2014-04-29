@@ -8,6 +8,7 @@ import edu.pjwstk.demo.expression.terminal.IntegerExpression;
 import edu.pjwstk.demo.expression.terminal.NameExpression;
 import edu.pjwstk.demo.expression.terminal.StringExpression;
 import edu.pjwstk.demo.expression.unary.BagExpression;
+import edu.pjwstk.demo.expression.unary.StructExpression;
 import edu.pjwstk.demo.model.Address;
 import edu.pjwstk.demo.model.Person;
 import edu.pjwstk.demo.result.IntegerResult;
@@ -16,7 +17,6 @@ import edu.pjwstk.jps.result.IBinderResult;
 import edu.pjwstk.jps.result.IIntegerResult;
 import edu.pjwstk.jps.result.ISingleResult;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -132,7 +132,6 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
         assertEquals(resultName, "testName1");
     } */
 
-    //@Ignore
     @Test
     public void shouldBeAbleToUseBinding_SimpleExample() throws Exception {
 
@@ -151,74 +150,75 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
         assertEquals(1, (long)result.getValue());
     }
 
-
-    @Ignore
     @Test
     public void shouldBeAbleToUseBinding_1() throws Exception {
     // Bag(FirstName As Zuzanna, LastName As Nowakowska)
         Expression e =
             new DotExpression(
-                new JoinExpression(
+                new UnionExpression(
                     new NameExpression("Person"),
                     new BagExpression(
-                        new CommaExpression(
-                            new AsExpression(
-                                new StringExpression("Zuzanna"),
-                                "FirstName"
-                            ),
-                            new AsExpression(
-                                new StringExpression("Nowakowska"),
-                                "LastName"
+                        new StructExpression(
+                            new CommaExpression(
+                                new AsExpression(
+                                    new StringExpression("Zuzanna"),
+                                    "firstName"
+                                ),
+                                new AsExpression(
+                                    new StringExpression("Nowakowska"),
+                                    "lastName"
+                                )
                             )
                         )
                     )
                 ),
-                new NameExpression("FirstName")
+                new NameExpression("firstName")
             );
 
         e.accept(visitor);
 
 
         ISingleResult[] results = getResultsFromBag(e);
-        ISingleResult[] expectedResults = getArrayOfResults("Jan", "Marcin", "Zuzanna");
+        ISingleResult[] expectedResults = getArrayOfResults("Marcin", "Jan", "Zuzanna");
 
         assertArrayEquals(expectedResults, results);
     }
 
-    @Ignore
     @Test
     public void shouldBeAbleToUseBinding_2() throws Exception {
 
         Expression e =
             new DotExpression(
                 new WhereExpression(
-                    new JoinExpression(
+                    new UnionExpression(
                         new NameExpression("Person"),
                         new BagExpression(
-                            new CommaExpression(
-                                new AsExpression(
-                                    new StringExpression("Zuzanna"),
-                                    "FirstName"
-                                ),
-                                new AsExpression(
-                                    new IntegerExpression(29),
-                                    "Age"
+                            new StructExpression(
+                                new CommaExpression(
+                                    new AsExpression(
+                                        new StringExpression("Zuzanna"),
+                                        "firstName"
+                                    ),
+                                    new AsExpression(
+                                        new IntegerExpression(29),
+                                        "age"
+                                    )
                                 )
                             )
                         )
                     ),
                     new GreaterThanExpression(
-                        new NameExpression("Age"),
+                        new NameExpression("age"),
                         new IntegerExpression(20)
                     )
                 ),
-                new NameExpression("FirstName")
+                new NameExpression("firstName")
             );
 
         e.accept(visitor);
 
         ISingleResult[] results = getResultsFromBag(e);
-        ISingleResult[] expectedResults = getArrayOfResults("Zuzanna", "Jan");
+        ISingleResult[] expectedResults = getArrayOfResults("Jan", "Zuzanna");
 
         assertArrayEquals(expectedResults, results);
     }
