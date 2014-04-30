@@ -749,7 +749,12 @@ public class ConcreteASTVisitor implements ASTVisitor {
     public void visitStructExpression(IStructExpression expr) {
         IAbstractQueryResult result = getResult(expr.getInnerExpression());
 
-        qres.push(new StructResult(Arrays.asList((ISingleResult)result)));
+        //qres.push(new StructResult(Arrays.asList((ISingleResult)result)));
+        if (result instanceof StructResult) {
+            qres.push(new StructResult(((StructResult) result).elements()));
+        } else {
+            qres.push(new StructResult(Arrays.asList((ISingleResult)result)));
+        }
     }
 
     // Dla uproszczenia rzutujemy wszystko na double
