@@ -39,6 +39,9 @@ terminal String MINUS;
 terminal String MULTIPLY;
 terminal String DIVIDE;
 
+terminal String AND;
+terminal String OR;
+
 terminal String LEFT_ROUND_BRACKET;
 terminal String RIGHT_ROUND_BRACKET;
 
@@ -47,6 +50,8 @@ non terminal Expression expr;
 
 
 //priority
+precedence left OR;
+precedence left AND;
 precedence left PLUS, MINUS;
 precedence left MULTIPLY, DIVIDE;
 precedence left LEFT_ROUND_BRACKET, RIGHT_ROUND_BRACKET;
@@ -56,10 +61,14 @@ start with goal;
 goal ::= expr:e		{: RESULT = e; parser.setResult(e); :} ;
 
 expr  ::=
-		expr:e1 PLUS:o expr:e2	{: RESULT = new PlusExpression(e1, e2); :}
-	| 	expr:e1 MINUS:o expr:e2	{: RESULT = new MinusExpression(e1, e2); :}
-	| 	expr:e1 MULTIPLY:o 	 expr:e2	{: RESULT = new MultiplyExpression(e1, e2); :}
-	| 	expr:e1 DIVIDE:o	 expr:e2	{: RESULT = new DivideExpression(e1, e2); :}
-	| 	INTEGER_LITERAL:o {: RESULT = new IntegerExpression((Integer)o); :}
+		expr:e1 PLUS:o      expr:e2	{: RESULT = new PlusExpression(e1, e2);         :}
+	| 	expr:e1 MINUS:o     expr:e2	{: RESULT = new MinusExpression(e1, e2);        :}
+	| 	expr:e1 MULTIPLY:o 	expr:e2	{: RESULT = new MultiplyExpression(e1, e2);     :}
+	| 	expr:e1 DIVIDE:o	expr:e2	{: RESULT = new DivideExpression(e1, e2);       :}
+	| 	expr:e1 AND:o	    expr:e2	{: RESULT = new AndExpression(e1, e2);          :}
+	| 	expr:e1 OR:o	    expr:e2	{: RESULT = new OrExpression(e1, e2);           :}
+	| 	INTEGER_LITERAL:o           {: RESULT = new IntegerExpression((Integer)o);  :}
+	| 	DOUBLE_LITERAL:o            {: RESULT = new DoubleExpression((Double)o);    :}
+	| 	BOOLEAN_LITERAL:o           {: RESULT = new BooleanExpression((Boolean)o);  :}
 	|	LEFT_ROUND_BRACKET:o expr:e1 RIGHT_ROUND_BRACKET {: RESULT = e1; :}
 	;

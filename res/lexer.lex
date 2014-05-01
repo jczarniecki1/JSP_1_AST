@@ -39,6 +39,8 @@ WHITESPACE = {LineTerminator} | [ \t\f]
 	"-"						{ return createToken(MINUS				); }
 	"*"						{ return createToken(MULTIPLY			); }
 	"/"						{ return createToken(DIVIDE				); }
+	"and"					{ return createToken(AND				); }
+	"or"					{ return createToken(OR				    ); }
 	"("						{ return createToken(LEFT_ROUND_BRACKET	); }
 	")"						{ return createToken(RIGHT_ROUND_BRACKET); }
 

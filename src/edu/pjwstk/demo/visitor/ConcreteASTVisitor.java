@@ -491,9 +491,20 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitMultiplyExpression(IMultiplyExpression expr) {
-        double left = getDouble(expr.getLeftExpression());
-        double right = getDouble(expr.getRightExpression());
-        qres.push(new DoubleResult(left * right));
+        expr.getLeftExpression().accept(this);
+        IAbstractQueryResult leftArgument = qres.pop();
+        expr.getRightExpression().accept(this);
+        IAbstractQueryResult rightArgument = qres.pop();
+        if (leftArgument instanceof IntegerResult && rightArgument instanceof IntegerResult){
+            int left = ((IntegerResult)leftArgument).getValue();
+            int right = ((IntegerResult)rightArgument).getValue();
+            qres.push(new IntegerResult(left * right));
+        }
+        else if (leftArgument instanceof DoubleResult || rightArgument instanceof DoubleResult){
+            double left = getDouble(leftArgument);
+            double right = getDouble(leftArgument);
+            qres.push(new DoubleResult(left * right));
+        }
     }
 
     @Override
@@ -792,30 +803,30 @@ public class ConcreteASTVisitor implements ASTVisitor {
     // Szybkie wyciąganie wartości z wyrażenia i rzutownie na double
     private double getDouble(IExpression expression) {
         expression.accept(this);
+        return getDouble(qres.pop());
+    }
+
+    // Szybkie wyciąganie wartości z wyrażenia i rzutownie na double
+    private double getDouble(IAbstractQueryResult result) {
         try {
-            return getDouble(qres.pop());
+            if (result instanceof IIntegerResult) {
+                return ((IIntegerResult)result).getValue().doubleValue();
+            }
+            else if (result instanceof IBagResult) {
+                Collection<ISingleResult> elements = ((IBagResult)result).getElements();
+                if (elements.size() == 1) {
+                    return getDouble(elements.iterator().next());
+                } else {
+                    throw new Exception("Collection is empty or has more than one element");
+                }
+            }
+            else {
+                return ((DoubleResult)result).getValue();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
             // TODO: Nie powinniśmy zwracać nic
-        }
-    }
-
-    // Szybkie wyciąganie wartości z wyrażenia i rzutownie na double
-    private double getDouble(IAbstractQueryResult result) throws Exception {
-        if (result instanceof IIntegerResult) {
-            return ((IIntegerResult)result).getValue().doubleValue();
-        }
-        else if (result instanceof IBagResult) {
-            Collection<ISingleResult> elements = ((IBagResult)result).getElements();
-            if (elements.size() == 1) {
-                return getDouble(elements.iterator().next());
-            } else {
-                throw new Exception("Collection is empty or has more than one element");
-            }
-        }
-        else {
-            return ((DoubleResult)result).getValue();
         }
     }
 
