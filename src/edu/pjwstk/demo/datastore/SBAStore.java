@@ -28,6 +28,12 @@ public class SBAStore implements ISBAStore {
     private IOID entryOID;
     private IOID lastOID;
 
+    public static ISBAStore getClearInstance() {
+        SBAStore store = (SBAStore)getInstance();
+        store.clearDatabase();
+        return store;
+    }
+
     @Override
     public IOID generateUniqueOID() {
         lastGeneratedId += 1;
@@ -311,5 +317,17 @@ public class SBAStore implements ISBAStore {
     boolean tryParseBoolean(String value)
     {
         return  (value != null && (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")));
+    }
+
+    private static ISBAStore instance = null;
+    public static ISBAStore getInstance() {
+        if (instance == null){
+            instance = new SBAStore();
+        }
+        return instance;
+    }
+
+    public void reset() {
+        clearDatabase();
     }
 }

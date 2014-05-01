@@ -17,7 +17,7 @@ public class _4_ENVS_Test {
     private static QResStack qres = new QResStack();
 
     private static IENVS envs = new ENVS();
-    private static ISBAStore store = new SBAStore();
+    private static ISBAStore store = SBAStore.getInstance();
 
     public static void main(String[] args){
 

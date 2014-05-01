@@ -11,6 +11,7 @@ import edu.pjwstk.demo.result.DoubleResult;
 import edu.pjwstk.demo.result.IntegerResult;
 import edu.pjwstk.demo.result.StringResult;
 import edu.pjwstk.demo.visitor.ConcreteASTVisitor;
+import edu.pjwstk.jps.datastore.ISBAStore;
 import edu.pjwstk.jps.interpreter.qres.IQResStack;
 import edu.pjwstk.jps.result.IBagResult;
 import edu.pjwstk.jps.result.ISingleResult;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class AbstractExpressionTest {
-    protected SBAStore store;
+    protected ISBAStore store;
     protected IQResStack qres;
     protected IStoreRepository repository;
     protected ASTVisitor visitor;
@@ -57,14 +58,14 @@ public class AbstractExpressionTest {
 
     @Before
     public void InitStore() {
-        store = new SBAStore();
+        store = SBAStore.getClearInstance();
     }
 
     @Before
     public void InitVisitor() {
         qres = new QResStack();
 
-        repository = new StoreRepository(store);
+        repository = StoreRepository.getInstance();
         visitor = new ConcreteASTVisitor(qres, repository);
     }
 

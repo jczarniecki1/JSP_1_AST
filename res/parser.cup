@@ -33,6 +33,8 @@ scan with {:		return lexer.next_token(); :};
 terminal Integer INTEGER_LITERAL;
 terminal Double  DOUBLE_LITERAL;
 terminal Boolean BOOLEAN_LITERAL;
+terminal String  STRING_LITERAL;
+terminal String  IDENTIFIER;
 
 terminal String PLUS;
 terminal String MINUS;
@@ -47,7 +49,6 @@ terminal String RIGHT_ROUND_BRACKET;
 
 non terminal Expression goal;
 non terminal Expression expr;
-
 
 //priority
 precedence left OR;
@@ -70,5 +71,7 @@ expr  ::=
 	| 	INTEGER_LITERAL:o           {: RESULT = new IntegerExpression((Integer)o);  :}
 	| 	DOUBLE_LITERAL:o            {: RESULT = new DoubleExpression((Double)o);    :}
 	| 	BOOLEAN_LITERAL:o           {: RESULT = new BooleanExpression((Boolean)o);  :}
+	| 	STRING_LITERAL:o            {: RESULT = new StringExpression((String)o);    :}
+	| 	IDENTIFIER:o                {: RESULT = new NameExpression((String)o);      :}
 	|	LEFT_ROUND_BRACKET:o expr:e1 RIGHT_ROUND_BRACKET {: RESULT = e1; :}
 	;

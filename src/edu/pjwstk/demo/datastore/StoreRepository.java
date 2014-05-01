@@ -18,9 +18,16 @@ import java.util.stream.Stream;
 public class StoreRepository implements IStoreRepository {
     private ISBAStore store;
 
-    public StoreRepository(ISBAStore store){
-
+    private StoreRepository(ISBAStore store) {
         this.store = store;
+    }
+
+    private static IStoreRepository instance = null;
+    public static IStoreRepository getInstance(){
+        if (instance == null){
+            instance = new StoreRepository(SBAStore.getInstance());
+        }
+        return  instance;
     }
 
     @Override
@@ -40,6 +47,11 @@ public class StoreRepository implements IStoreRepository {
     @Override
     public Object get(IReferenceResult reference) {
         return toResult(store.retrieve(reference.getOIDValue()));
+    }
+
+    @Override
+    public String printById(IOID id) {
+        return toString(store.retrieve(id));
     }
 
     @Override
@@ -78,5 +90,19 @@ public class StoreRepository implements IStoreRepository {
         else if (o instanceof DoubleObject)  return new DoubleResult(((DoubleObject) o).getValue());
         else if (o instanceof BooleanObject) return new BooleanResult(((BooleanObject) o).getValue());
         else return new ReferenceResult(o.getOID());
+    }
+
+    private String toString(ISBAObject o){
+        if (o == null) {
+            return "null";
+        }
+        if (o instanceof ComplexObject)
+        {
+            return o.getName().toString();
+        }
+        else
+        {
+            return toResult(o).toString();
+        }
     }
 }

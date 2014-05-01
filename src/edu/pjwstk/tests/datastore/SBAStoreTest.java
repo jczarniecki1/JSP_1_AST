@@ -19,7 +19,6 @@ import edu.pjwstk.demo.result.DoubleResult;
 import edu.pjwstk.demo.visitor.ConcreteASTVisitor;
 import edu.pjwstk.jps.ast.IExpression;
 import edu.pjwstk.jps.datastore.IOID;
-import edu.pjwstk.jps.datastore.ISBAStore;
 import edu.pjwstk.jps.visitor.ASTVisitor;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +32,7 @@ import static junit.framework.TestCase.fail;
 public class SBAStoreTest {
 
     private static QResStack qres = new QResStack();
-    private static ISBAStore store;
+    private static SBAStore store;
     private static ASTVisitor visitor;
     private static List<CD> cds;
     private static List<Wytwornia> wytwornie;
@@ -87,13 +86,14 @@ public class SBAStoreTest {
     }
 
     public void SetNewContext() {
-        IStoreRepository repository = new StoreRepository(store);
+        IStoreRepository repository = StoreRepository.getInstance();
         visitor = new ConcreteASTVisitor(qres, repository);
     }
 
     @Before
     public void Context(){
-        store = new SBAStore();
+        store = (SBAStore)SBAStore.getInstance();
+        store.reset();
     }
 
     @Test

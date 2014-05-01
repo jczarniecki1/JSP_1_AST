@@ -638,11 +638,11 @@ public class ConcreteASTVisitor implements ASTVisitor {
                 IBinderResult firstBinder = (IBinderResult) firstValue;
                 result = firstBinder.getValue();
             }
-            else if (firstValue instanceof IReferenceResult) {
-                IReferenceResult firstReference = (IReferenceResult) firstValue;
-                ISBAObject o = store.retrieve(firstReference.getOIDValue());
-                result = ISBAObjectToIAbstractQueryResult(o);
-            }
+//            else if (firstValue instanceof IReferenceResult) {
+//                IReferenceResult firstReference = (IReferenceResult) firstValue;
+//                ISBAObject o = store.retrieve(firstReference.getOIDValue());
+//                result = ISBAObjectToIAbstractQueryResult(o);
+//            }
             else {
                 result = firstValue;
             }

@@ -28,8 +28,8 @@ public abstract class AbstractParserTest {
     public void initContext(){
 
         qres = new QResStack();
-        store = new SBAStore();
-        repository = new StoreRepository(store);
+        store = SBAStore.getClearInstance();
+        repository = StoreRepository.getInstance();
 
         initData();
 

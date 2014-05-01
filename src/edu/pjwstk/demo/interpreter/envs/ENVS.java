@@ -50,20 +50,23 @@ public class ENVS implements IENVS {
     public IBagResult bind(String name) {
         List<ISingleResult> elements = new ArrayList<>();
         IENVSFrame firstFrame = null;
+
         int limit = stack.size();
         for (int i=0; i < limit; i++) {
             IENVSFrame currentFrame = stack.get(i);
             if (currentFrame.getElements()
                 .stream()
-                .anyMatch(x -> x.getName() == name))
+                .anyMatch(x -> x.getName().equals(name)))
             {
                 firstFrame = currentFrame;
             }
         }
 
         if (firstFrame != null) {
-            for (IENVSBinder binder : firstFrame.getElements()) {
-                if (binder.getName() == name) {
+            Collection<IENVSBinder> elementsInFrame = firstFrame.getElements();
+
+            for (IENVSBinder binder : elementsInFrame) {
+                if (binder.getName().equals(name)) {
                     elements.add((ISingleResult) binder.getValue());
                 }
             }

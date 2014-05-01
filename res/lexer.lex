@@ -75,4 +75,24 @@ WHITESPACE = {LineTerminator} | [ \t\f]
 		}
 		return createToken(BOOLEAN_LITERAL, new Boolean(val));
 	}
+	{STRING} {
+		String val;
+		try {
+			val = yytext();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+		return createToken(STRING_LITERAL, new String(val));
+	}
+	{IDENTIFIER} {
+		String val;
+		try {
+			val = yytext();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+		return createToken(IDENTIFIER, new String(val));
+	}
 }

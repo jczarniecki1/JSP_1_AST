@@ -15,6 +15,18 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
     @Test
     public void shouldSolveQueryThatAccessDataFromExternalSource(){
         IAbstractQueryResult result = SolveQuery("integerNumber");
-        assertEquals(result.toString(), "ref(10)");
+        assertEquals("ref(10)", result.toString());
+    }
+
+    @Test
+    public void shouldSolveQueryThatAccessStringValueFromExternalSource2(){
+        IAbstractQueryResult result = SolveQuery("stringValue");
+        assertEquals("ref(\"Ala\")", result.toString());
+    }
+
+    @Test
+    public void shouldSolveQueryThatAccessBooleanValueFromExternalSource2(){
+        IAbstractQueryResult result = SolveQuery("booleanValue");
+        assertEquals("ref(true)", result.toString());
     }
 }

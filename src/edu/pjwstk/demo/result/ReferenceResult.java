@@ -1,5 +1,6 @@
 package edu.pjwstk.demo.result;
 
+import edu.pjwstk.demo.datastore.StaticReferenceResolver;
 import edu.pjwstk.jps.datastore.IOID;
 import edu.pjwstk.jps.result.IReferenceResult;
 
@@ -18,6 +19,6 @@ public class ReferenceResult implements IReferenceResult {
 
     @Override
     public String toString(){
-        return objectId.toString();
+        return "ref("+ StaticReferenceResolver.valueOrName(objectId) +")";
     }
 }

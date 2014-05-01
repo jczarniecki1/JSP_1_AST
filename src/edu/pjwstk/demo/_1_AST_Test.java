@@ -21,13 +21,12 @@ import edu.pjwstk.jps.visitor.ASTVisitor;
 public class _1_AST_Test {
 
     private static QResStack qres = new QResStack();
-    private static ISBAStore store = new SBAStore();
     private static ASTVisitor visitor;
 
     public static void main(String[] args){
 
         LoadData();
-        IStoreRepository repository = new StoreRepository(store);
+        IStoreRepository repository = StoreRepository.getInstance();
         visitor = new ConcreteASTVisitor(qres, repository);
 
         // 1. Firma where (avg(zatrudnia.pensja) > 2550.50)
@@ -273,6 +272,7 @@ public class _1_AST_Test {
 
     private static void LoadData() {
         ExampleData data = new ExampleData();
+        ISBAStore store = SBAStore.getInstance();
         store.addJavaCollection(data.getPersons(), "Person");
         store.addJavaCollection(data.getCompanies(), "Company");
     }

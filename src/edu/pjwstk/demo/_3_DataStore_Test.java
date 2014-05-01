@@ -32,7 +32,7 @@ public class _3_DataStore_Test {
     }
 
     private static void TestXML() {
-        store = new SBAStore();
+        store = SBAStore.getInstance();
         Log("Wczytywanie danych...");
 
         store.loadXML("res/baza.xml");
