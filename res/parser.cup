@@ -44,7 +44,7 @@ terminal String DIVIDE;
 terminal String MODULO;
 terminal String XOR;
 
-terminal String BAG;
+
 terminal String IN;
 terminal String NOT;
 terminal String AND;
@@ -73,6 +73,9 @@ terminal String COUNT;
 terminal String DOT;
 terminal String COMMA;
 
+terminal String BAG;
+terminal String STRUCT;
+
 terminal String LEFT_ROUND_BRACKET;
 terminal String RIGHT_ROUND_BRACKET;
 
@@ -80,18 +83,18 @@ non terminal Expression goal;
 non terminal Expression expr;
 
 //priority
-precedence left OR;
-precedence left AND, XOR;
-precedence left NOT, IN, WHERE;
-precedence left NOT_EQUALS, GREATER, GREATER_EQUAL, LESS, LESS_EQUAL;
-precedence left MIN, MAX;
-precedence left EQUALS;
+precedence left JOIN, WHERE;
+precedence left NOT;
+precedence left UNION, IN;
+precedence left COMMA;
+precedence left OR, AND;
+precedence left XOR;
+precedence left EQUALS, NOT_EQUALS, GREATER, GREATER_EQUAL, LESS, LESS_EQUAL;
 precedence left PLUS, MINUS;
 precedence left MULTIPLY, DIVIDE, MODULO;
-precedence left JOIN, UNION, INTERSECT, MINUS_SET;
+precedence left SUM, COUNT, AVG, MIN, MAX; INTERSECT, MINUS_SET;
 precedence left DOT;
-precedence left COMMA;
-precedence left BAG;
+precedence left BAG, STRUCT;
 precedence left LEFT_ROUND_BRACKET, RIGHT_ROUND_BRACKET;
 
 start with goal;
@@ -117,8 +120,6 @@ expr  ::=
 	| 	expr:e1 IN:o	            expr:e2	{: RESULT = new InExpression                (e1, e2); :}
 	| 	NOT:o	                    expr:e1	{: RESULT = new NotExpression               (e1);     :}
 
-	| 	BAG:o	                    expr:e1	{: RESULT = new BagExpression               (e1);     :}
-
 	| 	expr:e1 WHERE:o	            expr:e2	{: RESULT = new WhereExpression             (e1, e2); :}
 	| 	expr:e1 JOIN:o	            expr:e2	{: RESULT = new JoinExpression              (e1, e2); :}
 	| 	expr:e1 UNION:o	            expr:e2	{: RESULT = new UnionExpression             (e1, e2); :}
@@ -140,5 +141,9 @@ expr  ::=
 
 	| 	expr:e1 DOT:o	            expr:e2	{: RESULT = new DotExpression               (e1, e2); :}
 	| 	expr:e1 COMMA:o	            expr:e2	{: RESULT = new CommaExpression             (e1, e2); :}
+
+	| 	BAG:o	                    expr:e1	{: RESULT = new BagExpression               (e1);     :}
+	| 	STRUCT:o	                expr:e1	{: RESULT = new StructExpression            (e1);     :}
+
 	|	LEFT_ROUND_BRACKET:o expr:e1 RIGHT_ROUND_BRACKET {: RESULT = e1; :}
 	;
