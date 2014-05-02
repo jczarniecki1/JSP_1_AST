@@ -11,11 +11,6 @@ public class ArgumentTypeToOperatorMapper {
 
         ArgumentTypeMapping = new HashMap<>();
 
-        // Operatory na kolekcjach
-        AsCollectionOperator(Operator.AVG);
-        AsCollectionOperator(Operator.SUM);
-        AsCollectionOperator(Operator.COUNT);
-
         // Operatory dowolnych pojedynczych wartościach
         AsSingleValueOperator(Operator.EQUALS);
         AsSingleValueOperator(Operator.NOT_EQUALS);

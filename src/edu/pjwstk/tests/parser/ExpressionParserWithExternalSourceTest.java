@@ -46,6 +46,12 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
     }
 
     @Test
+    public void shouldSolveQueryThatCountSingleInteger(){
+        IAbstractQueryResult result = SolveQuery("count(1)");
+        assertEquals("1", result.toString());
+    }
+
+    @Test
     public void shouldSolveAllQueriesFromGivenFile(){
 
         int allCount = 0, successCount = 0, parsedCount = 0;

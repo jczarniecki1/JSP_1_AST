@@ -60,6 +60,12 @@ WHITESPACE = {LineTerminator} | [ \t\f]
 	"=="					{ return createToken(EQUALS             ); }
 	"!="					{ return createToken(NOT_EQUALS         ); }
 
+	"max"					{ return createToken(MAX                ); }
+	"min"					{ return createToken(MIN                ); }
+	"sum"					{ return createToken(SUM                ); }
+	"avg"					{ return createToken(AVG                ); }
+	"count"					{ return createToken(COUNT              ); }
+
 	"."					    { return createToken(DOT                ); }
 	","					    { return createToken(COMMA              ); }
 

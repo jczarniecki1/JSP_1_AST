@@ -61,6 +61,13 @@ terminal String LESS_EQUAL;
 terminal String NOT_EQUALS;
 terminal String EQUALS;
 
+terminal String MAX;
+terminal String MIN;
+
+terminal String SUM;
+terminal String AVG;
+terminal String COUNT;
+
 terminal String DOT;
 terminal String COMMA;
 
@@ -75,6 +82,7 @@ precedence left OR;
 precedence left AND, XOR;
 precedence left NOT, IN;
 precedence left NOT_EQUALS, GREATER, GREATER_EQUAL, LESS, LESS_EQUAL;
+precedence left MIN, MAX;
 precedence left EQUALS;
 precedence left PLUS, MINUS;
 precedence left MULTIPLY, DIVIDE, MODULO;
@@ -93,6 +101,13 @@ expr  ::=
 	| 	expr:e1 MULTIPLY:o 	        expr:e2	{: RESULT = new MultiplyExpression          (e1, e2); :}
 	| 	expr:e1 DIVIDE:o	        expr:e2	{: RESULT = new DivideExpression            (e1, e2); :}
 	| 	expr:e1 MODULO:o	        expr:e2	{: RESULT = new ModuloExpression            (e1, e2); :}
+
+
+	| 	MAX:o	                    expr:e1	{: RESULT = new MaxExpression               (e1);     :}
+	| 	MIN:o	                    expr:e1	{: RESULT = new MinExpression               (e1);     :}
+	| 	SUM:o	                    expr:e1	{: RESULT = new SumExpression               (e1);     :}
+	| 	AVG:o	                    expr:e1	{: RESULT = new AvgExpression               (e1);     :}
+	| 	COUNT:o	                    expr:e1	{: RESULT = new CountExpression             (e1);     :}
 
 	| 	expr:e1 OR:o	            expr:e2	{: RESULT = new OrExpression                (e1, e2); :}
 	| 	expr:e1 AND:o	            expr:e2	{: RESULT = new AndExpression               (e1, e2); :}

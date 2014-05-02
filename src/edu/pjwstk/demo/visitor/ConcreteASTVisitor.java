@@ -390,15 +390,11 @@ public class ConcreteASTVisitor implements ASTVisitor {
         Collection<ISingleResult> leftCollection  = arguments.firstAsCollection();
         Collection<ISingleResult> rightCollection = arguments.secondAsCollection();
 
-        boolean isIntersect = Query.any(leftCollection, x ->
-                Query.any(rightCollection, y -> {
-                    Object left = ((ISimpleResult) y).getValue();
-                    Object right = ((ISimpleResult) x).getValue();
-                    if (left instanceof Integer) left = ((Integer)left).doubleValue();
-                    if (right instanceof Integer) right = ((Integer)right).doubleValue();
-                    return left.equals(right);
-                }));
-        qres.push(new BooleanResult(isIntersect));
+        Collection<ISingleResult> result =
+            leftCollection.stream().filter(x ->
+                rightCollection.stream().anyMatch(y -> x.equals(y)))
+            .collect(Collectors.toList());
+        qres.push(new BagResult(result));
     }
 
     @Override
@@ -678,8 +674,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
         expr.getInnerExpression().accept(this);
         Arguments arguments = ArgumentResolver.getArguments(Operator.COUNT, qres.pop());
 
-        int count = arguments.getElements().size();
-
+        int count = arguments.getAsCollection().size();
         qres.push(new IntegerResult(count));
     }
 
@@ -766,9 +761,8 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitSumExpression(ISumExpression expr) {
-        expr.getInnerExpression().accept(this);
-        Arguments arguments = ArgumentResolver.getArguments(Operator.SUM, qres.pop());
-        Collection<ISingleResult> elements = arguments.getElements();
+        Arguments arguments = getArgumentsForUnaryExpression(Operator.SUM, expr);
+        Collection<ISingleResult> elements = arguments.getAsCollection();
 
         Double sumDouble = 0.0;
         Integer sumInt = 0;
@@ -797,8 +791,16 @@ public class ConcreteASTVisitor implements ASTVisitor {
     @Override
     public void visitAvgExpression(IAvgExpression expr) {
         Arguments arguments = getArgumentsForUnaryExpression(Operator.AVG, expr);
-        Collection<ISingleResult> elements = arguments.getElements();
+        Collection<ISingleResult> elements = arguments.getAsCollection();
 
+        if (elements.size() == 0) {
+            qres.push(BagResult.Empty());
+            return;
+        }
+        if (elements.size() == 1) {
+            qres.push(new BagResult(new ArrayList<>(Arrays.asList(elements.iterator().next()))));
+            return;
+        }
         double sum = 0;
         for (ISingleResult item : elements){
             if (item instanceof IReferenceResult){
