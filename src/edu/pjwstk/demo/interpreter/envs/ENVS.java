@@ -92,7 +92,7 @@ public class ENVS implements IENVS {
         // Szukanie ramki, na której jest binder do podanej nazwy
 
         int limit = stack.size();
-        for (int i = 0; i < limit; i++) {
+        for (int i = limit-1; i >= 0; i--) {
             IENVSFrame currentFrame = stack.get(i);
             if (currentFrame.getElements()
                 .stream()
