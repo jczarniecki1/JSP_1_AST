@@ -2,6 +2,11 @@ package edu.pjwstk.demo.visitor.helpers;
 
 import java.util.*;
 
+//
+// Mapper ma za zadanie powiązać operatory z typami argumentów
+//  - jeśli operator nie jest wymieniony, to akceptowany jest dowolny rodzaj argumentów
+//  - mapowanie powinno być przede wszystkim czytelne
+//
 public class ArgumentTypeToOperatorMapper {
 
     private static Map<Operator, List<ArgumentType>> ArgumentTypeMapping;
@@ -35,11 +40,12 @@ public class ArgumentTypeToOperatorMapper {
         AsNumberOperator(Operator.LESS_OR_EQUAL);
 
 
-        // Dowolne argumenty przyjmują:
+        // Dowolne argumenty:
         //   IN
         //   MIN, MAX
         //   AS, GROUP_AS
-        // ? EXISTS, UNIQUE
+        //   EXISTS, UNIQUE
+        //   SUM, AVG, COUNT
         //   BAG, STRUCT, COMMA
         //   UNION, INTERSECT, MINUS_SET, JOIN
         //
@@ -66,12 +72,6 @@ public class ArgumentTypeToOperatorMapper {
         } else {
             ArgumentTypeMapping.put(o, new ArrayList<>(Arrays.asList(new ArgumentType[]{type})));
         }
-    }
-
-    private static void AsCollectionOperator(Operator o) {
-        map(o, ArgumentType.BAG);
-        map(o, ArgumentType.SEQUENCE);
-        map(o, ArgumentType.STRUCT);
     }
 
     private static void AsSingleValueOperator(Operator o) {

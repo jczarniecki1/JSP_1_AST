@@ -7,6 +7,9 @@ import edu.pjwstk.jps.datastore.ISBAStore;
 
 import java.util.List;
 
+//
+// Wypisuje zawartość bazy
+//
 public class DatastorePrinter {
 
     public static void PrintDatabase(ISBAStore store) {

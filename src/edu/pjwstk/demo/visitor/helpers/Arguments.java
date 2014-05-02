@@ -6,10 +6,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+//
+// Dostarcza wartości i informacje o typie przechowywanych argumentów
+//  - Ukrywa często powtarzające się rzutowanie na inne typy
+//  - Oryginalne wartości o typie abstrakcyjnym nie są dostępne
+//
 public class Arguments {
 
     private IAbstractQueryResult first;
     private IAbstractQueryResult second;
+
     public boolean mixedTypes;
     public boolean isInteger;
     public boolean firstIsInteger;
@@ -66,17 +72,6 @@ public class Arguments {
         );
     }
 
-    //
-    // Collection argument
-    //
-    public Collection<ISingleResult> getElements() {
-        if (first instanceof IBagResult) return ((IBagResult)first).getElements();
-        else return ((ISequenceResult)first).getElements();
-    }
-    public Collection<ISingleResult> getAsCollection() {
-        if (first instanceof ICollectionResult) return getElements();
-        else return new ArrayList<>(Arrays.asList((ISingleResult) first));
-    }
 
     //
     // Double collection argument
@@ -197,6 +192,18 @@ public class Arguments {
     public Collection<ISingleResult> secondAsCollection() {
         if (second instanceof ICollectionResult) return secondCollection();
         else return new ArrayList<>(Arrays.asList((ISingleResult)second));
+    }
+
+    //
+    // Single collection argument
+    //
+    public Collection<ISingleResult> getElements() {
+        if (first instanceof IBagResult) return ((IBagResult)first).getElements();
+        else return ((ISequenceResult)first).getElements();
+    }
+    public Collection<ISingleResult> getAsCollection() {
+        if (first instanceof ICollectionResult) return getElements();
+        else return new ArrayList<>(Arrays.asList((ISingleResult) first));
     }
 
     //

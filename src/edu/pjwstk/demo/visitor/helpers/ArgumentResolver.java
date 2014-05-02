@@ -3,8 +3,12 @@ package edu.pjwstk.demo.visitor.helpers;
 import edu.pjwstk.demo.datastore.StoreRepository;
 import edu.pjwstk.jps.result.*;
 
+//
+// Zadaniem ArgumentResolver'a jest dostarczenie eleganckiej formy wybierania argumentow w metodach ConcreteASTVisitora
+//  - Ukrywa szczegóły dotyczące walidacji typów
+//  - Może rzucić wyjątek, jeśli typy się nie zgadzają
+//
 public final class ArgumentResolver {
-
 
     // Pobieranie argumentów połączone z walidacją
     //
