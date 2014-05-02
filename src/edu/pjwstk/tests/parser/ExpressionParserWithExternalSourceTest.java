@@ -8,6 +8,9 @@ import java.io.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+//
+// Testowanie zbioru przypadków zapisanych w pliku tekstowym
+//
 public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
 
     @Override
@@ -15,42 +18,18 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
         store.loadXML("res/dane_do_zap_testowych.xml");
     }
 
+    //
+    // Metoda do izolowanego testowania wybranego przypadku
+    //
     @Test
-    public void shouldSolveQueryThatAccessDataFromExternalSource(){
-        IAbstractQueryResult result = SolveQuery("integerNumber");
-        assertEquals("ref(10)", result.toString());
+    public void shouldSolveQueryThatIsCurrentlyBeingFixed(){
+        IAbstractQueryResult result = SolveQuery("emp.book.author");
+        assertEquals("bag(ref(\"Juliusz Słowacki\"),ref(\"Adam Mickiewicz\"),ref(\"Aleksander Dumas (syn)\"))", result.toString());
     }
 
-    @Test
-    public void shouldSolveQueryThatAccessStringValueFromExternalSource(){
-        IAbstractQueryResult result = SolveQuery("stringValue");
-        assertEquals("ref(\"Ala\")", result.toString());
-    }
-
-    @Test
-    public void shouldSolveQueryThatAccessStringValueFromExternalSource2(){
-        IAbstractQueryResult result = SolveQuery("stringValue == \"Ala\"");
-        assertEquals("true", result.toString());
-    }
-
-    @Test
-    public void shouldSolveQueryThatAccessBooleanValueFromExternalSource(){
-        IAbstractQueryResult result = SolveQuery("booleanValue");
-        assertEquals("ref(true)", result.toString());
-    }
-
-    @Test
-    public void shouldSolveQueryThatAccessBooleanValueFromExternalSource2(){
-        IAbstractQueryResult result = SolveQuery("booleanValue or false");
-        assertEquals("true", result.toString());
-    }
-
-    @Test
-    public void shouldSolveQueryThatCountSingleInteger(){
-        IAbstractQueryResult result = SolveQuery("count(1)");
-        assertEquals("1", result.toString());
-    }
-
+    //
+    // Metoda do testowania wszystkich przypadków
+    //
     @Test
     public void shouldSolveAllQueriesFromGivenFile(){
 
@@ -94,13 +73,14 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
                 line = reader.readLine();
                 boolean failed = parsed && !solved;
 
-                Log("[ "+String.format("%3d",allCount)+" ]: "
-                        + query+getSpace(53-query.length())
-                        + (parsed ? " | parsed" : "")
-                        + (solved ? " | ok" : "")
-                        + (failed ? " | failed\n" +
-                                "\texpected: "+ expected+"\n" +
-                                "\tactual:   "+ result.toString() : "")
+                Log("[ "+String.format("%3d",allCount)+" ]: "           // Numer
+                        + query                                         // Treść zapytania
+                        + getSpace(55 - query.length())                 //
+                        + (parsed ? " | parsed" : "")                   // Czy się wykonało?
+                        + (solved ? " | ok" : "")                       // Czy wynik jest poprawny?
+                        + (failed ? " | failed\n" +                     //
+                                "\texpected: "+ expected+"\n" +         // Wynik oczekiwany
+                                "\tactual:   "+ result.toString() : "") // Wynik aktualny (błędny)
                         + "\n");
             }
 
@@ -117,11 +97,15 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
         }
 
         if (successCount < allCount){
-            fail("\n\nStatus: \n" +
+            fail("\n\nStatus: \n" +                                     // Podsumowanie
                     "\tparsed "+parsedCount+" of "+allCount +"\n"+
                     "\tsolved "+successCount+" of "+allCount +"\n\n"+ testlog);
         }
     }
+
+    /*
+     * ***************** Dodatkowe metody *************************
+     */
 
     private String getSpace(int i) {
         String sp = "";
@@ -130,6 +114,7 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
     }
 
     private static String testlog = "";
+
     private static void Log(String t){
         testlog+= t;
     }

@@ -1,6 +1,5 @@
 package edu.pjwstk.demo.datastore;
 
-import edu.pjwstk.demo.common.Query;
 import edu.pjwstk.jps.datastore.IOID;
 import edu.pjwstk.jps.datastore.ISBAObject;
 import edu.pjwstk.jps.datastore.ISBAStore;
@@ -28,12 +27,30 @@ public class SBAStore implements ISBAStore {
     private IOID entryOID;
     private IOID lastOID;
 
+    //
+    // TODO: Chyba będziemy musieli to zastąpić innym rozwiązaniem.
+    //   (Podobno SBAStore nie powinien być Singletonem)
+    //
+    private static ISBAStore instance = null;
+    public static ISBAStore getInstance() {
+        if (instance == null){
+            instance = new SBAStore();
+        }
+        return instance;
+    }
+
+    //
+    // Pobranie czystej bazy
+    //
     public static ISBAStore getClearInstance() {
         SBAStore store = (SBAStore)getInstance();
         store.clearDatabase();
         return store;
     }
 
+    //
+    // Generowanie nowego ID
+    //
     @Override
     public IOID generateUniqueOID() {
         lastGeneratedId += 1;
@@ -41,11 +58,18 @@ public class SBAStore implements ISBAStore {
         return lastOID;
     }
 
+    //
+    // Pobranie obiektu po ID
+    //
     @Override
     public ISBAObject retrieve(IOID oid) {
         return hash.get(oid);
     }
 
+    //
+    // Pobranie identyfikatora "entry"
+    //  - inicjuje "entry", jeżeli jeszcze nie istnieje
+    //
     @Override
     public IOID getEntryOID() {
         if (entryOID == null){
@@ -56,7 +80,7 @@ public class SBAStore implements ISBAStore {
 
     //
     // Wczytywanie do bazy z plików XML
-    // TODO: Upewnić się, czy próba wczytania ma czyścić poprzednią zawartość
+    // TODO: Upewnić się, czy nieudana próba wczytania ma czyścić poprzednią zawartość
     // ( i jeśli nie, to czym zastąpić blok finally{..} ? )
     //
     @Override
@@ -102,7 +126,15 @@ public class SBAStore implements ISBAStore {
         entryOID = null;
         getRootObject();
     }
+    public void reset() {
+        clearDatabase();
+    }
 
+    //
+    // Dodanie obiektu
+    //  - sprawdzamy czy da się rzutować na typ prosty lub tablicę indentyfikatorów
+    //  - jeśli nie, to przechodzimy do "addOtherType()"
+    //
     @Override
     public void addJavaObject(Object o, String name) {
         IOID id = generateUniqueOID();
@@ -114,14 +146,20 @@ public class SBAStore implements ISBAStore {
         else addOtherType(o, name);
     }
 
+    //
+    // Dodanie kolekcji obiektów
+    //  - iterujemy po obiektach i zbieramy ich identyfikatory
+    //  - na koniec dodajemy je do "entry"
+    //
     @Override
     public void addJavaCollection(Collection collection, String name) {
         ComplexObject root = getRootObject();
 
-        List<IOID> childrenIds = Query.select(collection,x -> {
-            addJavaObject(x, name);
-            return lastOID;
-        });
+        List<IOID> childrenIds = new ArrayList<>();
+        for (Object o: collection) {
+            addJavaObject(o, name);
+            childrenIds.add(lastOID);
+        }
 
         root.getChildOIDs().addAll(childrenIds);
     }
@@ -140,6 +178,9 @@ public class SBAStore implements ISBAStore {
         return  ((ComplexObject)retrieve(entryOID));
     }
 
+    //
+    // Dodaje obiekt i zwraca jego ID
+    //
     public IOID importObject(Object o, String name) {
         addJavaObject(o, name);
         return lastOID;
@@ -208,7 +249,6 @@ public class SBAStore implements ISBAStore {
     //   to zawsze traktujemy go jako ComplexObject
     //
     //   Inaczej:
-    //
     //   - Jeśli element na podelementy (czyli spełnia warunek "hasChildren(...)"),
     //     to wczytaj jako ComplexObject
     //
@@ -290,6 +330,9 @@ public class SBAStore implements ISBAStore {
         return ! item.getNodeName().startsWith("#");
     }
 
+    //
+    // Rzutowanie - brakujące funkcje
+    //
     boolean tryParseInt(String value)
     {
          try
@@ -317,17 +360,5 @@ public class SBAStore implements ISBAStore {
     boolean tryParseBoolean(String value)
     {
         return  (value != null && (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")));
-    }
-
-    private static ISBAStore instance = null;
-    public static ISBAStore getInstance() {
-        if (instance == null){
-            instance = new SBAStore();
-        }
-        return instance;
-    }
-
-    public void reset() {
-        clearDatabase();
     }
 }

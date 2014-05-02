@@ -66,7 +66,6 @@ public class Arguments {
         );
     }
 
-
     //
     // Collection argument
     //
@@ -78,7 +77,6 @@ public class Arguments {
         if (first instanceof ICollectionResult) return getElements();
         else return new ArrayList<>(Arrays.asList((ISingleResult) first));
     }
-
 
     //
     // Double collection argument
@@ -204,6 +202,9 @@ public class Arguments {
     //
     // Single argument
     //
+    public IAbstractQueryResult get() {
+        return first;
+    }
     public Boolean getBoolean(){
         return ((IBooleanResult)first).getValue();
     }
