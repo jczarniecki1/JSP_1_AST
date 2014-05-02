@@ -15,14 +15,12 @@ import edu.pjwstk.demo.result.IntegerResult;
 import edu.pjwstk.jps.result.IAbstractQueryResult;
 import edu.pjwstk.jps.result.IBinderResult;
 import edu.pjwstk.jps.result.IIntegerResult;
-import edu.pjwstk.jps.result.ISingleResult;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
@@ -177,11 +175,7 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
 
         e.accept(visitor);
 
-
-        ISingleResult[] results = getResultsFromBag(e);
-        ISingleResult[] expectedResults = getArrayOfResults("Marcin", "Jan", "Zuzanna");
-
-        assertArrayEquals(expectedResults, results);
+        assertEquals("bag(0=ref(\"Marcin\"),1=ref(\"Jan\"),2=\"Zuzanna\")", qres.pop().toString());
     }
 
     @Test
@@ -217,9 +211,6 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
 
         e.accept(visitor);
 
-        ISingleResult[] results = getResultsFromBag(e);
-        ISingleResult[] expectedResults = getArrayOfResults("Jan", "Zuzanna");
-
-        assertArrayEquals(expectedResults, results);
+        assertEquals("bag(0=ref(\"Jan\"),1=\"Zuzanna\")", qres.pop().toString());
     }
 }

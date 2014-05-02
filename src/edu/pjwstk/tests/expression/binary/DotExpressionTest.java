@@ -5,14 +5,13 @@ import edu.pjwstk.demo.expression.binary.DotExpression;
 import edu.pjwstk.demo.expression.terminal.NameExpression;
 import edu.pjwstk.demo.model.Address;
 import edu.pjwstk.demo.model.Person;
-import edu.pjwstk.jps.result.ISingleResult;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class DotExpressionTest extends AbstractBinaryExpressionTest {
 
@@ -36,11 +35,8 @@ public class DotExpressionTest extends AbstractBinaryExpressionTest {
                 new NameExpression("Person"),
                 new NameExpression("firstName")
             );
+        e.accept(visitor);
 
-        ISingleResult[] results = getResultsFromBag(e);
-
-        ISingleResult[] expectedResults = getArrayOfResults("Marcin","Jan","Piotr");
-
-        assertArrayEquals(expectedResults, results);
+        assertEquals("bag(0=ref(\"Marcin\"),1=ref(\"Jan\"),2=ref(\"Piotr\"))", qres.pop().toString());
     }
 }

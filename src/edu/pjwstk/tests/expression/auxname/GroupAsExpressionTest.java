@@ -110,7 +110,7 @@ public class GroupAsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
                 new NameExpression("FirstName")
             );
 
-        ISingleResult[] results = getResultsFromBag(e);
+        ISingleResult[] results = sgetResultsFromBag(e);
         ISingleResult[] expectedResults = getArrayOfResults("Jan", "Marcin", "Zuzanna");
 
         assertArrayEquals(expectedResults, results);

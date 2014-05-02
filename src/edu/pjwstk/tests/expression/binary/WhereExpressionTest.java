@@ -6,14 +6,13 @@ import edu.pjwstk.demo.expression.binary.WhereExpression;
 import edu.pjwstk.demo.expression.terminal.NameExpression;
 import edu.pjwstk.demo.model.Address;
 import edu.pjwstk.demo.model.Person;
-import edu.pjwstk.jps.result.ISingleResult;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class WhereExpressionTest extends AbstractBinaryExpressionTest {
 
@@ -40,11 +39,9 @@ public class WhereExpressionTest extends AbstractBinaryExpressionTest {
                 ),
                 new NameExpression("firstName")
             );
+        e.accept(visitor);
 
-        ISingleResult[] results = getResultsFromBag(e);
-        ISingleResult[] expectedResults = getArrayOfResults("Jan");
-
-        assertArrayEquals(expectedResults, results);
+        assertEquals("bag(0=ref(\"Jan\"))", qres.pop().toString());
     }
 
 }

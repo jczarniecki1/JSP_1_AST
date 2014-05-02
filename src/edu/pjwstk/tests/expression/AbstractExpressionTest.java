@@ -69,13 +69,4 @@ public class AbstractExpressionTest {
         visitor = new ConcreteASTVisitor(qres, repository);
     }
 
-    protected ISingleResult[] getResultsFromBag(Expression e) {
-
-        e.accept(visitor);
-
-        IBagResult bagResult = (IBagResult) qres.pop();
-        Collection<ISingleResult> elements = bagResult.getElements();
-
-        return elements.toArray(new ISingleResult[elements.size()]);
-    }
 }

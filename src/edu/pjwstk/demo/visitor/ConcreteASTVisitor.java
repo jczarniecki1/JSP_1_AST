@@ -2,10 +2,11 @@ package edu.pjwstk.demo.visitor;
 
 import edu.pjwstk.demo.common.Query;
 import edu.pjwstk.demo.datastore.*;
-import edu.pjwstk.demo.expression.binary.EqualsExpression;
-import edu.pjwstk.demo.expression.unary.NotExpression;
 import edu.pjwstk.demo.interpreter.envs.ENVS;
 import edu.pjwstk.demo.result.*;
+import edu.pjwstk.demo.visitor.helpers.ArgumentResolver;
+import edu.pjwstk.demo.visitor.helpers.Arguments;
+import edu.pjwstk.demo.visitor.helpers.Operator;
 import edu.pjwstk.jps.ast.IExpression;
 import edu.pjwstk.jps.ast.auxname.IAsExpression;
 import edu.pjwstk.jps.ast.auxname.IGroupAsExpression;
@@ -270,12 +271,27 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitDivideExpression(IDivideExpression expr) {
-        double left = getDouble(expr.getLeftExpression());
-        double right = getDouble(expr.getRightExpression());
-        if (right != 0) {
-            qres.push(new DoubleResult(left / right));
+
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.DIVIDE, expr);
+
+        if (!arguments.mixedTypes && arguments.firstIsInteger) {
+            if (arguments.secondInteger() != 0) {
+                // if (a % b == 0)
+                if (arguments.firstInteger() % arguments.secondInteger() == 0) {
+                    // return integer
+                    qres.push(new IntegerResult(arguments.firstInteger() / arguments.secondInteger()));
+                }
+                // return double
+                else qres.push(new DoubleResult(arguments.firstAsDouble() / arguments.secondAsDouble()));
+            }
         }
-        else qres.push(new StringResult("NaN"));
+        else {
+            if (arguments.secondAsDouble() != 0.0) {
+                // return double
+                qres.push(new DoubleResult(arguments.firstAsDouble() / arguments.secondAsDouble()));
+            }
+            else qres.push(new StringResult("NaN"));
+        }
     }
 
     // Wykonanie prawego wyrażenia na każdym elemencie kolekcji wejsciowej
@@ -329,41 +345,23 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitEqualsExpression(IEqualsExpression expr) {
-        ISingleResult left = ((ISingleResult)getResult(expr.getLeftExpression()));
-        ISingleResult right = ((ISingleResult)getResult(expr.getRightExpression()));
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.EQUALS, expr);
 
-        Object leftValue;
-        Object rightValue;
-
-        if (left instanceof IReferenceResult){
-            leftValue = repository.get((IReferenceResult)left);
-        } else {
-            leftValue = ((ISimpleResult)left).getValue();
-        }
-
-        if (right instanceof IReferenceResult){
-            rightValue = repository.get((IReferenceResult)right);
-        } else {
-            rightValue = ((ISimpleResult)right).getValue();
-        }
-
-        qres.push(new BooleanResult(leftValue.equals(rightValue)));
+        qres.push(new BooleanResult(arguments.firstValue().equals(arguments.secondValue())));
     }
 
     @Override
     public void visitGreaterThanExpression(IGreaterThanExpression expr) {
-        double left = getDouble(expr.getLeftExpression());
-        double right = getDouble(expr.getRightExpression());
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.GREATER, expr);
 
-        qres.push(new BooleanResult(left > right));
+        qres.push(new BooleanResult(arguments.firstAsDouble() > arguments.secondAsDouble()));
     }
 
     @Override
     public void visitGreaterOrEqualThanExpression(IGreaterOrEqualThanExpression expr) {
-        double left = getDouble(expr.getLeftExpression());
-        double right = getDouble(expr.getRightExpression());
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.GREATER_OR_EQUAL, expr);
 
-        qres.push(new BooleanResult(left >= right));
+        qres.push(new BooleanResult(arguments.firstAsDouble() >= arguments.secondAsDouble()));
     }
 
     @Override
@@ -398,6 +396,12 @@ public class ConcreteASTVisitor implements ASTVisitor {
             !Query.any(collectionLeft.getElements(), x ->
                 // ...nie występuje w prawej kolekcji
                 !Query.any(scope, y -> {
+                    if (x instanceof IReferenceResult || y instanceof IReferenceResult){
+                        if (x instanceof IReferenceResult && y instanceof IReferenceResult) {
+                            return ((IReferenceResult)x).getOIDValue().equals(((IReferenceResult)y).getOIDValue());
+                        }
+                        else return false;
+                    }
                     Object left = ((ISimpleResult) y).getValue();
                     Object right = ((ISimpleResult) x).getValue();
                     return left.equals(right);
@@ -436,25 +440,28 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitLessOrEqualThanExpression(ILessOrEqualThanExpression expr) {
-        double left = getDouble(expr.getLeftExpression());
-        double right = getDouble(expr.getRightExpression());
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.LESS_OR_EQUAL, expr);
 
-        qres.push(new BooleanResult(left <= right));
+        qres.push(new BooleanResult(arguments.firstAsDouble() <= arguments.secondAsDouble()));
     }
 
     @Override
     public void visitLessThanExpression(ILessThanExpression expr) {
-        double left = getDouble(expr.getLeftExpression());
-        double right = getDouble(expr.getRightExpression());
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.LESS, expr);
 
-        qres.push(new BooleanResult(left < right));
+        qres.push(new BooleanResult(arguments.firstAsDouble() < arguments.secondAsDouble()));
     }
 
     @Override
     public void visitMinusExpression(IMinusExpression expr) {
-        double left = getDouble(expr.getLeftExpression());
-        double right = getDouble(expr.getRightExpression());
-        qres.push(new DoubleResult(left-right));
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.MINUS, expr);
+
+        if (!arguments.mixedTypes && arguments.firstIsInteger) {
+            qres.push(new IntegerResult(arguments.firstInteger() - arguments.secondInteger()));
+        }
+        else {
+            qres.push(new DoubleResult(arguments.firstAsDouble() - arguments.secondAsDouble()));
+        }
     }
 
     @Override
@@ -481,37 +488,30 @@ public class ConcreteASTVisitor implements ASTVisitor {
         qres.push(new BagResult(result));
     }
 
-    //TODO: Potrzebujemy testów do tego
     @Override
     public void visitModuloExpression(IModuloExpression expr) {
-        double left = getDouble(expr.getLeftExpression());
-        double right = getDouble(expr.getRightExpression());
-        qres.push(new DoubleResult(left % right));
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.MODULO, expr);
+
+        qres.push(new IntegerResult(arguments.firstInteger() % arguments.secondInteger()));
     }
 
     @Override
     public void visitMultiplyExpression(IMultiplyExpression expr) {
-        expr.getLeftExpression().accept(this);
-        IAbstractQueryResult leftArgument = qres.pop();
-        expr.getRightExpression().accept(this);
-        IAbstractQueryResult rightArgument = qres.pop();
-        if (leftArgument instanceof IntegerResult && rightArgument instanceof IntegerResult){
-            int left = ((IntegerResult)leftArgument).getValue();
-            int right = ((IntegerResult)rightArgument).getValue();
-            qres.push(new IntegerResult(left * right));
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.MULTIPLY, expr);
+
+        if (!arguments.mixedTypes && arguments.firstIsInteger) {
+            qres.push(new IntegerResult(arguments.firstInteger() * arguments.secondInteger()));
         }
-        else if (leftArgument instanceof DoubleResult || rightArgument instanceof DoubleResult){
-            double left = getDouble(leftArgument);
-            double right = getDouble(leftArgument);
-            qres.push(new DoubleResult(left * right));
+        else {
+            qres.push(new DoubleResult(arguments.firstAsDouble() * arguments.secondAsDouble()));
         }
     }
 
     @Override
     public void visitNotEqualsExpression(INotEqualsExpression expr) {
-        new NotExpression(
-            new EqualsExpression(expr.getLeftExpression(), expr.getRightExpression())
-        ).accept(this);
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.NOT_EQUALS, expr);
+
+        qres.push(new BooleanResult(!arguments.firstValue().equals(arguments.secondValue())));
     }
 
     @Override
@@ -529,39 +529,37 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitPlusExpression(IPlusExpression expr) {
-        IAbstractQueryResult leftValue = getResult(expr.getLeftExpression());
-        IAbstractQueryResult rightValue = getResult(expr.getRightExpression());
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.PLUS, expr);
 
-        if (leftValue instanceof IntegerResult
-         && rightValue instanceof IntegerResult) {
-            qres.push(new IntegerResult(((IntegerResult) leftValue).getValue()+((IntegerResult) rightValue).getValue()));
-        } else if (leftValue instanceof StringResult || rightValue instanceof StringResult) {
-            if (!(rightValue instanceof StringResult)) {
-                qres.push(new StringResult(((StringResult)leftValue).getValue() + rightValue.toString()));
+        if (!arguments.mixedTypes) {
+            if (arguments.firstIsInteger) {
+                qres.push(new IntegerResult(arguments.firstInteger() + arguments.secondInteger()));
+            } else if (arguments.firstIsString) {
+                qres.push(new StringResult(arguments.firstString() + arguments.secondString()));
+            } else if (arguments.firstIsBoolean) {
+                qres.push(new BooleanResult(arguments.firstBoolean() && arguments.secondBoolean()));
             }
-            else if (!(leftValue instanceof StringResult)) {
-                qres.push(new StringResult(leftValue.toString() + ((StringResult)rightValue).getValue() ));
+            else {
+                qres.push(new DoubleResult(arguments.firstAsDouble() + arguments.secondAsDouble()));
+            }
+        }
+        else {
+            if (arguments.firstIsString || arguments.secondIsString) {
+                qres.push(new StringResult(arguments.firstAsString() + arguments.secondAsString()));
+            } else if (! (arguments.firstIsDouble || arguments.secondIsDouble)) {
+                qres.push(new IntegerResult(arguments.firstAsInteger() + arguments.secondAsInteger()));
             } else {
-                qres.push(new StringResult(((StringResult)leftValue).getValue() + ((StringResult)rightValue).getValue()));
-            }
-
-        } else {
-            try {
-                qres.push(new DoubleResult(getDouble(leftValue) + getDouble(rightValue)));
-            } catch (Exception e) {
-                e.printStackTrace();
-                // TODO: Powinniśmy zablokować wykonanie
+                qres.push(new DoubleResult(arguments.firstAsDouble() + arguments.secondAsDouble()));
             }
         }
     }
 
     @Override
     public void visitUnionExpression(IUnionExpression expr) {
-        IBagResult bagLeft = getBag(expr.getLeftExpression());
-        IBagResult bagRight = getBag(expr.getRightExpression());
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.UNION, expr);
 
-        Collection<ISingleResult> results = bagLeft.getElements();
-        results.addAll(bagRight.getElements());
+        Collection<ISingleResult> results = arguments.firstAsCollection();
+        results.addAll(arguments.secondAsCollection());
 
         qres.push(new BagResult(results));
     }
@@ -583,15 +581,16 @@ public class ConcreteASTVisitor implements ASTVisitor {
                 collection.getElements()
                     .stream()
                     .filter(x -> {
-                        IBooleanResult result;
+                        boolean result;
                         envs.push(envs.nested(x, store));
                         IAbstractQueryResult queryResult = getResult(condition);
                         if (queryResult instanceof IBagResult) {
-                            result = (IBooleanResult)((IBagResult)queryResult).getElements().iterator().next();
+                            ISingleResult firstElement = ((IBagResult) queryResult).getElements().iterator().next();
+                            result = getBoolean(firstElement);
                         }
-                        else result = (IBooleanResult) queryResult;
+                        else result = getBoolean((ISingleResult) queryResult);
                         envs.pop();
-                        return result.getValue();
+                        return result;
                     })
                     .collect(Collectors.toList())
             );
@@ -601,9 +600,9 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitXORExpression(IXORExpression expr) {
-        int left = getInteger(expr.getLeftExpression());
-        int right = getInteger(expr.getRightExpression());
-        qres.push(new IntegerResult(left ^ right));
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.XOR, expr);
+
+        qres.push(new IntegerResult(arguments.firstInteger() ^ arguments.secondInteger()));
     }
 
     @Override
@@ -697,9 +696,10 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitCountExpression(ICountExpression expr) {
-        IBagResult collection = getBag(expr.getInnerExpression());
+        expr.getInnerExpression().accept(this);
+        Arguments arguments = ArgumentResolver.getArguments(Operator.COUNT, qres.pop());
 
-        int count = collection.getElements().size();
+        int count = arguments.getElements().size();
 
         qres.push(new IntegerResult(count));
     }
@@ -758,24 +758,28 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitStructExpression(IStructExpression expr) {
-        IAbstractQueryResult result = getResult(expr.getInnerExpression());
+        IExpression innerExpression = expr.getInnerExpression();
+        IAbstractQueryResult result = getResult(innerExpression);
 
-        //qres.push(new StructResult(Arrays.asList((ISingleResult)result)));
-        if (result instanceof StructResult) {
-            qres.push(new StructResult(((StructResult) result).elements()));
+        if (innerExpression instanceof IStructExpression || innerExpression instanceof ICommaExpression) {
+            qres.push(result);
         } else {
             qres.push(new StructResult(Arrays.asList((ISingleResult)result)));
         }
     }
 
-    // Dla uproszczenia rzutujemy wszystko na double
     @Override
     public void visitSumExpression(ISumExpression expr) {
-        IBagResult collection = getBag(expr.getInnerExpression());
+        expr.getInnerExpression().accept(this);
+        Arguments arguments = ArgumentResolver.getArguments(Operator.SUM, qres.pop());
+        Collection<ISingleResult> elements = arguments.getElements();
 
         double sum = 0;
-        for (ISingleResult item : collection.getElements()){
-            sum += (double)((ISimpleResult)item).getValue();
+        for (ISingleResult item : elements){
+            if (item instanceof IReferenceResult){
+                sum += getDouble(repository.get((IReferenceResult) item));
+            }
+            else sum += getDouble(item);
         }
 
         qres.push(new DoubleResult(sum));
@@ -788,10 +792,18 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitAvgExpression(IAvgExpression expr) {
-        IBagResult collection = getBag(expr.getInnerExpression());
-        double sum = Query.aggregate(collection.getElements(), 0.0,
-                (current, x) -> current + ((DoubleResult) x).getValue());
-        double count = collection.getElements().size();
+        expr.getInnerExpression().accept(this);
+        Arguments arguments = ArgumentResolver.getArguments(Operator.AVG, qres.pop());
+        Collection<ISingleResult> elements = arguments.getElements();
+
+        double sum = 0;
+        for (ISingleResult item : elements){
+            if (item instanceof IReferenceResult){
+                sum += getDouble(repository.get((IReferenceResult) item));
+            }
+            else sum += getDouble(item);
+        }
+        double count = elements.size();
 
         qres.push(new DoubleResult(sum / count));
     }
@@ -800,10 +812,14 @@ public class ConcreteASTVisitor implements ASTVisitor {
      * ***************** Dodatkowe metody *************************
      */
 
-    // Szybkie wyciąganie wartości z wyrażenia i rzutownie na double
-    private double getDouble(IExpression expression) {
-        expression.accept(this);
-        return getDouble(qres.pop());
+    // Szybkie wyciąganie wartości z walidacją typów
+    private Arguments getArgumentsForBinaryExpression(Operator operator, IBinaryExpression expr) {
+        expr.getLeftExpression().accept(this);
+        IAbstractQueryResult leftResult = qres.pop();
+        expr.getRightExpression().accept(this);
+        IAbstractQueryResult rightResult = qres.pop();
+
+        return ArgumentResolver.getArguments(operator, leftResult, rightResult);
     }
 
     // Szybkie wyciąganie wartości z wyrażenia i rzutownie na double
@@ -846,6 +862,15 @@ public class ConcreteASTVisitor implements ASTVisitor {
     private boolean getBoolean(IExpression expression) {
         expression.accept(this);
         return (boolean)((ISimpleResult)qres.pop()).getValue();
+    }
+
+    // Szybkie rzutownie na boolean
+    private boolean getBoolean(ISingleResult result) {
+        if (result instanceof IReferenceResult){
+            IAbstractQueryResult value = repository.get((IReferenceResult) result);
+            return (boolean)((ISimpleResult) value).getValue();
+        }
+        return (boolean)((ISimpleResult)result).getValue();
     }
 
     // Szybkie ściąganie rezultatu ze stosu bez rzutowania

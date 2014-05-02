@@ -5,6 +5,7 @@ import edu.pjwstk.jps.datastore.IComplexObject;
 import edu.pjwstk.jps.datastore.IOID;
 import edu.pjwstk.jps.datastore.ISBAObject;
 import edu.pjwstk.jps.datastore.ISBAStore;
+import edu.pjwstk.jps.result.IAbstractQueryResult;
 import edu.pjwstk.jps.result.IReferenceResult;
 import edu.pjwstk.jps.result.ISingleResult;
 
@@ -45,7 +46,7 @@ public class StoreRepository implements IStoreRepository {
     }
 
     @Override
-    public Object get(IReferenceResult reference) {
+    public IAbstractQueryResult get(IReferenceResult reference) {
         return toResult(store.retrieve(reference.getOIDValue()));
     }
 
