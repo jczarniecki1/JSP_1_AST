@@ -113,23 +113,6 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
         assertEquals(resultName, "testName1");
     }
 
-    /*
-    @Test
-    public void shouldBindNameToCollection() throws Exception {
-
-        Expression e = new AsExpression(
-                new NameExpression("Person"),
-                "testName1"
-            );
-        IBinderResult[] results = getBinders(e);
-
-        IBagResult resultValue = (IBagResult)(results[0].getValue());
-        String resultName = results[0].getName();
-
-        assertEquals(resultValue.getElements().size(), 2);
-        assertEquals(resultName, "testName1");
-    } */
-
     @Test
     public void shouldBeAbleToUseBinding_SimpleExample() throws Exception {
 
@@ -150,9 +133,39 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
 
     @Test
     public void shouldBeAbleToUseBinding_1() throws Exception {
-    // Bag(FirstName As Zuzanna, LastName As Nowakowska)
+    // (Person union bag(struct("Zuzanna" as firstName, "Nowakowska" as lastName))).firstName
+
         Expression e =
             new DotExpression(
+                new StructExpression(
+                    new CommaExpression(
+                        new AsExpression(
+                            new StringExpression("Zuzanna"),
+                            "firstName"
+                        ),
+                        new AsExpression(
+                            new StringExpression("Nowakowska"),
+                            "lastName"
+                        )
+                    )
+                ),
+                new NameExpression("firstName")
+            );
+
+        e.accept(visitor);
+
+        assertEquals("\"Zuzanna\"", qres.pop().toString());
+
+        e = new DotExpression(
+                new NameExpression("Person"),
+                new NameExpression("firstName")
+            );
+
+        e.accept(visitor);
+
+        assertEquals("bag(ref(\"Marcin\"),ref(\"Jan\"))", qres.pop().toString());
+
+        e = new DotExpression(
                 new UnionExpression(
                     new NameExpression("Person"),
                     new BagExpression(
@@ -175,30 +188,42 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
 
         e.accept(visitor);
 
-        assertEquals("bag(0=ref(\"Marcin\"),1=ref(\"Jan\"),2=\"Zuzanna\")", qres.pop().toString());
+        assertEquals("bag(ref(\"Marcin\"),ref(\"Jan\"),\"Zuzanna\")", qres.pop().toString());
     }
 
     @Test
     public void shouldBeAbleToUseBinding_2() throws Exception {
-
+        // ((Person union bag(struct("Zuzanna" as firstName, 29 as age))) where age > 20).firstName
         Expression e =
             new DotExpression(
                 new WhereExpression(
                     new UnionExpression(
                         new NameExpression("Person"),
-                        new BagExpression(
-                            new StructExpression(
-                                new CommaExpression(
-                                    new AsExpression(
-                                        new StringExpression("Zuzanna"),
-                                        "firstName"
-                                    ),
-                                    new AsExpression(
-                                        new IntegerExpression(29),
-                                        "age"
+                        new UnionExpression(
+                                new StructExpression(
+                                    new CommaExpression(
+                                        new AsExpression(
+                                            new StringExpression("Zuzanna"),
+                                            "firstName"
+                                        ),
+                                        new AsExpression(
+                                            new IntegerExpression(29),
+                                            "age"
+                                        )
+                                    )
+                                ),
+                                new StructExpression(
+                                    new CommaExpression(
+                                        new AsExpression(
+                                            new StringExpression("Zuzanna2"),
+                                            "firstName"
+                                        ),
+                                        new AsExpression(
+                                            new IntegerExpression(29),
+                                            "age"
+                                        )
                                     )
                                 )
-                            )
                         )
                     ),
                     new GreaterThanExpression(
@@ -211,6 +236,6 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
 
         e.accept(visitor);
 
-        assertEquals("bag(0=ref(\"Jan\"),1=\"Zuzanna\")", qres.pop().toString());
+        assertEquals("bag(ref(\"Jan\"),\"Zuzanna\")", qres.pop().toString());
     }
 }

@@ -35,4 +35,10 @@ public class ExpressionParserTest extends AbstractParserTest {
         BooleanResult queryResult = (BooleanResult)SolveQuery("false or (true and false) or true and false");
         assertEquals(false, queryResult.getValue());
     }
+
+    @Test
+    public void shouldParseQueryWithXor(){
+        BooleanResult queryResult = (BooleanResult)SolveQuery("true xor true");
+        assertEquals(false, queryResult.getValue());
+    }
 }

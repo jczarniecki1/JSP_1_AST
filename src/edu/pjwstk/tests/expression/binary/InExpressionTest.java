@@ -40,7 +40,6 @@ public class InExpressionTest extends AbstractBinaryExpressionTest {
         IBooleanResult result = (IBooleanResult)qres.pop();
 
         assertEquals(true, result.getValue());
-
     }
 
     @Test

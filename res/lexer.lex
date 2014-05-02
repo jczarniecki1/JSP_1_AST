@@ -40,15 +40,29 @@ WHITESPACE = {LineTerminator} | [ \t\f]
 	"*"						{ return createToken(MULTIPLY			); }
 	"/"						{ return createToken(DIVIDE				); }
 	"%"						{ return createToken(MODULO				); }
+
 	"xor"					{ return createToken(XOR				); }
+	"not"					{ return createToken(NOT				); }
 	"and"					{ return createToken(AND				); }
 	"or"					{ return createToken(OR				    ); }
+
+	"in"					{ return createToken(IN				    ); }
+
+	"join"					{ return createToken(JOIN				); }
+	"union"					{ return createToken(UNION				); }
+	"intersect"				{ return createToken(INTERSECT			); }
+	"minus"					{ return createToken(MINUS_SET			); }
+
 	">"					    { return createToken(GREATER            ); }
 	">="					{ return createToken(GREATER_EQUAL      ); }
 	"<"					    { return createToken(LESS               ); }
 	"<="					{ return createToken(LESS_EQUAL         ); }
 	"=="					{ return createToken(EQUALS             ); }
 	"!="					{ return createToken(NOT_EQUALS         ); }
+
+	"."					    { return createToken(DOT                ); }
+	","					    { return createToken(COMMA              ); }
+
 	"("						{ return createToken(LEFT_ROUND_BRACKET	); }
 	")"						{ return createToken(RIGHT_ROUND_BRACKET); }
 
@@ -91,7 +105,7 @@ WHITESPACE = {LineTerminator} | [ \t\f]
 		catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
-		return createToken(STRING_LITERAL, new String(val));
+		return createToken(STRING_LITERAL, new String(val.substring(1,val.length()-1)));
 	}
 	{IDENTIFIER} {
 		String val;

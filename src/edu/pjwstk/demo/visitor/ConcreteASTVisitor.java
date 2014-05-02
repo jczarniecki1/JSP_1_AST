@@ -111,10 +111,12 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitAndExpression(IAndExpression expr) {
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.AND, expr);
+
         qres.push(new BooleanResult(
-                getBoolean(expr.getLeftExpression())
-             && getBoolean(expr.getRightExpression())
-        ));
+                arguments.firstAsBoolean()
+             && arguments.secondAsBoolean())
+        );
     }
 
     // Wykonuje prawe wyrażenie na każdym elemencie
@@ -366,58 +368,30 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitInExpression(IInExpression expr) {
-        /*
-        bag(2,3) in bag(1,2,3)	'true
-        1 in 1	                'true
-        (1,2) in (2,3)	        'false
-        (1,2) in (1,2)	        'true
-         */
-        BagResult collectionLeft;
-        BagResult collectionRight;
-        IAbstractQueryResult leftResult = getResult(expr.getLeftExpression());
-        IAbstractQueryResult rightResult = getResult(expr.getRightExpression());
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.IN, expr);
 
-        if (leftResult instanceof BagResult) {
-            collectionLeft = (BagResult)leftResult;
-        } else  {
-            collectionLeft = new BagResult(Arrays.asList((ISingleResult)leftResult));
-        }
-
-        if (rightResult instanceof BagResult) {
-            collectionRight = (BagResult)rightResult;
-        } else {
-            collectionRight = new BagResult(Arrays.asList((ISingleResult)rightResult));
-        }
-
-        Collection<ISingleResult> scope = collectionRight.getElements();
+        Collection<ISingleResult> leftCollection  = arguments.firstAsCollection();
+        Collection<ISingleResult> rightCollection = arguments.secondAsCollection();
 
         boolean isIN =
             // nieprawda, że istnieje element w lewej kolekcji, który...
-            !Query.any(collectionLeft.getElements(), x ->
+            !Query.any(leftCollection, x ->
                 // ...nie występuje w prawej kolekcji
-                !Query.any(scope, y -> {
-                    if (x instanceof IReferenceResult || y instanceof IReferenceResult){
-                        if (x instanceof IReferenceResult && y instanceof IReferenceResult) {
-                            return ((IReferenceResult)x).getOIDValue().equals(((IReferenceResult)y).getOIDValue());
-                        }
-                        else return false;
-                    }
-                    Object left = ((ISimpleResult) y).getValue();
-                    Object right = ((ISimpleResult) x).getValue();
-                    return left.equals(right);
-                }));
+                !Query.any(rightCollection, y -> x.equals(y)));
         qres.push(new BooleanResult(isIN));
     }
 
     @Override
     public void visitIntersectExpression(IIntersectExpression expr) {
-        IBagResult collectionLeft = getBag(expr.getRightExpression());
-        IBagResult collectionRight = getBag(expr.getRightExpression());
+        //Arguments arguments = getArgumentsForBinaryExpression(Operator.INTERSECT, expr);
+        // TODO: wyrzucić getArgumentsForIntersectExpression i zastąpić wersją dla IBinaryExpression
+        Arguments arguments = getArgumentsForIntersectExpression(Operator.INTERSECT, expr);
 
-        Collection<ISingleResult> scope = collectionRight.getElements();
+        Collection<ISingleResult> leftCollection  = arguments.firstAsCollection();
+        Collection<ISingleResult> rightCollection = arguments.secondAsCollection();
 
-        boolean isIntersect = Query.any(collectionLeft.getElements(), x ->
-                Query.any(scope, y -> {
+        boolean isIntersect = Query.any(leftCollection, x ->
+                Query.any(rightCollection, y -> {
                     Object left = ((ISimpleResult) y).getValue();
                     Object right = ((ISimpleResult) x).getValue();
                     if (left instanceof Integer) left = ((Integer)left).doubleValue();
@@ -429,13 +403,14 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitJoinExpression(IJoinExpression expr) {
-        IBagResult collectionLeft = getBag(expr.getLeftExpression());
-        IBagResult collectionRight = getBag(expr.getRightExpression());
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.JOIN, expr);
 
-        Collection<ISingleResult> joinResult = new ArrayList<>(collectionLeft.getElements());
-        joinResult.addAll(collectionRight.getElements());
+        Collection<ISingleResult> leftCollection  = arguments.firstAsCollection();
+        Collection<ISingleResult> rightCollection = arguments.secondAsCollection();
 
-        qres.push(new BagResult(joinResult));
+        leftCollection.addAll(rightCollection);
+
+        qres.push(new BagResult(leftCollection));
     }
 
     @Override
@@ -466,33 +441,32 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitMinusSetExpression(IMinusSetExpression expr) {
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.MINUS_SET, expr);
 
-        IBagResult collectionLeft = getBag(expr.getLeftExpression());
-        IBagResult collectionRight = getBag(expr.getRightExpression());
+        Collection<ISingleResult> scope = arguments.firstAsCollection();
+        Collection<ISingleResult> scopeToSubstract = arguments.secondAsCollection();
 
-        Collection<ISingleResult> scope = collectionLeft.getElements();
-        Collection<ISingleResult> scopeToSubstract = collectionRight.getElements();
-
-        Collection<ISingleResult> result =
-                scope
+        Collection<ISingleResult> result = scope
                 .stream()
-                .filter(x -> !Query.any(scopeToSubstract, y -> {
-                    Object left = ((ISimpleResult) y).getValue();
-                    Object right = ((ISimpleResult) x).getValue();
-                    if (left instanceof Integer) left = ((Integer)left).doubleValue();
-                    if (right instanceof Integer) right = ((Integer)right).doubleValue();
-                    return left.equals(right);
-                }))
+                .filter(x -> !Query.any(scopeToSubstract, y -> x.equals(y)))
                 .collect(Collectors.toList());
 
-        qres.push(new BagResult(result));
+        if (arguments.firstIsCollection || result.size() == 0)
+             qres.push(new BagResult(result));
+        else
+             qres.push(result.iterator().next());
     }
 
     @Override
     public void visitModuloExpression(IModuloExpression expr) {
         Arguments arguments = getArgumentsForBinaryExpression(Operator.MODULO, expr);
 
-        qres.push(new IntegerResult(arguments.firstInteger() % arguments.secondInteger()));
+        if (!arguments.mixedTypes && arguments.firstIsInteger) {
+            qres.push(new IntegerResult(arguments.firstInteger() % arguments.secondInteger()));
+        }
+        else {
+            qres.push(new DoubleResult(arguments.firstAsDouble() % arguments.secondAsDouble()));
+        }
     }
 
     @Override
@@ -521,10 +495,12 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitOrExpression(IOrExpression expr) {
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.OR, expr);
+
         qres.push(new BooleanResult(
-                getBoolean(expr.getLeftExpression())
-             || getBoolean(expr.getRightExpression())
-        ));
+            arguments.firstAsBoolean()
+         || arguments.secondAsBoolean())
+        );
     }
 
     @Override
@@ -602,7 +578,11 @@ public class ConcreteASTVisitor implements ASTVisitor {
     public void visitXORExpression(IXORExpression expr) {
         Arguments arguments = getArgumentsForBinaryExpression(Operator.XOR, expr);
 
-        qres.push(new IntegerResult(arguments.firstInteger() ^ arguments.secondInteger()));
+        qres.push(new BooleanResult(
+            arguments.firstAsBoolean()
+          ^ arguments.secondAsBoolean()
+        ));
+
     }
 
     @Override
@@ -750,11 +730,10 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitNotExpression(INotExpression expr) {
-        qres.push(new BooleanResult(
-            ! getBoolean(expr.getInnerExpression())
-        ));
-    }
+        Arguments arguments = getArgumentsForUnaryExpression(Operator.NOT, expr);
 
+        qres.push(new BooleanResult(! arguments.getBoolean()));
+    }
     @Override
     public void visitStructExpression(IStructExpression expr) {
         IExpression innerExpression = expr.getInnerExpression();
@@ -811,8 +790,26 @@ public class ConcreteASTVisitor implements ASTVisitor {
      * ***************** Dodatkowe metody *************************
      */
 
+
+    // Szybkie wyciąganie wartości z walidacją typów
+    private Arguments getArgumentsForUnaryExpression(Operator operator, IUnaryExpression expr) {
+        expr.getInnerExpression().accept(this);
+        IAbstractQueryResult result = qres.pop();
+
+        return ArgumentResolver.getArguments(operator, result);
+    }
+
     // Szybkie wyciąganie wartości z walidacją typów
     private Arguments getArgumentsForBinaryExpression(Operator operator, IBinaryExpression expr) {
+        expr.getLeftExpression().accept(this);
+        IAbstractQueryResult leftResult = qres.pop();
+        expr.getRightExpression().accept(this);
+        IAbstractQueryResult rightResult = qres.pop();
+
+        return ArgumentResolver.getArguments(operator, leftResult, rightResult);
+    }
+    // Szybkie wyciąganie wartości z walidacją typów
+    private Arguments getArgumentsForIntersectExpression(Operator operator, IIntersectExpression expr) {
         expr.getLeftExpression().accept(this);
         IAbstractQueryResult leftResult = qres.pop();
         expr.getRightExpression().accept(this);

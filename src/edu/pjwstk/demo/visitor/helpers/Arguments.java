@@ -23,6 +23,9 @@ public class Arguments {
     public boolean isString;
     public boolean firstIsString;
     public boolean secondIsString;
+    public boolean isCollection;
+    public boolean firstIsCollection;
+    public boolean secondIsCollection;
 
     //
     // Constructors
@@ -35,6 +38,7 @@ public class Arguments {
         else if (first instanceof IDoubleResult) isDouble = true;
         else if (first instanceof IBooleanResult) isBoolean = true;
         else if (first instanceof IStringResult) isString = true;
+        else if (first instanceof ICollectionResult) isCollection = true;
     }
 
     public Arguments(IAbstractQueryResult first, IAbstractQueryResult second) {
@@ -46,16 +50,19 @@ public class Arguments {
         else if (first instanceof IDoubleResult) firstIsDouble = true;
         else if (first instanceof IBooleanResult) firstIsBoolean = true;
         else if (first instanceof IStringResult) firstIsString = true;
+        else if (first instanceof ICollectionResult) firstIsCollection = true;
         if (second instanceof IIntegerResult) secondIsInteger = true;
         else if (second instanceof IDoubleResult) secondIsDouble = true;
         else if (second instanceof IBooleanResult) secondIsBoolean = true;
         else if (second instanceof IStringResult) secondIsString = true;
+        else if (second instanceof ICollectionResult) secondIsCollection = true;
 
         mixedTypes = ! (
              (firstIsInteger && secondIsInteger)
           || (firstIsDouble  && secondIsDouble)
           || (firstIsBoolean && secondIsBoolean)
           || (firstIsString  && secondIsString)
+          || (firstIsCollection  && secondIsCollection)
         );
     }
 
@@ -168,13 +175,26 @@ public class Arguments {
         if (second instanceof IStringResult) return ((IStringResult) second).getValue();
         else return second.toString();
     }
+
+    public boolean firstAsBoolean() {
+        if (first instanceof IBooleanResult) return firstBoolean();
+        else if (first instanceof IIntegerResult) return ((IIntegerResult) first).getValue() > 0;
+        else return false;
+    }
+    public boolean secondAsBoolean() {
+        if (second instanceof IBooleanResult) return secondBoolean();
+        else if (second instanceof IIntegerResult) return ((IIntegerResult) second).getValue() > 0;
+        else return false;
+    }
     
     public Collection<ISingleResult> firstAsCollection() {
         if (first instanceof ICollectionResult) return firstCollection();
+//        else if (first instanceof IStructResult) return ((IStructResult) first).elements();
         else return new ArrayList<>(Arrays.asList((ISingleResult) first));
     }
     public Collection<ISingleResult> secondAsCollection() {
         if (second instanceof ICollectionResult) return secondCollection();
+//        else if (second instanceof IStructResult) return ((IStructResult) second).elements();
         else return new ArrayList<>(Arrays.asList((ISingleResult)second));
     }
 

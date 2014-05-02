@@ -3,12 +3,13 @@ package edu.pjwstk.demo.result;
 import edu.pjwstk.jps.result.IBagResult;
 import edu.pjwstk.jps.result.ISingleResult;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 
 public class BagResult implements IBagResult{
 
-    private Collection<ISingleResult> values;
+    private Collection<ISingleResult> values = new ArrayList<>();
 
     public BagResult() {
         // pusty bag

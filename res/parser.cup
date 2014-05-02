@@ -9,6 +9,7 @@ import java_cup.runtime.Symbol;
 import edu.pjwstk.demo.expression.*;
 import edu.pjwstk.demo.expression.terminal.*;
 import edu.pjwstk.demo.expression.binary.*;
+import edu.pjwstk.demo.expression.unary.*;
 
 parser code {:
 	public Lexer lexer;
@@ -43,8 +44,15 @@ terminal String DIVIDE;
 terminal String MODULO;
 terminal String XOR;
 
+terminal String IN;
+terminal String NOT;
 terminal String AND;
 terminal String OR;
+
+terminal String JOIN;
+terminal String UNION;
+terminal String INTERSECT;
+terminal String MINUS_SET;
 
 terminal String GREATER;
 terminal String GREATER_EQUAL;
@@ -52,6 +60,9 @@ terminal String LESS;
 terminal String LESS_EQUAL;
 terminal String NOT_EQUALS;
 terminal String EQUALS;
+
+terminal String DOT;
+terminal String COMMA;
 
 terminal String LEFT_ROUND_BRACKET;
 terminal String RIGHT_ROUND_BRACKET;
@@ -61,12 +72,15 @@ non terminal Expression expr;
 
 //priority
 precedence left OR;
-precedence left AND;
+precedence left AND, XOR;
+precedence left NOT, IN;
 precedence left NOT_EQUALS, GREATER, GREATER_EQUAL, LESS, LESS_EQUAL;
 precedence left EQUALS;
 precedence left PLUS, MINUS;
-precedence left MULTIPLY, DIVIDE;
-precedence left XOR, MODULO;
+precedence left MULTIPLY, DIVIDE, MODULO;
+precedence left JOIN, UNION, INTERSECT, MINUS_SET;
+precedence left DOT;
+precedence left COMMA;
 precedence left LEFT_ROUND_BRACKET, RIGHT_ROUND_BRACKET;
 
 start with goal;
@@ -74,24 +88,37 @@ start with goal;
 goal ::= expr:e		{: RESULT = e; parser.setResult(e); :} ;
 
 expr  ::=
-		expr:e1 PLUS:o      expr:e2	{: RESULT = new PlusExpression(e1, e2);         :}
-	| 	expr:e1 MINUS:o     expr:e2	{: RESULT = new MinusExpression(e1, e2);        :}
-	| 	expr:e1 MULTIPLY:o 	expr:e2	{: RESULT = new MultiplyExpression(e1, e2);     :}
-	| 	expr:e1 DIVIDE:o	expr:e2	{: RESULT = new DivideExpression(e1, e2);       :}
-	| 	expr:e1 MODULO:o	expr:e2	{: RESULT = new ModuloExpression(e1, e2);       :}
-	| 	expr:e1 XOR:o	    expr:e2	{: RESULT = new XORExpression(e1, e2);          :}
-	| 	expr:e1 AND:o	    expr:e2	{: RESULT = new AndExpression(e1, e2);          :}
-	| 	expr:e1 OR:o	    expr:e2	{: RESULT = new OrExpression(e1, e2);           :}
-	| 	expr:e1 GREATER:o           expr:e2	{: RESULT = new GreaterThanExpression(e1, e2);          :}
-	| 	expr:e1 GREATER_EQUAL:o	    expr:e2	{: RESULT = new GreaterOrEqualThanExpression(e1, e2);   :}
-	| 	expr:e1 LESS:o              expr:e2	{: RESULT = new LessThanExpression(e1, e2);             :}
-	| 	expr:e1 LESS_EQUAL:o	    expr:e2	{: RESULT = new LessOrEqualThanExpression(e1, e2);      :}
-	| 	expr:e1 NOT_EQUALS:o        expr:e2	{: RESULT = new NotEqualsExpression(e1, e2);            :}
-	| 	expr:e1 EQUALS:o	        expr:e2	{: RESULT = new EqualsExpression(e1, e2);               :}
-	| 	INTEGER_LITERAL:o           {: RESULT = new IntegerExpression((Integer)o);  :}
-	| 	DOUBLE_LITERAL:o            {: RESULT = new DoubleExpression((Double)o);    :}
-	| 	BOOLEAN_LITERAL:o           {: RESULT = new BooleanExpression((Boolean)o);  :}
-	| 	STRING_LITERAL:o            {: RESULT = new StringExpression((String)o);    :}
-	| 	IDENTIFIER:o                {: RESULT = new NameExpression((String)o);      :}
+		expr:e1 PLUS:o              expr:e2	{: RESULT = new PlusExpression              (e1, e2); :}
+	| 	expr:e1 MINUS:o             expr:e2	{: RESULT = new MinusExpression             (e1, e2); :}
+	| 	expr:e1 MULTIPLY:o 	        expr:e2	{: RESULT = new MultiplyExpression          (e1, e2); :}
+	| 	expr:e1 DIVIDE:o	        expr:e2	{: RESULT = new DivideExpression            (e1, e2); :}
+	| 	expr:e1 MODULO:o	        expr:e2	{: RESULT = new ModuloExpression            (e1, e2); :}
+
+	| 	expr:e1 OR:o	            expr:e2	{: RESULT = new OrExpression                (e1, e2); :}
+	| 	expr:e1 AND:o	            expr:e2	{: RESULT = new AndExpression               (e1, e2); :}
+	| 	expr:e1 XOR:o	            expr:e2	{: RESULT = new XORExpression               (e1, e2); :}
+	| 	expr:e1 IN:o	            expr:e2	{: RESULT = new InExpression                (e1, e2); :}
+	| 	NOT:o	                    expr:e1	{: RESULT = new NotExpression               (e1);     :}
+
+	| 	expr:e1 JOIN:o	            expr:e2	{: RESULT = new JoinExpression              (e1, e2); :}
+	| 	expr:e1 UNION:o	            expr:e2	{: RESULT = new UnionExpression             (e1, e2); :}
+	| 	expr:e1 INTERSECT:o         expr:e2	{: RESULT = new IntersectExpression         (e1, e2); :}
+	| 	expr:e1 MINUS_SET:o         expr:e2	{: RESULT = new MinusSetExpression          (e1, e2); :}
+
+	| 	expr:e1 GREATER:o           expr:e2	{: RESULT = new GreaterThanExpression       (e1, e2); :}
+	| 	expr:e1 GREATER_EQUAL:o	    expr:e2	{: RESULT = new GreaterOrEqualThanExpression(e1, e2); :}
+	| 	expr:e1 LESS:o              expr:e2	{: RESULT = new LessThanExpression          (e1, e2); :}
+	| 	expr:e1 LESS_EQUAL:o	    expr:e2	{: RESULT = new LessOrEqualThanExpression   (e1, e2); :}
+	| 	expr:e1 NOT_EQUALS:o        expr:e2	{: RESULT = new NotEqualsExpression         (e1, e2); :}
+	| 	expr:e1 EQUALS:o	        expr:e2	{: RESULT = new EqualsExpression            (e1, e2); :}
+
+	| 	INTEGER_LITERAL:o           {: RESULT = new IntegerExpression   ((Integer)o);  :}
+	| 	DOUBLE_LITERAL:o            {: RESULT = new DoubleExpression    ((Double)o);   :}
+	| 	BOOLEAN_LITERAL:o           {: RESULT = new BooleanExpression   ((Boolean)o);  :}
+	| 	STRING_LITERAL:o            {: RESULT = new StringExpression    ((String)o);   :}
+	| 	IDENTIFIER:o                {: RESULT = new NameExpression      ((String)o);   :}
+
+	| 	expr:e1 DOT:o	            expr:e2	{: RESULT = new DotExpression               (e1, e2); :}
+	| 	expr:e1 COMMA:o	            expr:e2	{: RESULT = new CommaExpression             (e1, e2); :}
 	|	LEFT_ROUND_BRACKET:o expr:e1 RIGHT_ROUND_BRACKET {: RESULT = e1; :}
 	;

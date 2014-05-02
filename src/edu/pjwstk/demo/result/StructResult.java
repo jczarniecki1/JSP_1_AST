@@ -14,13 +14,44 @@ public class StructResult extends SingleResult implements IStructResult {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof StructResult)) return false;
+
+        StructResult that = (StructResult) o;
+
+        if (values != null ? !values.equals(that.values) : that.values != null) return false;
+
+        if (this.elements().size() != that.elements().size()) return false;
+
+        if (this.elements()
+                .stream()
+                .anyMatch(x -> ! that.elements()
+                                     .stream()
+                                     .anyMatch(y -> y.equals(x)))) return false;
+        if (that.elements()
+                .stream()
+                .anyMatch(x -> ! this.elements()
+                                     .stream()
+                                     .anyMatch(y -> y.equals(x)))) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return values != null ? values.hashCode() : 0;
+    }
+
+    @Override
     public String toString() {
-        int index=0;
+        int index = 0;
         String textResult = "struct(";
         if (values != null) {
             for (ISingleResult innerResult : values) {
 
                 textResult += (index > 0 ? "," : "") + innerResult;
+
                 index++;
             }
         }

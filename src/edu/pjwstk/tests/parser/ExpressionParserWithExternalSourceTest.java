@@ -22,21 +22,33 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
     }
 
     @Test
-    public void shouldSolveQueryThatAccessStringValueFromExternalSource2(){
+    public void shouldSolveQueryThatAccessStringValueFromExternalSource(){
         IAbstractQueryResult result = SolveQuery("stringValue");
         assertEquals("ref(\"Ala\")", result.toString());
     }
 
     @Test
-    public void shouldSolveQueryThatAccessBooleanValueFromExternalSource2(){
+    public void shouldSolveQueryThatAccessStringValueFromExternalSource2(){
+        IAbstractQueryResult result = SolveQuery("stringValue == \"Ala\"");
+        assertEquals("true", result.toString());
+    }
+
+    @Test
+    public void shouldSolveQueryThatAccessBooleanValueFromExternalSource(){
         IAbstractQueryResult result = SolveQuery("booleanValue");
         assertEquals("ref(true)", result.toString());
     }
 
     @Test
+    public void shouldSolveQueryThatAccessBooleanValueFromExternalSource2(){
+        IAbstractQueryResult result = SolveQuery("booleanValue or false");
+        assertEquals("true", result.toString());
+    }
+
+    @Test
     public void shouldSolveAllQueriesFromGivenFile(){
 
-        int allCount = 0, passedCount = 0;
+        int allCount = 0, successCount = 0, parsedCount = 0;
         String filePath = "res/Zapytania_testowe_JPS.txt";
 
 
@@ -51,6 +63,7 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
 
             String query = "";
             String expected = "";
+            IAbstractQueryResult result = null;
 
             while(line != null){
                 String[] lineArgs = line.split("[\t]");
@@ -60,10 +73,11 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
                     query = lineArgs[0];
                     expected = lineArgs[1];
 
-                    IAbstractQueryResult result = SolveQuery(query);
+                    result = SolveQuery(query);
+                    parsedCount++;
                     parsed = true;
                     if (expected.equals(result.toString())){
-                        passedCount++;
+                        successCount++;
                         solved = true;
                     };
                 }
@@ -72,8 +86,16 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
                 }
 
                 line = reader.readLine();
+                boolean failed = parsed && !solved;
 
-                Log("[ "+allCount+" ]: "+query+getSpace(40-query.length())+" | "+(parsed ? "parsed" : "") + " | " +(solved ? "solved" : "") + "\n");
+                Log("[ "+allCount+" ]: "
+                        + query+getSpace(40-query.length())
+                        + (parsed ? " | parsed" : "")
+                        + (solved ? " | ok" : "")
+                        + (failed ? " | failed\n" +
+                                "\texpected: "+ expected+"\n" +
+                                "\tactual:   "+ result.toString() : "")
+                        + "\n");
             }
 
         } catch (FileNotFoundException ex) {
@@ -87,8 +109,10 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
             } catch (IOException ex) {}
         }
 
-        if (passedCount < allCount){
-            fail("Status: passed "+passedCount+" of "+allCount +"\n\n"+ testlog);
+        if (successCount < allCount){
+            fail("\n\nStatus: \n" +
+                    "\tparsed "+parsedCount+" of "+allCount +"\n"+
+                    "\tsolved "+successCount+" of "+allCount +"\n\n"+ testlog);
         }
     }
 

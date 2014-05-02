@@ -16,11 +16,6 @@ public class ArgumentTypeToOperatorMapper {
         AsCollectionOperator(Operator.SUM);
         AsCollectionOperator(Operator.COUNT);
 
-        AsCollectionOperator(Operator.MINUS_SET);
-        AsCollectionOperator(Operator.INTERSECT);
-        AsCollectionOperator(Operator.UNION);
-        AsCollectionOperator(Operator.JOIN);
-
         // Operatory dowolnych pojedynczych wartościach
         AsSingleValueOperator(Operator.EQUALS);
         AsSingleValueOperator(Operator.NOT_EQUALS);
@@ -30,14 +25,13 @@ public class ArgumentTypeToOperatorMapper {
         AsBooleanOperator(Operator.AND);
         AsBooleanOperator(Operator.OR);
         AsBooleanOperator(Operator.NOT);
+        AsBooleanOperator(Operator.XOR);
 
         // Operatory arytmetyczne
         AsNumberOperator(Operator.MINUS);
         AsNumberOperator(Operator.MULTIPLY);
         AsNumberOperator(Operator.DIVIDE);
-
-        AsIntegerOperator(Operator.XOR);
-        AsIntegerOperator(Operator.MODULO);
+        AsNumberOperator(Operator.MODULO);
 
         // Operatory porównania
         AsNumberOperator(Operator.GREATER);
@@ -47,13 +41,14 @@ public class ArgumentTypeToOperatorMapper {
 
 
         // Dowolne argumenty przyjmują:
+        //   IN
         //   MIN, MAX
         //   AS, GROUP_AS
         // ? EXISTS, UNIQUE
         //   BAG, STRUCT, COMMA
+        //   UNION, INTERSECT, MINUS_SET, JOIN
         //
         // Specialne traktowanie:
-        //   IN
         //   DOT, WHERE
         //   FOR_ALL, FOR_ANY
         //   CLOSE_BY, ORDER_BY
@@ -65,7 +60,7 @@ public class ArgumentTypeToOperatorMapper {
 
         List<ArgumentType> validArguments = ArgumentTypeMapping.get(operator);
 
-        return validArguments != null && validArguments.contains(type);
+        return validArguments == null || validArguments.contains(type);
     }
 
     private static void map(Operator o, ArgumentType type) {
@@ -81,6 +76,7 @@ public class ArgumentTypeToOperatorMapper {
     private static void AsCollectionOperator(Operator o) {
         map(o, ArgumentType.BAG);
         map(o, ArgumentType.SEQUENCE);
+        map(o, ArgumentType.STRUCT);
     }
 
     private static void AsSingleValueOperator(Operator o) {
@@ -93,13 +89,6 @@ public class ArgumentTypeToOperatorMapper {
 
     private static void AsBooleanOperator(Operator o) {
         map(o, ArgumentType.BOOLEAN);
-    }
-
-    private static void AsStringOperator(Operator o) {
-        map(o, ArgumentType.STRING);
-    }
-
-    private static void AsIntegerOperator(Operator o) {
         map(o, ArgumentType.INTEGER);
     }
 
