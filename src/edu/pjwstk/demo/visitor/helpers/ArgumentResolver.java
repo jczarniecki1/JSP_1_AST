@@ -54,7 +54,9 @@ public final class ArgumentResolver {
     //
     private static void throwExceptionIfArgumentNotSupported(Operator operator, IAbstractQueryResult argument)
             throws RuntimeException {
+
         ArgumentType type = getType(argument);
+
         if (!ArgumentTypeToOperatorMapper.isValid(operator, type)) {
             throw new RuntimeException("Argument " + type + " for " + operator + " operator not supported.");
         }

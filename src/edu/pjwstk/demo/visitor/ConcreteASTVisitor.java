@@ -335,7 +335,9 @@ public class ConcreteASTVisitor implements ASTVisitor {
     public void visitEqualsExpression(IEqualsExpression expr) {
         Arguments arguments = getArgumentsForBinaryExpression(Operator.EQUALS, expr);
 
-        qres.push(new BooleanResult(arguments.firstValue().equals(arguments.secondValue())));
+        boolean equals = arguments.firstValue().equals(arguments.secondValue());
+
+        qres.push(new BooleanResult(equals));
     }
 
     @Override
@@ -778,12 +780,12 @@ public class ConcreteASTVisitor implements ASTVisitor {
     @Override
     public void visitAvgExpression(IAvgExpression expr) {
 
-        // Zawssze zwraca Double
+        // Zawsze zwraca Double
 
         Arguments arguments = getArgumentsForUnaryExpression(Operator.AVG, expr);
         Collection<ISingleResult> elements = arguments.getAsCollection();
 
-        if (elements.size() == 0) {
+        if (elements.isEmpty()) {
             qres.push(BagResult.Empty());
             return;
         }
