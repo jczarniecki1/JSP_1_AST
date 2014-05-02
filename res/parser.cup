@@ -92,7 +92,7 @@ precedence left XOR;
 precedence left EQUALS, NOT_EQUALS, GREATER, GREATER_EQUAL, LESS, LESS_EQUAL;
 precedence left PLUS, MINUS;
 precedence left MULTIPLY, DIVIDE, MODULO;
-precedence left SUM, COUNT, AVG, MIN, MAX; INTERSECT, MINUS_SET;
+precedence left SUM, COUNT, AVG, MIN, MAX, INTERSECT, MINUS_SET;
 precedence left DOT;
 precedence left BAG, STRUCT;
 precedence left LEFT_ROUND_BRACKET, RIGHT_ROUND_BRACKET;
