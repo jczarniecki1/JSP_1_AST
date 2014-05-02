@@ -29,11 +29,11 @@ import java.util.stream.Collectors;
      - odpowiada za wykonywanie wyrażeń (Expressions) i wrzucenie wyniku na stos (QRes)
      - implementacje wyrażeń nie mają żadnej logiki, są tylko "pojemnikami" na inne wyrażenia
 
-    Postęp: 40/43 (86%)
+    Postęp: 40/43 (93%)
 
     TODO:
      * OrderBy, CloseBy, Unique
-     * Fixes in Comma, Join, Exists
+     * Fixes in Comma, Join
  */
 
 public class ConcreteASTVisitor implements ASTVisitor {
@@ -297,10 +297,12 @@ public class ConcreteASTVisitor implements ASTVisitor {
         }
     }
 
-    // Wykonanie prawego wyrażenia na każdym elemencie kolekcji wejsciowej
-    // daje kolekcję wynikową
     @Override
     public void visitDotExpression(IDotExpression expr) {
+
+        // Wykonanie prawego wyrażenia na każdym elemencie kolekcji wejsciowej
+        // daje kolekcję wynikową
+
         IExpression selection = expr.getRightExpression();
         IBagResult collection;
 
