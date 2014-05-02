@@ -30,6 +30,9 @@ public class ENVSFrame implements IENVSFrame {
     }
 
     private Collection<IENVSBinder> initElements(IAbstractQueryResult x, ISBAStore store) {
+
+        // Przydziela odpowiednią akcję względem typu analizowanego obiektu
+
              if (x instanceof IReferenceResult) return initElements((IReferenceResult)x, store);
         else if (x instanceof IBinderResult) return initElements((IBinderResult)x);
         else if (x instanceof IStructResult) return initElements((IStructResult)x, store);
@@ -37,10 +40,14 @@ public class ENVSFrame implements IENVSFrame {
     }
 
     private Collection<IENVSBinder> initElements(IReferenceResult reference, ISBAStore store) {
+
         ArrayList<IENVSBinder> newElements = new ArrayList<>();
         ISBAObject object = store.retrieve(reference.getOIDValue());
 
         if (object instanceof IComplexObject){
+
+            // Jeśli referencja na obiekt złożony, to dodaje Bindery z referencjami na jego pola
+
             newElements.addAll(
                 ((IComplexObject) object).getChildOIDs()
                     .stream()
@@ -54,6 +61,9 @@ public class ENVSFrame implements IENVSFrame {
             );
         }
         else if (object instanceof IReferenceResult){
+
+            // Jeśli referencja na referencję, to dodaje Bindery z jedną referencją
+
             IReferenceResult innerReference = (IReferenceResult) object;
             newElements.add(
                 new ENVSBinder(
@@ -67,6 +77,9 @@ public class ENVSFrame implements IENVSFrame {
     }
 
     private Collection<IENVSBinder> initElements(IBinderResult binder) {
+
+        // Jeśli Binder, to dodaje taki sam ENVSBinder
+
         ArrayList<IENVSBinder> newElements = new ArrayList<>(1);
         newElements.add(
             new ENVSBinder(
@@ -78,12 +91,19 @@ public class ENVSFrame implements IENVSFrame {
     }
 
     private Collection<IENVSBinder> initElements(IStructResult result, ISBAStore store) {
+
+        // Jeśli struktura, to wykonaj nested (czyli initElements) na każdym z jej elementów
+        //  - flatMap scala wszyskie ENVSBindery w jedną listę do ramki
+
         return result.elements()
             .stream()
             .flatMap(x -> initElements(x, store).stream())
             .collect(Collectors.toList());
     }
 
+    //
+    // Skróty do wyciągania nazw dla ENVSBinderów
+    //
     private String retriveName(IReferenceResult reference, ISBAStore store) {
         return store.retrieve(reference.getOIDValue()).getName();
     }

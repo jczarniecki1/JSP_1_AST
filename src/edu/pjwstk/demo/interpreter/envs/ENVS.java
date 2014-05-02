@@ -19,21 +19,22 @@ public class ENVS implements IENVS {
 
     @Override
     public void init(IOID rootOID, ISBAStore store) {
+
+        // Inicjuje stos i dodaje pierwszą ramkę
+        //  - pierwsza ramka składa się z ENVSBinderów do dzieci elementu "entry"
+        //  - każdy Binder ma tylko referencję na obiekt
+
         stack = new Stack<>();
 
         IComplexObject entry = (IComplexObject)store.retrieve(rootOID);
 
         Collection<IENVSBinder> frameCollection =
             entry.getChildOIDs()
-            .stream()
-            .map(x -> {
-                ISBAObject object = store.retrieve(x);
-                return new ENVSBinder(object.getName(), new ReferenceResult(x));
-            })
-            .collect(Collectors.toList());
+                .stream()
+                .map(childId -> getENVSBinder(store, childId))
+                .collect(Collectors.toList());
 
-        IENVSFrame frame = new ENVSFrame(frameCollection);
-        push(frame);
+        push(new ENVSFrame(frameCollection));
     }
 
     @Override
@@ -48,35 +49,74 @@ public class ENVS implements IENVS {
 
     @Override
     public IBagResult bind(String name) {
-        List<ISingleResult> elements = new ArrayList<>();
-        IENVSFrame firstFrame = null;
+
+        // Szuka elementu na stosie środowiskowym po nazwie
+        //  - najpierw znajduje poziom (pierwszą pasującą ramkę)
+        //  - potem wybiera pasujące elementy
+
+        IENVSFrame frame = findFrameForName(name);
+
+        if (frame == null) {
+            return BagResult.Empty();
+        }
+        else {
+            Collection<ISingleResult> results = getResultsFromFrame(name, frame);
+            return new BagResult(results);
+        }
+    }
+
+    @Override
+    public IENVSFrame nested(IAbstractQueryResult result, ISBAStore store) {
+
+        // Ładowanie obiektu do ramki
+        //  - cała logika w konstruktorze ramki
+
+        return new ENVSFrame(result, store);
+    }
+
+    /*
+     * ***************** Dodatkowe metody *************************
+     */
+
+    private ENVSBinder getENVSBinder(ISBAStore store, IOID id) {
+
+        // Zamiana id na ENVSBinder
+
+        ISBAObject object = store.retrieve(id);
+        ReferenceResult objectRef = new ReferenceResult(id);
+        return new ENVSBinder(object.getName(), objectRef);
+    }
+
+    private IENVSFrame findFrameForName(String name) {
+
+        // Szukanie ramki, na której jest binder do podanej nazwy
 
         int limit = stack.size();
-        for (int i=0; i < limit; i++) {
+        for (int i = 0; i < limit; i++) {
             IENVSFrame currentFrame = stack.get(i);
             if (currentFrame.getElements()
                 .stream()
                 .anyMatch(x -> x.getName().equals(name)))
             {
-                firstFrame = currentFrame;
+                return currentFrame;
             }
         }
+        return null;
+    }
 
-        if (firstFrame != null) {
-            Collection<IENVSBinder> elementsInFrame = firstFrame.getElements();
+    private List<ISingleResult> getResultsFromFrame(String name, IENVSFrame frame) {
 
-            for (IENVSBinder binder : elementsInFrame) {
-                if (binder.getName().equals(name)) {
-                    elements.add((ISingleResult) binder.getValue());
-                }
+        // Pobranie wartości binderów z ramki po nazwie
+
+        Collection<IENVSBinder> elementsInFrame = frame.getElements();
+        List<ISingleResult> results = new ArrayList<>();
+
+        for (IENVSBinder binder : elementsInFrame) {
+            if (binder.getName().equals(name)) {
+                results.add((ISingleResult) binder.getValue());
             }
         }
-
-        return new BagResult(elements);
+        return results;
     }
 
-    @Override
-    public IENVSFrame nested(IAbstractQueryResult result, ISBAStore store) {
-        return new ENVSFrame(result, store);
-    }
 }
