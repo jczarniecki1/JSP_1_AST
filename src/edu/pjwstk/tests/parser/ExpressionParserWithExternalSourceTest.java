@@ -85,7 +85,7 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
                     if (expected.equals(result.toString())){
                         successCount++;
                         solved = true;
-                    };
+                    }
                 }
                 catch (Throwable e){
                     //e.printStackTrace();
@@ -94,8 +94,8 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
                 line = reader.readLine();
                 boolean failed = parsed && !solved;
 
-                Log("[ "+allCount+" ]: "
-                        + query+getSpace(40-query.length())
+                Log("[ "+String.format("%3d",allCount)+" ]: "
+                        + query+getSpace(53-query.length())
                         + (parsed ? " | parsed" : "")
                         + (solved ? " | ok" : "")
                         + (failed ? " | failed\n" +
@@ -110,9 +110,10 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
             fail("Error while reading the file");
         } finally {
             try {
-                reader.close();
-                inputStream.close();
-            } catch (IOException ex) {}
+                if (reader != null) reader.close();
+                if (inputStream != null) inputStream.close();
+            }
+            catch (IOException ignored) {}
         }
 
         if (successCount < allCount){
