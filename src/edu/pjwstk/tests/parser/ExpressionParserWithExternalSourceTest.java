@@ -23,8 +23,8 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
     //
     @Test
     public void shouldSolveQueryThatIsCurrentlyBeingFixed(){
-        IAbstractQueryResult result = SolveQuery("emp.book.author");
-        assertEquals("bag(ref(\"Juliusz Słowacki\"),ref(\"Adam Mickiewicz\"),ref(\"Aleksander Dumas (syn)\"))", result.toString());
+        IAbstractQueryResult result = SolveQuery("bag(\"Ala\",2,3) minus bag(2,3.40)");
+        assertEquals("", result.toString());
     }
 
     //

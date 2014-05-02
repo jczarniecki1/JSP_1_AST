@@ -97,7 +97,7 @@ public class ENVSFrame implements IENVSFrame {
 
         return result.elements()
             .stream()
-            .flatMap(x -> initElements(x, store).stream())
+            .flatMap(structElement -> initElements(structElement, store).stream())
             .collect(Collectors.toList());
     }
 

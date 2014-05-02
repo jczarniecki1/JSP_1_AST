@@ -44,6 +44,7 @@ terminal String DIVIDE;
 terminal String MODULO;
 terminal String XOR;
 
+terminal String BAG;
 terminal String IN;
 terminal String NOT;
 terminal String AND;
@@ -90,6 +91,7 @@ precedence left MULTIPLY, DIVIDE, MODULO;
 precedence left JOIN, UNION, INTERSECT, MINUS_SET;
 precedence left DOT;
 precedence left COMMA;
+precedence left BAG;
 precedence left LEFT_ROUND_BRACKET, RIGHT_ROUND_BRACKET;
 
 start with goal;
@@ -114,6 +116,8 @@ expr  ::=
 	| 	expr:e1 XOR:o	            expr:e2	{: RESULT = new XORExpression               (e1, e2); :}
 	| 	expr:e1 IN:o	            expr:e2	{: RESULT = new InExpression                (e1, e2); :}
 	| 	NOT:o	                    expr:e1	{: RESULT = new NotExpression               (e1);     :}
+
+	| 	BAG:o	                    expr:e1	{: RESULT = new BagExpression               (e1);     :}
 
 	| 	expr:e1 WHERE:o	            expr:e2	{: RESULT = new WhereExpression             (e1, e2); :}
 	| 	expr:e1 JOIN:o	            expr:e2	{: RESULT = new JoinExpression              (e1, e2); :}

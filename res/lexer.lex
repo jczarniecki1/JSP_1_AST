@@ -46,6 +46,7 @@ WHITESPACE = {LineTerminator} | [ \t\f]
 	"and"					{ return createToken(AND				); }
 	"or"					{ return createToken(OR				    ); }
 
+	"bag"					{ return createToken(BAG				); }
 	"in"					{ return createToken(IN				    ); }
 	"where"					{ return createToken(WHERE				); }
 

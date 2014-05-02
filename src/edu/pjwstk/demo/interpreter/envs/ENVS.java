@@ -28,13 +28,13 @@ public class ENVS implements IENVS {
 
         IComplexObject entry = (IComplexObject)store.retrieve(rootOID);
 
-        Collection<IENVSBinder> frameCollection =
+        Collection<IENVSBinder> binders =
             entry.getChildOIDs()
                 .stream()
                 .map(childId -> getENVSBinder(store, childId))
                 .collect(Collectors.toList());
 
-        push(new ENVSFrame(frameCollection));
+        push(new ENVSFrame(binders));
     }
 
     @Override
