@@ -29,8 +29,7 @@ public class BagResult implements IBagResult{
         if (values != null) {
             for (ISingleResult innerResult : values) {
 
-                textResult += (textResult.length() > 4 ? "," : "")
-                        + index + "=" + innerResult;
+                textResult += (index > 0 ? "," : "") + innerResult;
                 index++;
             }
         }

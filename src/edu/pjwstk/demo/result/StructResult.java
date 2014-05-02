@@ -1,6 +1,5 @@
 package edu.pjwstk.demo.result;
 
-import edu.pjwstk.jps.result.IAbstractQueryResult;
 import edu.pjwstk.jps.result.ISingleResult;
 import edu.pjwstk.jps.result.IStructResult;
 
@@ -8,22 +7,22 @@ import java.util.List;
 
 public class StructResult extends SingleResult implements IStructResult {
 
-    private List<ISingleResult> elementsOfStruct;
+    private List<ISingleResult> values;
 
     public StructResult(List<ISingleResult> elements) {
-        elementsOfStruct = elements;
+        values = elements;
     }
-
-
 
     @Override
     public String toString() {
+        int index=0;
         String textResult = "struct(";
-        for (IAbstractQueryResult innerResult : elementsOfStruct){
-            if (textResult.length()>7) {
-                textResult += ",";
+        if (values != null) {
+            for (ISingleResult innerResult : values) {
+
+                textResult += (index > 0 ? "," : "") + innerResult;
+                index++;
             }
-            textResult += innerResult;
         }
         textResult += ")";
         return textResult;
@@ -31,6 +30,6 @@ public class StructResult extends SingleResult implements IStructResult {
 
     @Override
     public List<ISingleResult> elements() {
-        return elementsOfStruct;
+        return values;
     }
 }

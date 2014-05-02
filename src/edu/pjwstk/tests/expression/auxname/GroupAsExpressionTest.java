@@ -48,7 +48,7 @@ public class GroupAsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
                 "x"
         );
         e.accept(visitor);
-        assertEquals("binder(name=\"x\",value=bag(0=1,1=2))",qres.pop().toString());
+        assertEquals("<x,bag(1,2)>",qres.pop().toString());
 
     }
 

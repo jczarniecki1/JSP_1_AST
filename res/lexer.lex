@@ -39,8 +39,16 @@ WHITESPACE = {LineTerminator} | [ \t\f]
 	"-"						{ return createToken(MINUS				); }
 	"*"						{ return createToken(MULTIPLY			); }
 	"/"						{ return createToken(DIVIDE				); }
+	"%"						{ return createToken(MODULO				); }
+	"xor"					{ return createToken(XOR				); }
 	"and"					{ return createToken(AND				); }
 	"or"					{ return createToken(OR				    ); }
+	">"					    { return createToken(GREATER            ); }
+	">="					{ return createToken(GREATER_EQUAL      ); }
+	"<"					    { return createToken(LESS               ); }
+	"<="					{ return createToken(LESS_EQUAL         ); }
+	"=="					{ return createToken(EQUALS             ); }
+	"!="					{ return createToken(NOT_EQUALS         ); }
 	"("						{ return createToken(LEFT_ROUND_BRACKET	); }
 	")"						{ return createToken(RIGHT_ROUND_BRACKET); }
 

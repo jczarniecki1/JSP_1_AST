@@ -41,7 +41,7 @@ public class WhereExpressionTest extends AbstractBinaryExpressionTest {
             );
         e.accept(visitor);
 
-        assertEquals("bag(0=ref(\"Jan\"))", qres.pop().toString());
+        assertEquals("bag(ref(\"Jan\"))", qres.pop().toString());
     }
 
 }

@@ -72,7 +72,7 @@ public class CommaExpressionTest extends AbstractBinaryExpressionTest {
                 new IntegerExpression(3)
         );
         e.accept(visitor);
-        assertEquals("bag(0=struct(1,3),1=struct(2,3))",qres.pop().toString());
+        assertEquals("bag(struct(1,3),struct(2,3))",qres.pop().toString());
     }
     @Test
     public void shoudGiveBagOfStructsFromSimpleAndBag() throws Exception {
@@ -87,7 +87,7 @@ public class CommaExpressionTest extends AbstractBinaryExpressionTest {
 
         );
         e.accept(visitor);
-        assertEquals("bag(0=struct(1,2),1=struct(1,3))",qres.pop().toString());
+        assertEquals("bag(struct(1,2),struct(1,3))",qres.pop().toString());
     }
 
     @Test
@@ -108,7 +108,7 @@ public class CommaExpressionTest extends AbstractBinaryExpressionTest {
 
         );
         e.accept(visitor);
-        assertEquals("bag(0=struct(1,3),1=struct(1,4),2=struct(2,3),3=struct(2,4))",qres.pop().toString());
+        assertEquals("bag(struct(1,3),struct(1,4),struct(2,3),struct(2,4))",qres.pop().toString());
     }
 
 
@@ -132,7 +132,7 @@ public class CommaExpressionTest extends AbstractBinaryExpressionTest {
         );
 
         e.accept(visitor);
-        assertEquals("bag(0=struct(1,3,4),1=struct(2,3,4))",qres.pop().toString());
+        assertEquals("bag(struct(1,3,4),struct(2,3,4))",qres.pop().toString());
     }
 
     @Test
@@ -160,7 +160,7 @@ public class CommaExpressionTest extends AbstractBinaryExpressionTest {
         );
 
         e.accept(visitor);
-        assertEquals("bag(0=struct(1,2,binder(name=\"nazwa\",value=\"test\")),1=struct(1,2,binder(name=\"nazwa\",value=\"Ala\")))",qres.pop().toString());
+        assertEquals("bag(struct(1,2,<nazwa,\"test\">),struct(1,2,<nazwa,\"Ala\">))",qres.pop().toString());
     }
 
 

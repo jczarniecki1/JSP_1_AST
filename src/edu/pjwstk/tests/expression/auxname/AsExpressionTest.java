@@ -46,7 +46,7 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
                         );
         e.accept(visitor);
         IAbstractQueryResult result = qres.pop();
-        assertEquals("binder(name=\"liczba\",value=12)", result.toString());
+        assertEquals("<liczba,12>", result.toString());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
         );
         e.accept(visitor);
         IAbstractQueryResult result = qres.pop();
-        assertEquals("bag(0=binder(name=\"num\",value=1),1=binder(name=\"num\",value=2))", result.toString());
+        assertEquals("bag(<num,1>,<num,2>)", result.toString());
 
     }
 
@@ -82,7 +82,7 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
         );
         e.accept(visitor);
         IAbstractQueryResult result = qres.pop();
-        assertEquals("bag(0=binder(name=\"nazwa\",value=\"test\"),1=binder(name=\"nazwa\",value=\"Ala\"))", result.toString());
+        assertEquals("bag(<nazwa,\"test\">,<nazwa,\"Ala\">)", result.toString());
 
     }
 
@@ -94,7 +94,7 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
         );
         e.accept(visitor);
         IAbstractQueryResult result = qres.pop();
-        assertEquals("binder(name=\"liczba\",value=\"dwanaście\")", result.toString());
+        assertEquals("<liczba,\"dwanaście\">", result.toString());
     }
 
     @Test

@@ -49,7 +49,7 @@ public abstract class AbstractParserTest {
 
             return qres.pop();
         }
-        catch (Exception e) {
+        catch (Throwable e) {
             fail("Failed to run query");
             return null;
         }

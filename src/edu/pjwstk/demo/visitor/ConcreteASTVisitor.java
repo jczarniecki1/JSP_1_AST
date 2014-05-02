@@ -653,8 +653,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
                             return (ISingleResult)((IBinderResult)x).getValue();
                         }
                         else {
-                            return (ISingleResult) ISBAObjectToIAbstractQueryResult(
-                                    store.retrieve(((IReferenceResult) x).getOIDValue()));
+                            return x;
                         }
                     })
                     .collect(Collectors.toList());

@@ -25,7 +25,7 @@ public class BagExpressionTest extends AbstractExpressionTest {
             )
         );
         e.accept(visitor);
-        boolean result = qres.pop().toString().equals("bag(0=1,1=3)");
+        boolean result = qres.pop().toString().equals("bag(1,3)");
 
         assertEquals(true,result);
     }
@@ -48,7 +48,7 @@ public class BagExpressionTest extends AbstractExpressionTest {
 
         e.accept(visitor);
 
-        assertEquals("bag(0=struct(1,3),1=struct(2,3))",qres.pop().toString());
+        assertEquals("bag(struct(1,3),struct(2,3))",qres.pop().toString());
 
     }
 
@@ -70,7 +70,7 @@ public class BagExpressionTest extends AbstractExpressionTest {
 
         e.accept(visitor);
 
-        assertEquals("bag(0=1,1=2,2=3)",qres.pop().toString());
+        assertEquals("bag(1,2,3)",qres.pop().toString());
 
     }
 
@@ -93,7 +93,7 @@ public class BagExpressionTest extends AbstractExpressionTest {
                ) );
 
         e.accept(visitor);
-        assertEquals("bag(0=struct(1,2),1=struct(1,3))",qres.pop().toString());
+        assertEquals("bag(struct(1,2),struct(1,3))",qres.pop().toString());
 
     }
 }

@@ -37,6 +37,6 @@ public class DotExpressionTest extends AbstractBinaryExpressionTest {
             );
         e.accept(visitor);
 
-        assertEquals("bag(0=ref(\"Marcin\"),1=ref(\"Jan\"),2=ref(\"Piotr\"))", qres.pop().toString());
+        assertEquals("bag(ref(\"Marcin\"),ref(\"Jan\"),ref(\"Piotr\"))", qres.pop().toString());
     }
 }

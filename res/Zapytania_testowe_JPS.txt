@@ -1,0 +1,129 @@
+all 1 true	true
+all (bag(1,bag(2,3) group as wew) as num) (num == 2)	false
+all emp married	true
+true and false	false
+booleanValue and true	true
+false and true and 1	false
+any 1 true	true
+any emp married	true
+1 as liczba	<liczba,1>
+bag(1,2) as num	bag(<num,1>,<num,2>)
+(1,2) as num	<num,struct(1,2)>
+bag(1)	bag(1)
+bag(1,2,3)	bag(1,2,3)
+bag(1+2,3)	bag(3,3)
+bag(bag(1,2,3))	bag(1,2,3)
+integerNumber	ref(10)
+realNumber	ref(234.35)
+booleanValue	ref(true)
+stringValue	ref("Ala")
+pomidor	bag(ref("Pan pomidor wlazł na tyczkę"),ref("I przedrzeźnia ogrodniczkę."),ref(""Jak pan może,"),ref("Panie pomidorze?!""))
+sampleComplexObj	ref(sampleComplexObj)
+(1,2)	struct(1,2)
+(bag(1,2),3)	bag(struct(1,3),struct(2,3))
+bag(1,2),bag(3,4)	bag(struct(1,3),struct(1,4),struct(2,3),struct(2,4))
+10/5	2
+5/3.50	1,4285714285714286
+3.50/5	0,7
+3.50/5.50	0,63636363636364
+(1 as x).(x)	1
+(1,2).("Ala")	"Ala"
+emp.book.author	bag(ref("Juliusz Słowacki"),ref("Adam Mickiewicz"),ref("Aleksander Dumas (syn)"))
+bag(1,2).("Ala")	bag("Ala","Ala")
+1 == 2	false
+integerNumber == 10	true
+booleanValue == true	true
+stringValue == "Ala"	true
+1 == true	false
+5 == "5"	false
+5.50 == 5	false
+1 > 1	false
+3 > 2.99	true
+24.35 > 24.34	true
+1 >= 1	true
+3 >= 2.99	true
+24.35 >= 24.34	true
+bag(1,2,3) group as num	<num,bag(1,2,3)>
+1 group as liczba	<liczba,1>
+bag(1,2,3) intersect bag(2,3)	bag(2,3)
+1 intersect 1	bag(1)
+(1,2) intersect (2,3)	pusty bag
+(1,2) intersect (1,2)	bag(struct(1,2))
+bag("ala",2,3) intersect bag(2,3.40)	bag(2)
+1 join 2	struct(1,2)
+(1 as n) join n	struct(<n,1>,1)
+(emp) join (married)	bag(struct(ref(emp1),true),struct(ref(emp2),true))
+(emp as e) join (e.married)	bag(struct(<e,ref(emp1)>,true),struct(<e,ref(emp2)>,true))
+1 <= 1	true
+24.34 <= 24.35	true
+2.99 <= 3	true
+1 < 1	false
+24.34 < 24.35	true
+2.99 < 3	true
+max(1)	1
+max (bag(1,3.35,3))	3.35
+min(1)	1
+min (bag(1.01,2.35,3))	1.01
+10-5	5
+5-3.50	1,50
+3.50-5	-1,5
+3.50-5.50	-2
+10%5	0
+5%3.50	1,5
+3.50%5	3,5
+3.50%5.50	3,5
+10*5	50
+5*3.50	17,5
+3.50*5	17,5
+3.50*5.50	19.25
+true or false	true
+booleanValue or false	true
+true or false or 1	true
+10+5	15
+5+3.50	8,50
+3.50+5	8,50
+3.50+5.50	9
+3+"Ala"	"3Ala"
+3.5+"Ala"	"3.5Ala"
+"Ala"+3.7	"Ala3.7"
+true+"Ala"	"trueAla"
+struct(1)	struct(1)
+struct(1,2,3)	struct(1,2,3)
+struct(1+2,3)	struct(3,3)
+struct(struct(1,2,3))	struct(1,2,3)
+1 union 2	bag(1,2)
+bag(1,2) union bag(3,4)	bag(1,2,3,4)
+(1,2) union (3,4)	bag(struct(1,2),struct(3,4))
+unique(bag(1,2,1))	bag(1,2)
+unique(bag(1.01,2,1.01,"ala"))	bag(1.01,2,"ala")
+bag(1,2) where true	bag(1,2)
+bag(1,2,3) as n where n == 1	bag(<n,1>)
+emp where married	bag(ref(emp1),ref(emp2))
+sum(1)	1
+sum(bag(1.01,2.35,3))	6,36
+count(1)	1
+count(bag(1.01,2.35,3))	3
+count(1.01,2.35,3)	1
+empty(1)	false
+empty (bag(1.01,2.35,3))	false
+empty (1 where false)	true
+not true	false
+not false	true
+true xor false	true
+true xor true	false
+false xor true	true
+booleanValue xor true	false
+true nand false	true
+false nand true	true
+false nand false	true
+true nand true	false
+booleanValue nand true	false
+bag(2,3) in bag(1,2,3)	true
+1 in 1	true
+(1,2) in (2,3)	false
+(1,2) in (1,2)	true
+bag(1,2,3) minus bag(2,3)	bag(1)
+1 minus 1	pusty bag
+(1,2) minus (2,3)	struct(1,2)
+(1,2) minus (1,2)	pusty bag
+bag("ala",2,3) minus bag(2,3.40)	bag("Ala",3)
