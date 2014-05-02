@@ -74,6 +74,11 @@ public class Arguments {
         if (first instanceof IBagResult) return ((IBagResult)first).getElements();
         else return ((ISequenceResult)first).getElements();
     }
+    public Collection<ISingleResult> getAsCollection() {
+        if (first instanceof ICollectionResult) return getElements();
+        else return new ArrayList<>(Arrays.asList((ISingleResult) first));
+    }
+
 
     //
     // Double collection argument
@@ -189,12 +194,10 @@ public class Arguments {
     
     public Collection<ISingleResult> firstAsCollection() {
         if (first instanceof ICollectionResult) return firstCollection();
-//        else if (first instanceof IStructResult) return ((IStructResult) first).elements();
         else return new ArrayList<>(Arrays.asList((ISingleResult) first));
     }
     public Collection<ISingleResult> secondAsCollection() {
         if (second instanceof ICollectionResult) return secondCollection();
-//        else if (second instanceof IStructResult) return ((IStructResult) second).elements();
         else return new ArrayList<>(Arrays.asList((ISingleResult)second));
     }
 

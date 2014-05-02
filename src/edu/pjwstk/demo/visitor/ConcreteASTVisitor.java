@@ -704,28 +704,46 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitMaxExpression(IMaxExpression expr) {
-        IBagResult collection = getBag(expr.getInnerExpression());
+        Arguments arguments = getArgumentsForUnaryExpression(Operator.MAX, expr);
+        Collection<ISingleResult> elements = arguments.getAsCollection();
 
-        double max = Integer.MIN_VALUE;
-        for (ISingleResult item : collection.getElements()){
-            if (item instanceof IIntegerResult) max = Math.max(max, (double) ((IIntegerResult) item).getValue());
-            if (item instanceof IDoubleResult)  max = Math.max(max, ((IDoubleResult) item).getValue());
+        if (elements.size() == 0) {
+            qres.push(BagResult.Empty());
+            return;
+        }
+        Double maxDouble = Double.MIN_VALUE;
+        Integer maxInt = Integer.MIN_VALUE;
+        for (ISingleResult item : elements){
+            if (item instanceof IIntegerResult) maxInt = Math.max(maxInt, ((IIntegerResult) item).getValue());
+            if (item instanceof IDoubleResult)  maxDouble = Math.max(maxDouble, ((IDoubleResult) item).getValue());
         }
 
-        qres.push(new DoubleResult(max));
+        if (maxDouble > maxInt.doubleValue())
+            qres.push(new DoubleResult(maxDouble));
+        else
+            qres.push(new IntegerResult(maxInt));
     }
 
     @Override
     public void visitMinExpression(IMinExpression expr) {
-        IBagResult collection = getBag(expr.getInnerExpression());
+        Arguments arguments = getArgumentsForUnaryExpression(Operator.MIN, expr);
+        Collection<ISingleResult> elements = arguments.getAsCollection();
 
-        double min = Integer.MAX_VALUE;
-        for (ISingleResult item : collection.getElements()){
-            if (item instanceof IIntegerResult) min = Math.min(min, (double)((IIntegerResult)item).getValue());
-            if (item instanceof IDoubleResult)  min = Math.min(min, ((IDoubleResult)item).getValue());
+        if (elements.size() == 0) {
+            qres.push(BagResult.Empty());
+            return;
+        }
+        Double minDouble = Double.MAX_VALUE;
+        Integer minInt = Integer.MAX_VALUE;
+        for (ISingleResult item : elements){
+            if (item instanceof IIntegerResult) minInt = Math.min(minInt, ((IIntegerResult) item).getValue());
+            if (item instanceof IDoubleResult)  minDouble = Math.min(minDouble, ((IDoubleResult) item).getValue());
         }
 
-        qres.push(new DoubleResult(min));
+        if (minDouble < minInt.doubleValue())
+            qres.push(new DoubleResult(minDouble));
+        else
+            qres.push(new IntegerResult(minInt));
     }
 
     @Override
@@ -752,15 +770,23 @@ public class ConcreteASTVisitor implements ASTVisitor {
         Arguments arguments = ArgumentResolver.getArguments(Operator.SUM, qres.pop());
         Collection<ISingleResult> elements = arguments.getElements();
 
-        double sum = 0;
+        Double sumDouble = 0.0;
+        Integer sumInt = 0;
         for (ISingleResult item : elements){
             if (item instanceof IReferenceResult){
-                sum += getDouble(repository.get((IReferenceResult) item));
+                IAbstractQueryResult resultInStore = repository.get((IReferenceResult) item);
+                if (resultInStore instanceof IIntegerResult) sumInt += ((IIntegerResult) resultInStore).getValue();
+                else sumDouble += getDouble(resultInStore);
             }
-            else sum += getDouble(item);
+            else {
+                if (item instanceof IIntegerResult) sumInt += ((IIntegerResult) item).getValue();
+                else sumDouble += getDouble(item);
+            }
         }
-
-        qres.push(new DoubleResult(sum));
+        if (sumDouble != 0.0){
+            qres.push(new DoubleResult(sumDouble + sumInt.doubleValue()));
+        }
+        else qres.push(new IntegerResult(sumInt));
     }
 
     @Override
@@ -770,8 +796,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitAvgExpression(IAvgExpression expr) {
-        expr.getInnerExpression().accept(this);
-        Arguments arguments = ArgumentResolver.getArguments(Operator.AVG, qres.pop());
+        Arguments arguments = getArgumentsForUnaryExpression(Operator.AVG, expr);
         Collection<ISingleResult> elements = arguments.getElements();
 
         double sum = 0;

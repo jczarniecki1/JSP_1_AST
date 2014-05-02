@@ -37,4 +37,8 @@ public class BagResult implements IBagResult{
         textResult += ")";
         return textResult;
     }
+
+    public static IBagResult Empty() {
+        return new BagResult();
+    }
 }

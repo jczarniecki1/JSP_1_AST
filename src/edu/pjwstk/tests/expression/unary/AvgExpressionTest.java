@@ -8,12 +8,10 @@ import edu.pjwstk.demo.expression.unary.AvgExpression;
 import edu.pjwstk.demo.expression.unary.BagExpression;
 import edu.pjwstk.jps.result.IDoubleResult;
 import edu.pjwstk.tests.expression.AbstractExpressionTest;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-@Ignore
 public class AvgExpressionTest extends AbstractExpressionTest {
 
     @Test
