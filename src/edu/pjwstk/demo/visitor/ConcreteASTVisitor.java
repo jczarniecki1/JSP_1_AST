@@ -540,10 +540,11 @@ public class ConcreteASTVisitor implements ASTVisitor {
         qres.push(new BagResult(results));
     }
 
-    // Zachowanie analogiczne do DotExpression, ale kolekcja wynikowa
-    // budowana jest z elementów kolekcji wejściowej
     @Override
     public void visitWhereExpression(IWhereExpression expr) {
+
+        // Zachowanie analogiczne do DotExpression, ale kolekcja wynikowa
+        // budowana jest z elementów kolekcji wejściowej
 
         IExpression condition = expr.getRightExpression();
 

@@ -49,6 +49,7 @@ terminal String NOT;
 terminal String AND;
 terminal String OR;
 
+terminal String WHERE;
 terminal String JOIN;
 terminal String UNION;
 terminal String INTERSECT;
@@ -80,7 +81,7 @@ non terminal Expression expr;
 //priority
 precedence left OR;
 precedence left AND, XOR;
-precedence left NOT, IN;
+precedence left NOT, IN, WHERE;
 precedence left NOT_EQUALS, GREATER, GREATER_EQUAL, LESS, LESS_EQUAL;
 precedence left MIN, MAX;
 precedence left EQUALS;
@@ -102,7 +103,6 @@ expr  ::=
 	| 	expr:e1 DIVIDE:o	        expr:e2	{: RESULT = new DivideExpression            (e1, e2); :}
 	| 	expr:e1 MODULO:o	        expr:e2	{: RESULT = new ModuloExpression            (e1, e2); :}
 
-
 	| 	MAX:o	                    expr:e1	{: RESULT = new MaxExpression               (e1);     :}
 	| 	MIN:o	                    expr:e1	{: RESULT = new MinExpression               (e1);     :}
 	| 	SUM:o	                    expr:e1	{: RESULT = new SumExpression               (e1);     :}
@@ -115,6 +115,7 @@ expr  ::=
 	| 	expr:e1 IN:o	            expr:e2	{: RESULT = new InExpression                (e1, e2); :}
 	| 	NOT:o	                    expr:e1	{: RESULT = new NotExpression               (e1);     :}
 
+	| 	expr:e1 WHERE:o	            expr:e2	{: RESULT = new WhereExpression             (e1, e2); :}
 	| 	expr:e1 JOIN:o	            expr:e2	{: RESULT = new JoinExpression              (e1, e2); :}
 	| 	expr:e1 UNION:o	            expr:e2	{: RESULT = new UnionExpression             (e1, e2); :}
 	| 	expr:e1 INTERSECT:o         expr:e2	{: RESULT = new IntersectExpression         (e1, e2); :}
