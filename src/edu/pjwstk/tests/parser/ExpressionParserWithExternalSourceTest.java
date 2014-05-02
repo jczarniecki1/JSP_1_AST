@@ -23,8 +23,8 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
     //
     @Test
     public void shouldSolveQueryThatIsCurrentlyBeingFixed(){
-        IAbstractQueryResult result = SolveQuery("bag(\"Ala\",2,3) minus bag(2,3.40)");
-        assertEquals("", result.toString());
+        IAbstractQueryResult result = SolveQuery("unique(bag(1,2,1))");
+        assertEquals("bag(1,2)", result.toString());
     }
 
     //

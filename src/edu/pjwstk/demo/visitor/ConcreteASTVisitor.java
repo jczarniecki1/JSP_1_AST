@@ -774,6 +774,19 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitUniqueExpression(IUniqueExpression expr) {
+        // zwraca kolekcję unikalnych wartości z baga
+
+        Arguments arguments = getArgumentsForUnaryExpression(Operator.UNIQUE, expr);
+        Collection<ISingleResult> elements = arguments.getAsCollection();
+
+        Collection<ISingleResult> uniqueElements = new ArrayList<>();
+        for (ISingleResult e :elements) {
+            if (uniqueElements.size()==0 || !uniqueElements.contains(e) )
+                uniqueElements.add(e);
+        }
+
+        qres.push(new BagResult(uniqueElements));
+
 
     }
 
