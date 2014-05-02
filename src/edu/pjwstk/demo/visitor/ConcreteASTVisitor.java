@@ -664,7 +664,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
         Collection<ISingleResult> elements = arguments.getAsCollection();
 
         boolean exists = ! (elements.isEmpty()
-            || (elements.size() == 1 && elements.iterator().next() != null)
+            || (elements.size() == 1 && elements.iterator().next() == null)
         );
 
         qres.push(new BooleanResult(exists));
