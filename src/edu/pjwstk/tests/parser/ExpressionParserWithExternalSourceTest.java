@@ -1,5 +1,7 @@
 package edu.pjwstk.tests.parser;
 
+import edu.pjwstk.demo.visitor.ExpressionSolver;
+import edu.pjwstk.demo.visitor.SolverParams;
 import edu.pjwstk.jps.result.IAbstractQueryResult;
 import org.junit.Test;
 
@@ -23,7 +25,10 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
     //
     @Test
     public void shouldSolveQueryThatIsCurrentlyBeingFixed(){
-        IAbstractQueryResult result = SolveQuery("bag(\"Ala\",2,3) minus bag(2,3.40)");
+        IAbstractQueryResult result = ExpressionSolver.execute("bag(\"Ala\",2,3) minus bag(2,3.40)");
+        if (result == null){
+            fail("Failed to run query");
+        }
         assertEquals("", result.toString());
     }
 
@@ -58,7 +63,7 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
                     query = lineArgs[0];
                     expected = lineArgs[1];
 
-                    result = SolveQuery(query);
+                    result = ExpressionSolver.execute(query, SolverParams.ThrowExceptionOnly);
                     parsedCount++;
                     parsed = true;
                     if (expected.equals(result.toString())){
@@ -76,11 +81,11 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
                 Log("[ "+String.format("%3d",allCount)+" ]: "           // Numer
                         + query                                         // Treść zapytania
                         + getSpace(55 - query.length())                 //
-                        + (parsed ? " | parsed" : "")                   // Czy się wykonało?
+                        + (parsed ? " | executed" : "")                   // Czy się wykonało?
                         + (solved ? " | ok" : "")                       // Czy wynik jest poprawny?
                         + (failed ? " | failed\n" +                     //
                                 "\texpected: "+ expected+"\n" +         // Wynik oczekiwany
-                                "\tactual:   "+ result.toString() : "") // Wynik aktualny (błędny)
+                                "\tactual:   "+ result : "")            // Wynik aktualny (błędny)
                         + "\n");
             }
 
