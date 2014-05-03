@@ -70,6 +70,9 @@ WHITESPACE = {LineTerminator} | [ \t\f]
 	"count"					{ return createToken(COUNT              ); }
 	"unique"                { return createToken(UNIQUE             ); }
 
+	"all"                   { return createToken(FOR_ANY            ); }
+	"any"                   { return createToken(FOR_ALL            ); }
+
 	"."					    { return createToken(DOT                ); }
 	","					    { return createToken(COMMA              ); }
 

@@ -25,11 +25,11 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
     //
     @Test
     public void shouldSolveQueryThatIsCurrentlyBeingFixed(){
-        IAbstractQueryResult result = ExpressionSolver.execute("bag(\"Ala\",2,3) minus bag(2,3.40)");
+        IAbstractQueryResult result = ExpressionSolver.execute("any 1 true");
         if (result == null){
             fail("Failed to run query");
         }
-        assertEquals("", result.toString());
+        assertEquals("true", result.toString());
     }
 
     //

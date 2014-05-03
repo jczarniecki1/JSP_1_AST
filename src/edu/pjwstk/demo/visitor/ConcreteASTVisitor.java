@@ -93,16 +93,16 @@ public class ConcreteASTVisitor implements ASTVisitor {
     @Override
     public void visitAllExpression(IForAllExpression expr) {
 
-        // All() jako odwrócone Any()
-
+        Arguments arguments = getArgumentsForBinaryExpressionWithCondition(Operator.FOR_ALL, expr.getLeftExpression());
         IExpression condition = expr.getRightExpression();
-        IBagResult collection = getBag(expr.getLeftExpression());
 
         IBooleanResult results = new BooleanResult(
-            ! collection.getElements()
-                .stream().anyMatch(x -> {
-                    qres.push(x);
-                    return ! getBoolean(condition);
+            arguments.getAsCollection().stream()
+                .allMatch(x -> {
+                    envs.push(envs.nested(x, store));
+                    boolean result = getBoolean(condition);
+                    envs.pop();
+                    return result;
                 }));
 
         qres.push(results);
@@ -121,17 +121,16 @@ public class ConcreteASTVisitor implements ASTVisitor {
     @Override
     public void visitAnyExpression(IForAnyExpression expr) {
 
-        // Wykonuje prawe wyrażenie na każdym elemencie
-        // Jeśli choć jeden spełnia warunek, pętla będzie przerwana
-
+        Arguments arguments = getArgumentsForBinaryExpressionWithCondition(Operator.FOR_ALL, expr.getLeftExpression());
         IExpression condition = expr.getRightExpression();
-        IBagResult collection = getBag(expr.getLeftExpression());
 
-        BooleanResult results = new BooleanResult(
-            collection.getElements().stream()
+        IBooleanResult results = new BooleanResult(
+            arguments.getAsCollection().stream()
                 .anyMatch(x -> {
-                    qres.push(x);
-                    return getBoolean(condition);
+                    envs.push(envs.nested(x, store));
+                    boolean result = getBoolean(condition);
+                    envs.pop();
+                    return result;
                 }));
 
         qres.push(results);
@@ -304,13 +303,11 @@ public class ConcreteASTVisitor implements ASTVisitor {
         // Wykonanie prawego wyrażenia na każdym elemencie kolekcji wejsciowej
         // daje kolekcję wynikową
 
+        Arguments arguments = getArgumentsForBinaryExpressionWithCondition(Operator.FOR_ALL, expr.getLeftExpression());
         IExpression selection = expr.getRightExpression();
 
-        expr.getLeftExpression().accept(this);
-        IAbstractQueryResult collectionOrReference = qres.pop();
-
         Collection<ISingleResult> results =
-            streamResult(collectionOrReference)
+            arguments.getAsCollection().stream()
                 .flatMap(x -> {
                     envs.push(envs.nested(x, store));                       // Wrzuć obiekt na ENVS
                     selection.accept(this);                                 // Wykonaj wyrażenie po prawej
@@ -324,7 +321,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
         // Dostosowanie formatu wyjściowego kolekcja/wartość
         //
-        if (results.size() == 1 && ! (collectionOrReference instanceof ICollectionResult)) {
+        if (results.size() == 1) {
             qres.push(results.iterator().next());
         } else {
             qres.push(new BagResult(results));
@@ -556,28 +553,25 @@ public class ConcreteASTVisitor implements ASTVisitor {
         // Zachowanie analogiczne do DotExpression, ale kolekcja wynikowa
         // budowana jest z elementów kolekcji wejściowej
 
+        Arguments arguments = getArgumentsForBinaryExpressionWithCondition(Operator.FOR_ALL, expr.getLeftExpression());
         IExpression condition = expr.getRightExpression();
 
-        IAbstractQueryResult left = getResult(expr.getLeftExpression());
-        IBagResult collection = (left instanceof IBagResult)
-            ? (IBagResult) left
-            : new BagResult(Arrays.asList((ISingleResult) left));
+        Collection<ISingleResult> results =
+            arguments.getAsCollection().stream()
+                .filter(x -> {
+                    envs.push(envs.nested(x, store));              // Wrzuć obiekt na ENVS
+                    boolean result = getBoolean(condition);        // Wykonaj wyrażenie z prawej i ściągnij wynik
+                    envs.pop();                                    // Zdejmij obiekt z ENVS
 
-        IBagResult results =
-            new BagResult(
-                collection.getElements()
-                    .stream()
-                    .filter(x -> {
-                        envs.push(envs.nested(x, store));              // Wrzuć obiekt na ENVS
-                        boolean result = getBoolean(condition);        // Wykonaj wyrażenie z prawej i ściągnij wynik
-                        envs.pop();                                    // Zdejmij obiekt z ENVS
+                    return result;
+                })
+                .collect(Collectors.toList());
 
-                        return result;
-                    })
-                    .collect(Collectors.toList())
-            );
-
-        qres.push(results);
+        if (results.size() == 1) {
+            qres.push(results.iterator().next());
+        } else {
+            qres.push(new BagResult(results));
+        }
     }
 
     @Override
@@ -846,6 +840,13 @@ public class ConcreteASTVisitor implements ASTVisitor {
         IAbstractQueryResult rightResult = qres.pop();
 
         return ArgumentResolver.getArguments(operator, leftResult, rightResult);
+    }
+
+    private Arguments getArgumentsForBinaryExpressionWithCondition(Operator operator, IExpression leftExpression) {
+        leftExpression.accept(this);
+        IAbstractQueryResult leftResult = qres.pop();
+
+        return ArgumentResolver.getArguments(operator, leftResult);
     }
 
     private Arguments getArgumentsForIntersectExpression(Operator operator, IIntersectExpression expr) {
