@@ -15,9 +15,9 @@ public final class ArgumentResolver {
     public static Arguments getArguments(Operator operator, IAbstractQueryResult argument)
             throws RuntimeException {
 
-        if (argument instanceof IReferenceResult) {
-            argument = dereference((IReferenceResult) argument);
-        }
+        argument = getActualValue(argument);
+
+        // walidacja
         throwExceptionIfNullArgument(operator, argument);
         throwExceptionIfArgumentNotSupported(operator, argument);
 
@@ -27,12 +27,10 @@ public final class ArgumentResolver {
     public static Arguments getArguments(Operator operator, IAbstractQueryResult left, IAbstractQueryResult right)
             throws RuntimeException {
 
-        if (left instanceof IReferenceResult) {
-            left = dereference((IReferenceResult) left);
-        }
-        if (right instanceof IReferenceResult) {
-            right = dereference((IReferenceResult) right);
-        }
+        left = getActualValue(left);
+        right = getActualValue(right);
+
+        // walidacja
         throwExceptionIfNullArgument(operator, left);
         throwExceptionIfNullArgument(operator, right);
         throwExceptionIfArgumentNotSupported(operator, left);
@@ -74,12 +72,20 @@ public final class ArgumentResolver {
         if (argument instanceof ISequenceResult)    return ArgumentType.SEQUENCE;
         if (argument instanceof IStructResult)      return ArgumentType.STRUCT;
         if (argument instanceof IReferenceResult)   return ArgumentType.REFERENCE;
+        if (argument instanceof IBinderResult)   return ArgumentType.BINDER;
 
         else throw new RuntimeException("Type of argument not supported.");
     }
 
-    // Dereferencja
+    // Uzyskiwanie wartości - dereferencja
     //
+    private static IAbstractQueryResult getActualValue(IAbstractQueryResult argument) {
+        if (argument instanceof IReferenceResult) {
+            argument = dereference((IReferenceResult) argument);
+        }
+        return argument;
+    }
+
     private static IAbstractQueryResult dereference(IReferenceResult ref) {
         return StoreRepository.getInstance().get(ref);
     }

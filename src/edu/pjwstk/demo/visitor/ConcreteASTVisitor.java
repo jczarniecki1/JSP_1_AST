@@ -121,7 +121,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
     @Override
     public void visitAnyExpression(IForAnyExpression expr) {
 
-        Arguments arguments = getArgumentsForBinaryExpressionWithCondition(Operator.FOR_ALL, expr.getLeftExpression());
+        Arguments arguments = getArgumentsForBinaryExpressionWithCondition(Operator.FOR_ANY, expr.getLeftExpression());
         IExpression condition = expr.getRightExpression();
 
         IBooleanResult results = new BooleanResult(
@@ -303,7 +303,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
         // Wykonanie prawego wyrażenia na każdym elemencie kolekcji wejsciowej
         // daje kolekcję wynikową
 
-        Arguments arguments = getArgumentsForBinaryExpressionWithCondition(Operator.FOR_ALL, expr.getLeftExpression());
+        Arguments arguments = getArgumentsForBinaryExpressionWithCondition(Operator.DOT, expr.getLeftExpression());
         IExpression selection = expr.getRightExpression();
 
         Collection<ISingleResult> results =
@@ -553,7 +553,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
         // Zachowanie analogiczne do DotExpression, ale kolekcja wynikowa
         // budowana jest z elementów kolekcji wejściowej
 
-        Arguments arguments = getArgumentsForBinaryExpressionWithCondition(Operator.FOR_ALL, expr.getLeftExpression());
+        Arguments arguments = getArgumentsForBinaryExpressionWithCondition(Operator.WHERE, expr.getLeftExpression());
         IExpression condition = expr.getRightExpression();
 
         Collection<ISingleResult> results =
@@ -911,12 +911,6 @@ public class ConcreteASTVisitor implements ASTVisitor {
     private IAbstractQueryResult getResult(IExpression expression) {
         expression.accept(this);
         return qres.pop();
-    }
-
-    // Szybkie ściąganie Baga ze stosu
-    private IBagResult getBag(IExpression expression) {
-        expression.accept(this);
-        return (IBagResult)qres.pop();
     }
 
     // Streaming wartości

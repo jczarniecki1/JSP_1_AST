@@ -52,6 +52,8 @@ public class ArgumentTypeToOperatorMapper {
         // Specialne traktowanie:
         //   DOT, WHERE
         //   FOR_ALL, FOR_ANY
+        //
+        // Inne:
         //   CLOSE_BY, ORDER_BY
     }
 
