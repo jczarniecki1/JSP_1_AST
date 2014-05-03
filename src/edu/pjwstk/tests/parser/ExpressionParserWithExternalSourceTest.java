@@ -1,7 +1,5 @@
 package edu.pjwstk.tests.parser;
 
-import edu.pjwstk.demo.visitor.ExpressionSolver;
-import edu.pjwstk.demo.visitor.SolverParams;
 import edu.pjwstk.jps.result.IAbstractQueryResult;
 import org.junit.Test;
 
@@ -63,7 +61,7 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
                     query = lineArgs[0];
                     expected = lineArgs[1];
 
-                    result = ExpressionSolver.execute(query, SolverParams.ThrowExceptionOnly);
+                    result = SolveQuery(query);
                     parsedCount++;
                     parsed = true;
                     if (expected.equals(result.toString())){

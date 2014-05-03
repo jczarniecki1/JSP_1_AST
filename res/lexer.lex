@@ -68,6 +68,7 @@ WHITESPACE = {LineTerminator} | [ \t\f]
 	"sum"					{ return createToken(SUM                ); }
 	"avg"					{ return createToken(AVG                ); }
 	"count"					{ return createToken(COUNT              ); }
+	"unique"                { return createToken(UNIQUE             ); }
 
 	"."					    { return createToken(DOT                ); }
 	","					    { return createToken(COMMA              ); }

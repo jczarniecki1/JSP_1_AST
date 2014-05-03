@@ -69,6 +69,7 @@ terminal String MIN;
 terminal String SUM;
 terminal String AVG;
 terminal String COUNT;
+terminal String UNIQUE;
 
 terminal String DOT;
 terminal String COMMA;
@@ -92,7 +93,7 @@ precedence left XOR;
 precedence left EQUALS, NOT_EQUALS, GREATER, GREATER_EQUAL, LESS, LESS_EQUAL;
 precedence left PLUS, MINUS;
 precedence left MULTIPLY, DIVIDE, MODULO;
-precedence left SUM, COUNT, AVG, MIN, MAX, INTERSECT, MINUS_SET;
+precedence left SUM, COUNT, AVG, MIN, MAX, INTERSECT, MINUS_SET, UNIQUE;
 precedence left DOT;
 precedence left BAG, STRUCT;
 precedence left LEFT_ROUND_BRACKET, RIGHT_ROUND_BRACKET;
@@ -113,6 +114,7 @@ expr  ::=
 	| 	SUM:o	                    expr:e1	{: RESULT = new SumExpression               (e1);     :}
 	| 	AVG:o	                    expr:e1	{: RESULT = new AvgExpression               (e1);     :}
 	| 	COUNT:o	                    expr:e1	{: RESULT = new CountExpression             (e1);     :}
+	| 	UNIQUE:o	                expr:e1	{: RESULT = new UniqueExpression            (e1);     :}
 
 	| 	expr:e1 OR:o	            expr:e2	{: RESULT = new OrExpression                (e1, e2); :}
 	| 	expr:e1 AND:o	            expr:e2	{: RESULT = new AndExpression               (e1, e2); :}
