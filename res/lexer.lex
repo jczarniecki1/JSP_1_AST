@@ -73,6 +73,9 @@ WHITESPACE = {LineTerminator} | [ \t\f]
 	"all"                   { return createToken(FOR_ANY            ); }
 	"any"                   { return createToken(FOR_ALL            ); }
 
+	"as"                    { return createToken(AS                 ); }
+	"group as"              { return createToken(GROUP_AS           ); }
+
 	"."					    { return createToken(DOT                ); }
 	","					    { return createToken(COMMA              ); }
 

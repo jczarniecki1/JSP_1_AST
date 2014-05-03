@@ -7,6 +7,7 @@ import java.util.List;
 import java_cup.runtime.DefaultSymbolFactory;
 import java_cup.runtime.Symbol;
 import edu.pjwstk.demo.expression.*;
+import edu.pjwstk.demo.expression.auxname.*;
 import edu.pjwstk.demo.expression.terminal.*;
 import edu.pjwstk.demo.expression.binary.*;
 import edu.pjwstk.demo.expression.unary.*;
@@ -65,6 +66,9 @@ terminal String LESS_EQUAL;
 terminal String NOT_EQUALS;
 terminal String EQUALS;
 
+terminal String AS;
+terminal String GROUP_AS;
+
 terminal String MAX;
 terminal String MIN;
 
@@ -96,6 +100,7 @@ precedence left XOR;
 precedence left EQUALS, NOT_EQUALS, GREATER, GREATER_EQUAL, LESS, LESS_EQUAL;
 precedence left PLUS, MINUS;
 precedence left MULTIPLY, DIVIDE, MODULO;
+precedence left AS, GROUP_AS;
 precedence left SUM, COUNT, AVG, MIN, MAX, INTERSECT, MINUS_SET, UNIQUE;
 precedence left DOT;
 precedence left BAG, STRUCT;
@@ -139,6 +144,9 @@ expr  ::=
 	| 	expr:e1 LESS_EQUAL:o	    expr:e2	{: RESULT = new LessOrEqualThanExpression   (e1, e2); :}
 	| 	expr:e1 NOT_EQUALS:o        expr:e2	{: RESULT = new NotEqualsExpression         (e1, e2); :}
 	| 	expr:e1 EQUALS:o	        expr:e2	{: RESULT = new EqualsExpression            (e1, e2); :}
+
+	| 	expr:e1 AS:o	            IDENTIFIER:e2	{: RESULT = new AsExpression        (e1, e2); :}
+	| 	expr:e1 GROUP_AS:o	        IDENTIFIER:e2	{: RESULT = new GroupAsExpression   (e1, e2); :}
 
 	| 	INTEGER_LITERAL:o           {: RESULT = new IntegerExpression   ((Integer)o);  :}
 	| 	DOUBLE_LITERAL:o            {: RESULT = new DoubleExpression    ((Double)o);   :}
