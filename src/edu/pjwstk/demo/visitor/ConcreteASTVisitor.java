@@ -30,10 +30,10 @@ import java.util.stream.Stream;
      - odpowiada za wykonywanie wyrażeń (Expressions)
        i wrzucenie wyniku na stos (QRes)
 
-    Postęp: 40/43 (93%)
+    Postęp: 41/43 (93%)
 
     TODO:
-     * OrderBy, CloseBy, Unique
+     * OrderBy, CloseBy
      * Poprawki dla Comma, Join
  */
 

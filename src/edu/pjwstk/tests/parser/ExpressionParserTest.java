@@ -3,7 +3,7 @@ package edu.pjwstk.tests.parser;
 import edu.pjwstk.demo.result.BooleanResult;
 import edu.pjwstk.demo.result.DoubleResult;
 import edu.pjwstk.demo.result.IntegerResult;
-import edu.pjwstk.demo.visitor.ExpressionSolver;
+import edu.pjwstk.demo.solver.ExpressionSolver;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
