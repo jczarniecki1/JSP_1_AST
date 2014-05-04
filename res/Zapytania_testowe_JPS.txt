@@ -104,20 +104,12 @@ sum(bag(1.01,2.35,3))	6.36
 count(1)	1
 count(bag(1.01,2.35,3))	3
 count(1.01,2.35,3)	1
-empty(1)	false
-empty (bag(1.01,2.35,3))	false
-empty (1 where false)	true
 not true	false
 not false	true
 true xor false	true
 true xor true	false
 false xor true	true
 booleanValue xor true	false
-true nand false	true
-false nand true	true
-false nand false	true
-true nand true	false
-booleanValue nand true	false
 bag(2,3) in bag(1,2,3)	true
 1 in 1	true
 (1,2) in (2,3)	false
