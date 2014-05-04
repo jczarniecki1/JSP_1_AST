@@ -82,9 +82,11 @@ public class ExpressionSolver {
                     query = lineArgs[0];
                     expected = lineArgs[1];
 
-                    result = ExpressionSolver.execute(query, SolverParams.ThrowExceptionOnly);
+                    result = execute(query, SolverParams.ThrowExceptionOnly);
+
                     parsedCount++;
                     parsed = true;
+
                     if (expected.equals(result.toString())){
                         successCount++;
                         solved = true;
