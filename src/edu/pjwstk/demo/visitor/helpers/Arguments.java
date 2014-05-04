@@ -213,15 +213,15 @@ public class Arguments {
         return first;
     }
     public Boolean getBoolean(){
-        return ((IBooleanResult)first).getValue();
+        return firstBoolean();
     }
     public Integer getInteger(){
-        return ((IIntegerResult)first).getValue();
+        return firstInteger();
     }
     public Double getDouble(){
-        return ((IDoubleResult)first).getValue();
+        return firstDouble();
     }
     public String getString(){
-        return ((IStringResult)first).getValue();
+        return firstString();
     }
 }

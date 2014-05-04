@@ -48,6 +48,7 @@ terminal String XOR;
 
 terminal String FOR_ALL;
 terminal String FOR_ANY;
+terminal String EXISTS;
 terminal String IN;
 terminal String NOT;
 terminal String AND;
@@ -101,7 +102,7 @@ precedence left EQUALS, NOT_EQUALS, GREATER, GREATER_EQUAL, LESS, LESS_EQUAL;
 precedence left PLUS, MINUS;
 precedence left MULTIPLY, DIVIDE, MODULO;
 precedence left AS, GROUP_AS;
-precedence left SUM, COUNT, AVG, MIN, MAX, INTERSECT, MINUS_SET, UNIQUE;
+precedence left SUM, COUNT, AVG, MIN, MAX, INTERSECT, MINUS_SET, UNIQUE, EXISTS;
 precedence left DOT;
 precedence left BAG, STRUCT;
 precedence left LEFT_ROUND_BRACKET, RIGHT_ROUND_BRACKET;
@@ -130,6 +131,7 @@ expr  ::=
 	| 	expr:e1 IN:o	            expr:e2	{: RESULT = new InExpression                (e1, e2); :}
 	| 	FOR_ALL:o	expr:e1         expr:e2	{: RESULT = new ForAllExpression            (e1, e2); :}
 	| 	FOR_ANY:o	expr:e1         expr:e2	{: RESULT = new ForAnyExpression            (e1, e2); :}
+	| 	EXISTS:o	                expr:e1	{: RESULT = new ExistsExpression            (e1);     :}
 	| 	NOT:o	                    expr:e1	{: RESULT = new NotExpression               (e1);     :}
 
 	| 	expr:e1 WHERE:o	            expr:e2	{: RESULT = new WhereExpression             (e1, e2); :}

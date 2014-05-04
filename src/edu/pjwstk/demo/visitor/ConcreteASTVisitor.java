@@ -787,8 +787,6 @@ public class ConcreteASTVisitor implements ASTVisitor {
     @Override
     public void visitAvgExpression(IAvgExpression expr) {
 
-        // Zawsze zwraca Double
-
         Arguments arguments = getArgumentsForUnaryExpression(Operator.AVG, expr);
         Collection<ISingleResult> elements = arguments.getAsCollection();
 
@@ -797,7 +795,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
             return;
         }
         if (elements.size() == 1) {
-            qres.push(new BagResult(new ArrayList<>(Arrays.asList(elements.iterator().next()))));
+            qres.push(arguments.get());
             return;
         }
         double sum = 0;

@@ -49,6 +49,7 @@ WHITESPACE = {LineTerminator} | [ \t\f]
 	"bag"					{ return createToken(BAG				); }
 	"struct"				{ return createToken(STRUCT				); }
 	"in"					{ return createToken(IN				    ); }
+	"exists"				{ return createToken(EXISTS				); }
 	"where"					{ return createToken(WHERE				); }
 
 	"join"					{ return createToken(JOIN				); }

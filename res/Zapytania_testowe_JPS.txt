@@ -127,3 +127,15 @@ bag(1,2,3) minus bag(2,3)	bag(1)
 (1,2) minus (2,3)	struct(1,2)
 (1,2) minus (1,2)	bag()
 bag("Ala",2,3) minus bag(2,3.40)	bag("Ala",3)
+1 != 2	true
+integerNumber != 10	false
+booleanValue != false	true
+stringValue != "Ala"	false
+1 != true	true
+5 != "5"	true
+5.50 != 5	true
+avg(1)	1
+avg(bag(1.01,2.35,3))	2.12
+exists(1)	true
+exists (bag(1.01,2.35,3))	true
+exists (1 where false)	false
