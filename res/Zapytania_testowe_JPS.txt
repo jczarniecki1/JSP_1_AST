@@ -139,3 +139,4 @@ avg(bag(1.01,2.35,3))	2.12
 exists(1)	true
 exists (bag(1.01,2.35,3))	true
 exists (1 where false)	false
+any (bag(1,bag(2,3) group as wew) as num) (num == 2)	false

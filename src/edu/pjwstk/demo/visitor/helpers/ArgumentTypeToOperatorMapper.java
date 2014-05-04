@@ -82,6 +82,7 @@ public class ArgumentTypeToOperatorMapper {
         map(o, ArgumentType.BOOLEAN);
         map(o, ArgumentType.STRING);
         map(o, ArgumentType.REFERENCE);
+        map(o, ArgumentType.BINDER);
     }
 
     private static void AsBooleanOperator(Operator o) {

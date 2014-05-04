@@ -614,8 +614,8 @@ public class ConcreteASTVisitor implements ASTVisitor {
             result = BagResult.Empty();
         }
         else if (valuesFromENVS.size() == 1){
-            ISingleResult firstValue = valuesFromENVS.iterator().next();
-            result = unbindValue(firstValue);
+            // first (and only) value from ENVS
+            result = valuesFromENVS.iterator().next();
         }
         else result = new BagResult(getWithoutBinders(valuesFromENVS));
 

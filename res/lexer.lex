@@ -71,8 +71,8 @@ WHITESPACE = {LineTerminator} | [ \t\f]
 	"count"					{ return createToken(COUNT              ); }
 	"unique"                { return createToken(UNIQUE             ); }
 
-	"all"                   { return createToken(FOR_ANY            ); }
-	"any"                   { return createToken(FOR_ALL            ); }
+	"all"                   { return createToken(FOR_ALL            ); }
+	"any"                   { return createToken(FOR_ANY            ); }
 
 	"as"                    { return createToken(AS                 ); }
 	"group as"              { return createToken(GROUP_AS           ); }
