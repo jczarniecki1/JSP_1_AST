@@ -2,10 +2,10 @@ package edu.pjwstk.demo.solver;
 
 import edu.pjwstk.demo.datastore.IStoreRepository;
 import edu.pjwstk.demo.datastore.StoreRepository;
-import edu.pjwstk.demo.expression.Expression;
 import edu.pjwstk.demo.interpreter.qres.QResStack;
 import edu.pjwstk.demo.parser.ExpressionParser;
 import edu.pjwstk.demo.visitor.ConcreteASTVisitor;
+import edu.pjwstk.jps.ast.IExpression;
 import edu.pjwstk.jps.result.IAbstractQueryResult;
 import edu.pjwstk.jps.visitor.ASTVisitor;
 
@@ -22,17 +22,31 @@ public class ExpressionSolver {
     }
 
     public static IAbstractQueryResult execute(String query, SolverParams params){
+        return execute(query, null, params);
+    }
+
+    public static IAbstractQueryResult execute(IExpression expression){
+        return execute(expression, SolverParams.None);
+    }
+
+    public static IAbstractQueryResult execute(IExpression expression, SolverParams params){
+        return execute(null, expression, params);
+    }
+
+    // Wspólna implementacja "execute"
+    //
+    private static IAbstractQueryResult execute(String query, IExpression expression, SolverParams params){
         try {
             if (repository == null) {
                 repository = StoreRepository.getInstance();
             }
-
             // Inicjalizacja qres i envs przed każdym zapytaniem
             QResStack qres = new QResStack();
             ASTVisitor visitor = new ConcreteASTVisitor(qres, repository);
 
-            // Wykonanie zapytania
-            Expression expression = parse(query);
+            if (expression == null) {
+                expression = parse(query);
+            }
             expression.accept(visitor);
 
             return qres.pop();
@@ -48,7 +62,7 @@ public class ExpressionSolver {
         }
     }
 
-    private static Expression parse(String query) throws Exception {
+    private static IExpression parse(String query) throws Exception {
         ExpressionParser parser = new ExpressionParser(query);
         parser.user_init();
         parser.parse();
