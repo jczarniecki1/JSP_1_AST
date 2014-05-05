@@ -18,6 +18,23 @@ public class _6_Operatory_II_Test {
         store.loadXML("res/dane_do_zap_testowych.xml");
 
         // TODO: Zapytania dla miniprojektu 6
+//        where
+//        +
+//        -
+//        %
+//        xor
+//        *
+//        =
+//        not
+//        unique
+//        union
+//        join
+//        count
+//        and
+//        or
+//        /
+//        !=
+
         Log("---------------------");
         Log("1 + 2");
         Expression expression =
