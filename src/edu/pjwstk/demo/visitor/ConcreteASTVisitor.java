@@ -396,9 +396,10 @@ public class ConcreteASTVisitor implements ASTVisitor {
         Collection<ISingleResult> leftCollection  = arguments.firstAsCollection();
         Collection<ISingleResult> rightCollection = arguments.secondAsCollection();
 
-        leftCollection.addAll(rightCollection);
+        List<ISingleResult> results = new ArrayList<>(leftCollection);
+        results.addAll(rightCollection);
 
-        qres.push(new BagResult(leftCollection));
+        qres.push(new BagResult(results));
     }
 
     @Override
