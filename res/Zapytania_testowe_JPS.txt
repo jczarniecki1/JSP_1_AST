@@ -132,3 +132,4 @@ exists(1)	true
 exists (bag(1.01,2.35,3))	true
 exists (1 where false)	false
 any (bag(1,bag(2,3) group as wew) as num) (num == 2)	false
+((emp.address union ("Poznań" as city, 29 as number)) where number <= 50).city	bag(ref("Warszawa"),"Poznań")
