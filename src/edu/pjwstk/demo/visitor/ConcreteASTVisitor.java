@@ -319,13 +319,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
                 .filter(x -> x != null)
                 .collect(Collectors.toList());
 
-        // Dostosowanie formatu wyjściowego kolekcja/wartość
-        //
-        if (results.size() == 1) {
-            qres.push(results.iterator().next());
-        } else {
-            qres.push(new BagResult(results));
-        }
+        qres.push(new BagResult(results));
     }
 
     @Override
@@ -568,11 +562,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
                 })
                 .collect(Collectors.toList());
 
-        if (results.size() == 1) {
-            qres.push(results.iterator().next());
-        } else {
-            qres.push(new BagResult(results));
-        }
+        qres.push(new BagResult(results));
     }
 
     @Override
@@ -769,7 +759,8 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     @Override
     public void visitUniqueExpression(IUniqueExpression expr) {
-        // zwraca kolekcję unikalnych wartości z baga
+
+        // Zwraca kolekcję unikalnych wartości z baga
 
         Arguments arguments = getArgumentsForUnaryExpression(Operator.UNIQUE, expr);
         Collection<ISingleResult> elements = arguments.getAsCollection();
@@ -781,8 +772,6 @@ public class ConcreteASTVisitor implements ASTVisitor {
         }
 
         qres.push(new BagResult(uniqueElements));
-
-
     }
 
     @Override
