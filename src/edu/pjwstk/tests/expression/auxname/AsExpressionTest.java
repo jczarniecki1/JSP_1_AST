@@ -11,7 +11,6 @@ import edu.pjwstk.demo.expression.unary.BagExpression;
 import edu.pjwstk.demo.expression.unary.StructExpression;
 import edu.pjwstk.demo.model.Address;
 import edu.pjwstk.demo.model.Person;
-import edu.pjwstk.demo.result.IntegerResult;
 import edu.pjwstk.jps.result.IAbstractQueryResult;
 import edu.pjwstk.jps.result.IBinderResult;
 import edu.pjwstk.jps.result.IIntegerResult;
@@ -126,14 +125,13 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
             );
 
         e.accept(visitor);
-        IntegerResult result = (IntegerResult)qres.pop();
 
-        assertEquals(1, (long)result.getValue());
+        assertEquals("bag(1)",  qres.pop().toString());
     }
 
     @Test
     public void shouldBeAbleToUseBinding_1() throws Exception {
-    // (Person union bag(struct("Zuzanna" as firstName, "Nowakowska" as lastName))).firstName
+    // (Person union ("Zuzanna" as firstName, "Nowakowska" as lastName)).firstName
 
         Expression e =
             new DotExpression(
@@ -154,7 +152,7 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
 
         e.accept(visitor);
 
-        assertEquals("\"Zuzanna\"", qres.pop().toString());
+        assertEquals("bag(\"Zuzanna\")", qres.pop().toString());
 
         e = new DotExpression(
                 new NameExpression("Person"),
@@ -168,18 +166,14 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
         e = new DotExpression(
                 new UnionExpression(
                     new NameExpression("Person"),
-                    new BagExpression(
-                        new StructExpression(
-                            new CommaExpression(
-                                new AsExpression(
-                                    new StringExpression("Zuzanna"),
-                                    "firstName"
-                                ),
-                                new AsExpression(
-                                    new StringExpression("Nowakowska"),
-                                    "lastName"
-                                )
-                            )
+                    new CommaExpression(
+                        new AsExpression(
+                            new StringExpression("Zuzanna"),
+                            "firstName"
+                        ),
+                        new AsExpression(
+                            new StringExpression("Nowakowska"),
+                            "lastName"
                         )
                     )
                 ),
@@ -193,37 +187,21 @@ public class AsExpressionTest extends AbstractAuxiliaryNameExpressionTest{
 
     @Test
     public void shouldBeAbleToUseBinding_2() throws Exception {
-        // ((Person union bag(struct("Zuzanna" as firstName, 29 as age))) where age > 20).firstName
+        // (Person union ("Zuzanna" as firstName, 29 as age) where age > 20).firstName
         Expression e =
             new DotExpression(
                 new WhereExpression(
                     new UnionExpression(
                         new NameExpression("Person"),
-                        new UnionExpression(
-                                new StructExpression(
-                                    new CommaExpression(
-                                        new AsExpression(
-                                            new StringExpression("Zuzanna"),
-                                            "firstName"
-                                        ),
-                                        new AsExpression(
-                                            new IntegerExpression(29),
-                                            "age"
-                                        )
-                                    )
-                                ),
-                                new StructExpression(
-                                    new CommaExpression(
-                                        new AsExpression(
-                                            new StringExpression("Zuzanna2"),
-                                            "firstName"
-                                        ),
-                                        new AsExpression(
-                                            new IntegerExpression(29),
-                                            "age"
-                                        )
-                                    )
-                                )
+                        new CommaExpression(
+                            new AsExpression(
+                                new StringExpression("Zuzanna"),
+                                "firstName"
+                            ),
+                            new AsExpression(
+                                new IntegerExpression(29),
+                                "age"
+                            )
                         )
                     ),
                     new GreaterThanExpression(
