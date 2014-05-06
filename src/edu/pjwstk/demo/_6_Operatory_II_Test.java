@@ -13,8 +13,14 @@ import edu.pjwstk.demo.expression.unary.UniqueExpression;
 import edu.pjwstk.demo.solver.ExecutionResult;
 import edu.pjwstk.demo.solver.ExpressionSolver;
 import edu.pjwstk.jps.datastore.ISBAStore;
+import org.junit.Test;
 
 public class _6_Operatory_II_Test {
+
+    @Test
+    public void _6_Operatory_II_Test() throws Exception {
+        main(null);
+    }
 
     public static void main(String[] args) throws Exception {
 

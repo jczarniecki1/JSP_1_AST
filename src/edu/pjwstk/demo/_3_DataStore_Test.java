@@ -5,6 +5,7 @@ import edu.pjwstk.demo.model.CD;
 import edu.pjwstk.demo.model.Transakcja;
 import edu.pjwstk.demo.model.Wytwornia;
 import edu.pjwstk.jps.datastore.ISBAStore;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,11 @@ public class _3_DataStore_Test {
     private static List<CD> cds;
     private static List<Wytwornia> wytwornie;
 
+
+    @Test
+    public void _3_DataStore_Test() throws Exception {
+        main(null);
+    }
 
     public static void main(String[] args){
 

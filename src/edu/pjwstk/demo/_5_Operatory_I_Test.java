@@ -11,8 +11,14 @@ import edu.pjwstk.demo.expression.terminal.NameExpression;
 import edu.pjwstk.demo.expression.unary.*;
 import edu.pjwstk.demo.solver.ExpressionSolver;
 import edu.pjwstk.jps.datastore.ISBAStore;
+import org.junit.Test;
 
 public class _5_Operatory_I_Test {
+
+    @Test
+    public void _5_Operatory_I_Test() throws Exception {
+        main(null);
+    }
 
     public static void main(String[] args) throws Exception {
 

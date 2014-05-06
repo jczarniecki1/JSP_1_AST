@@ -16,12 +16,18 @@ import edu.pjwstk.demo.interpreter.qres.QResStack;
 import edu.pjwstk.demo.visitor.ConcreteASTVisitor;
 import edu.pjwstk.jps.datastore.ISBAStore;
 import edu.pjwstk.jps.visitor.ASTVisitor;
+import org.junit.Test;
 
 
 public class _1_AST_Test {
 
     private static QResStack qres = new QResStack();
     private static ASTVisitor visitor;
+
+    @Test
+    public void _1_AST_Test() throws Exception {
+        main(null);
+    }
 
     public static void main(String[] args){
 

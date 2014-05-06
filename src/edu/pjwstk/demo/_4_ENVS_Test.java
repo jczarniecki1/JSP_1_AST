@@ -8,6 +8,7 @@ import edu.pjwstk.jps.datastore.ISBAStore;
 import edu.pjwstk.jps.datastore.IStringObject;
 import edu.pjwstk.jps.interpreter.envs.IENVS;
 import edu.pjwstk.jps.result.*;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +19,11 @@ public class _4_ENVS_Test {
 
     private static IENVS envs = new ENVS();
     private static ISBAStore store = SBAStore.getInstance();
+
+    @Test
+    public void _4_ENVS_Test() throws Exception {
+        main(null);
+    }
 
     public static void main(String[] args){
 

@@ -3,6 +3,8 @@ package edu.pjwstk.demo;
 import edu.pjwstk.jps.result.ISingleResult;
 import edu.pjwstk.demo.interpreter.qres.QResStack;
 import edu.pjwstk.demo.result.*;
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +12,11 @@ import java.util.List;
  * Created by Małgorzata on 15.04.14.
  */
 public class _2_QRES_Test {
+
+    @Test
+    public void _2_QRES_Test() throws Exception {
+        main(null);
+    }
 
     public static void main(String[] args){
 
