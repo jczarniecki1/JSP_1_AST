@@ -131,6 +131,12 @@ avg(bag(1.01,2.35,3))	2.12
 exists(1)	true
 exists (bag(1.01,2.35,3))	true
 exists (1 where false)	false
-any (bag(1,bag(2,3) group as wew) as num) (num == 2)	false
 ((emp.address union ("Poznań" as city, 29 as number)) where number <= 50).city	bag(ref("Warszawa"),"Poznań")
 5.0 != 5	true
+booleanValue in bag(not(not(booleanValue))) 	false
+(emp where fName == "Maciej").married in (emp where fName == "Anna").married	false
+(emp where fName == "Maciej").married == (emp where fName == "Anna").married	true
+bag(booleanValue, false) in bag(true, booleanValue2)	false
+bag(1,1,2) in bag(2,2,1)	true
+bag(1,1,2,3,3) minus bag(2,2,1)	bag(3)
+bag(1,1,2) intersect bag(2, 1, 1)	bag(1,2)

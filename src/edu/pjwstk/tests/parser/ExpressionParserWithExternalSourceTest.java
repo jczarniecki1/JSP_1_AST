@@ -25,12 +25,12 @@ public class ExpressionParserWithExternalSourceTest extends AbstractParserTest {
     @Test
     public void shouldSolveQueryThatIsCurrentlyBeingFixed(){
 
-        IAbstractQueryResult result = ExpressionSolver.execute("any (bag(1,bag(2,3) group as wew) as num) (num == 2)");
+        IAbstractQueryResult result = ExpressionSolver.execute("not(booleanValue in bag(not(not(booleanValue))))");
 
         if (result == null){
             fail("Failed to run query");
         }
-        assertEquals("false", result.toString());
+        assertEquals("true", result.toString());
     }
 
     //

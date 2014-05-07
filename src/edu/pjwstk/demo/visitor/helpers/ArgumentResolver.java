@@ -3,6 +3,8 @@ package edu.pjwstk.demo.visitor.helpers;
 import edu.pjwstk.demo.datastore.StoreRepository;
 import edu.pjwstk.jps.result.*;
 
+import java.util.Collection;
+
 //
 // Zadaniem ArgumentResolver'a jest dostarczenie eleganckiej formy wybierania argumentow w metodach ConcreteASTVisitora
 //  - Ukrywa szczegóły dotyczące walidacji typów
@@ -15,7 +17,9 @@ public final class ArgumentResolver {
     public static Arguments getArguments(Operator operator, IAbstractQueryResult argument)
             throws RuntimeException {
 
-        argument = getActualValue(argument);
+        boolean acceptReference = ArgumentTypeToOperatorMapper.checkReferenceAcceptance(operator);
+
+        argument = getActualValue(argument, acceptReference);
 
         // walidacja
         throwExceptionIfNullArgument(operator, argument);
@@ -27,8 +31,10 @@ public final class ArgumentResolver {
     public static Arguments getArguments(Operator operator, IAbstractQueryResult left, IAbstractQueryResult right)
             throws RuntimeException {
 
-        left = getActualValue(left);
-        right = getActualValue(right);
+        boolean acceptReference = ArgumentTypeToOperatorMapper.checkReferenceAcceptance(operator);
+
+        left = getActualValue(left, acceptReference);
+        right = getActualValue(right, acceptReference);
 
         // walidacja
         throwExceptionIfNullArgument(operator, left);
@@ -77,11 +83,24 @@ public final class ArgumentResolver {
         else throw new RuntimeException("Type of argument not supported.");
     }
 
-    // Uzyskiwanie wartości - dereferencja
+    // Uzyskiwanie wartości - dereferencja lub pobranie elementu opakowanego w bag
     //
-    private static IAbstractQueryResult getActualValue(IAbstractQueryResult argument) {
-        if (argument instanceof IReferenceResult) {
+    private static IAbstractQueryResult getActualValue(IAbstractQueryResult argument, boolean acceptReferences) {
+        if (argument instanceof IBagResult) {
+            argument = tryFirstElementFromBag(argument);
+        }
+        if (!acceptReferences && argument instanceof IReferenceResult) {
             argument = dereference((IReferenceResult) argument);
+        }
+        return argument;
+    }
+
+    private static IAbstractQueryResult tryFirstElementFromBag(IAbstractQueryResult argument) {
+        if (argument instanceof IBagResult) {
+            Collection<ISingleResult> elements = ((IBagResult) argument).getElements();
+            if (elements != null && elements.size() == 1) {
+                argument = elements.iterator().next();
+            }
         }
         return argument;
     }

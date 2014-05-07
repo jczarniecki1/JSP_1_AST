@@ -10,6 +10,7 @@ import java.util.*;
 public class ArgumentTypeToOperatorMapper {
 
     private static Map<Operator, List<ArgumentType>> ArgumentTypeMapping;
+    public static Collection<Operator> operatorsAcceptingReferences;
 
     private static void checkMappingInitialized() {
         if (ArgumentTypeMapping != null) return;
@@ -39,7 +40,6 @@ public class ArgumentTypeToOperatorMapper {
         AsNumberOperator(Operator.LESS);
         AsNumberOperator(Operator.LESS_OR_EQUAL);
 
-
         // Dowolne argumenty:
         //   IN
         //   MIN, MAX
@@ -55,6 +55,12 @@ public class ArgumentTypeToOperatorMapper {
         //
         // Inne:
         //   CLOSE_BY, ORDER_BY
+
+        operatorsAcceptingReferences = Arrays.asList(
+            Operator.MINUS_SET,
+            Operator.INTERSECT,
+            Operator.IN
+        );
     }
 
     public static boolean isValid(Operator operator, ArgumentType type){
@@ -64,6 +70,13 @@ public class ArgumentTypeToOperatorMapper {
         List<ArgumentType> validArguments = ArgumentTypeMapping.get(operator);
 
         return validArguments == null || validArguments.contains(type);
+    }
+
+    public static boolean checkReferenceAcceptance(Operator operator) {
+
+        checkMappingInitialized();
+
+        return operatorsAcceptingReferences.stream().anyMatch(operator::equals);
     }
 
     private static void map(Operator o, ArgumentType type) {
@@ -81,8 +94,6 @@ public class ArgumentTypeToOperatorMapper {
         map(o, ArgumentType.DOUBLE);
         map(o, ArgumentType.BOOLEAN);
         map(o, ArgumentType.STRING);
-        map(o, ArgumentType.REFERENCE);
-        map(o, ArgumentType.BINDER);
     }
 
     private static void AsBooleanOperator(Operator o) {

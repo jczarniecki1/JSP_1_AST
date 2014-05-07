@@ -353,10 +353,10 @@ public class ConcreteASTVisitor implements ASTVisitor {
         Collection<ISingleResult> rightCollection = arguments.secondAsCollection();
 
         boolean isIN =
-            // nieprawda, że istnieje element w lewej kolekcji, który...
-            !leftCollection.stream().anyMatch(x ->
-                // ...nie występuje w prawej kolekcji
-                !rightCollection.stream().anyMatch(x::equals));
+            // każdy element lewej kolekcji
+            leftCollection.stream().allMatch(x ->
+                // ... występuje w prawej kolekcji
+                rightCollection.stream().anyMatch(x::equals));
 
         qres.push(new BooleanResult(isIN));
     }
@@ -375,6 +375,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
         Collection<ISingleResult> result =
             leftCollection.stream().filter(x ->
                 rightCollection.stream().anyMatch(x::equals))
+            .distinct()
             .collect(Collectors.toList());
 
         qres.push(new BagResult(result));
@@ -431,6 +432,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
         Collection<ISingleResult> result = scope.stream()
                 .filter(x -> !scopeToSubstract.stream().anyMatch(x::equals))
+                .distinct()
                 .collect(Collectors.toList());
 
         if (result.isEmpty())

@@ -22,19 +22,6 @@ public class StructResult extends SingleResult implements IStructResult {
 
         if (values != null ? !values.equals(that.values) : that.values != null) return false;
 
-        if (this.elements().size() != that.elements().size()) return false;
-
-        if (this.elements()
-                .stream()
-                .anyMatch(x -> ! that.elements()
-                                     .stream()
-                                     .anyMatch(y -> y.equals(x)))) return false;
-        if (that.elements()
-                .stream()
-                .anyMatch(x -> ! this.elements()
-                                     .stream()
-                                     .anyMatch(y -> y.equals(x)))) return false;
-
         return true;
     }
 
