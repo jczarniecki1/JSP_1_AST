@@ -26,8 +26,8 @@ bag(1,2),bag(3,4)	bag(struct(1,3),struct(1,4),struct(2,3),struct(2,4))
 5/3.50	1.4285714285714286
 3.50/5	0.7
 3.50/5.50	0.6363636363636364
-(1 as x).(x)	1
-(1,2).("Ala")	"Ala"
+(1 as x).(x)	bag(1)
+(1,2).("Ala")	bag("Ala")
 emp.book.author	bag(ref("Juliusz Słowacki"),ref("Adam Mickiewicz"),ref("Aleksander Dumas (syn)"))
 bag(1,2).("Ala")	bag("Ala","Ala")
 1 == 2	false
@@ -133,3 +133,4 @@ exists (bag(1.01,2.35,3))	true
 exists (1 where false)	false
 any (bag(1,bag(2,3) group as wew) as num) (num == 2)	false
 ((emp.address union ("Poznań" as city, 29 as number)) where number <= 50).city	bag(ref("Warszawa"),"Poznań")
+5.0 != 5	true
