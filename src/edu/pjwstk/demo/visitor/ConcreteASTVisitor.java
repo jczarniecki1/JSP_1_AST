@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static edu.pjwstk.demo.visitor.helpers.ArgumentResolver.getArgumentsForComma;
-
 
 /*
     Implementacja ASTVisitora
@@ -37,7 +35,7 @@ import static edu.pjwstk.demo.visitor.helpers.ArgumentResolver.getArgumentsForCo
 
     TODO:
      * OrderBy, CloseBy
-     * Poprawki dla Comma, Join
+     * Poprawki dla Join
  */
 
 public class ConcreteASTVisitor implements ASTVisitor {
@@ -147,162 +145,32 @@ public class ConcreteASTVisitor implements ASTVisitor {
     @Override
     public void visitCommaExpression(ICommaExpression expr) {
 
-        expr.getLeftExpression().accept(this);
-        IAbstractQueryResult leftResult = qres.pop();
+        Arguments arguments = getArgumentsForBinaryExpression(Operator.COMMA, expr);
 
-        expr.getRightExpression().accept(this);
-        IAbstractQueryResult rightResult = qres.pop();
+        if (arguments.firstIsCollection || arguments.secondIsCollection) {
 
-        Arguments arguments = getArgumentsForComma(leftResult, rightResult);
+            ArrayList<ISingleResult> bagElements = new ArrayList<>();
 
-       if (arguments.firstIsCollection || arguments.secondIsCollection) {
-           BagResult bag = new BagResult();
+            for (ISingleResult elementFromLeft : arguments.firstAsCollection()) {
 
-               for (ISingleResult e1: arguments.firstAsCollection())
-                   for (ISingleResult e2 : arguments.secondAsCollection()) {
-                       // struct(b1,b2)
-                       Arguments arg = getArgumentsForComma(e1, e2);
+                List<ISingleResult> leftResults = getElementsFromPotentialStruct(elementFromLeft);
 
-                       IStructResult struct = new StructResult();
-                       struct.elements().addAll(arg.firstAsStruct().elements());
-                       struct.elements().addAll(arg.secondAsStruct().elements());
-                       bag.getElements().add(struct);
-                   }
+                for (ISingleResult elementFromRight : arguments.secondAsCollection()) {
 
-            qres.push(bag);
-       } else {
-           IStructResult struct = new StructResult();
-           struct.elements().addAll(arguments.firstStruct().elements());
-           struct.elements().addAll(arguments.secondStruct().elements());
-           qres.push(struct);
-       }
+                    List<ISingleResult> rightResults = getElementsFromPotentialStruct(elementFromRight);
 
-       /**  List<ISingleResult> list = new ArrayList<>();
-        List<ISingleResult> listLeft = new ArrayList<>();
-        List<ISingleResult> listRight = new ArrayList<>();
-        IBagResult leftBag = new BagResult();
-        IBagResult rightBag = new BagResult();
-        IStructResult leftStruct;
-        IStructResult rightStruct;
-
-        expr.getLeftExpression().accept(this);
-        IAbstractQueryResult leftResult = qres.pop();
-        if (leftResult instanceof ISingleResult) {
-            if (leftResult instanceof IStructResult) {
-                leftStruct = (IStructResult)  leftResult;
-                for (ISingleResult structElement : leftStruct.elements()) {
-                    list.add(structElement);
-                    listLeft.add(structElement);
-                }
-            } else {
-                list.add((ISingleResult) leftResult);
-            }
-        } else if (leftResult instanceof ICollectionResult) {
-            leftBag = (IBagResult) leftResult;
-            for (ISingleResult bagElement : leftBag.getElements()) {
-                list.add(bagElement);
-            }
-        }
-
-        expr.getRightExpression().accept(this);
-
-        IAbstractQueryResult rightResult = qres.pop();
-        if (rightResult instanceof ISingleResult) {
-            if (rightResult instanceof IStructResult) {
-                rightStruct = (IStructResult) rightResult;
-                for (ISingleResult structElement : rightStruct.elements()) {
-                    list.add(structElement);
-                    listRight.add(structElement);
-                }
-            } else {
-            list.add((ISingleResult) rightResult);
-            }
-        } else if (rightResult instanceof ICollectionResult) {
-            rightBag = (IBagResult) rightResult;
-            for (ISingleResult bagElement : rightBag.getElements()) {
-                list.add(bagElement);
-            }
-        }
-
-
-        if (leftResult instanceof ICollectionResult || rightResult instanceof ICollectionResult) {
-            list.clear();
-            // z lewej bag
-            if (leftResult instanceof ICollectionResult) {
-                if (rightResult instanceof ISingleResult) {
-                    if (rightResult instanceof IStructResult) {
-                        // z prawej struktura
-                        for (ISingleResult bagElement : leftBag.getElements()) {
-                            List<ISingleResult> bagStruct = new ArrayList<>();
-
-                            if (bagElement instanceof ISimpleResult) {
-                                bagStruct.add(bagElement);
-                                bagStruct.addAll(((IStructResult) rightResult).elements());
-                            }
-                            list.add(new StructResult(bagStruct));
-                        }
-
-                    } else {
-                        //
-                        for (ISingleResult bagElement : leftBag.getElements()) {
-                            List<ISingleResult> bagStruct = new ArrayList<>();
-
-                            if (bagElement instanceof ISingleResult) {
-                                bagStruct.add(bagElement);
-                                bagStruct.add((ISingleResult) rightResult);
-                            }
-                            list.add(new StructResult(bagStruct));
-                        }
-                    }
-
-                } else {
-                    // z prawej też bag
-                    for (ISingleResult leftBagElement : leftBag.getElements()) {
-                        for (ISingleResult rightBagElement : rightBag.getElements()) {
-                            List<ISingleResult> bagStruct = new ArrayList<>();
-                            if (leftBagElement instanceof ISimpleResult) {
-                                bagStruct.add(leftBagElement);
-                                bagStruct.add(rightBagElement);
-                            }
-                            list.add(new StructResult(bagStruct));
-                        }
-                    }
-                }
-            } else {
-            // z prawej bag
-                if (leftResult instanceof ISingleResult) {
-                    if (leftResult instanceof IStructResult) {
-                        // z lewej struktura
-                        for (ISingleResult bagElement : rightBag.getElements()) {
-                            List<ISingleResult> bagStruct = new ArrayList<>();
-
-                            if (bagElement instanceof ISingleResult) {
-                                bagStruct.addAll(((IStructResult) leftResult).elements());
-                                bagStruct.add(bagElement);
-                            }
-                            list.add(new StructResult(bagStruct));
-                        }
-
-                    } else {
-                        // z lewej IReference lub IBinder lub ISimple
-                        for (ISingleResult bagElement : rightBag.getElements()) {
-                            List<ISingleResult> bagStruct = new ArrayList<>();
-
-                            if (bagElement instanceof ISingleResult) {
-                                bagStruct.add((ISingleResult) leftResult);
-                                bagStruct.add(bagElement);
-                            }
-                            list.add(new StructResult(bagStruct));
-                        }
-                    }
+                    bagElements.add(MergeIntoStruct(leftResults, rightResults));
                 }
             }
-            qres.push(new BagResult(list));
+
+            qres.push(new BagResult(bagElements));
         }
         else {
-            qres.push(new StructResult(list));
+            qres.push(MergeIntoStruct(
+                arguments.firstAsStruct().elements(),
+                arguments.secondAsStruct().elements()
+            ));
         }
-        */
     }
 
     @Override
@@ -388,8 +256,8 @@ public class ConcreteASTVisitor implements ASTVisitor {
         boolean isIN =
             // każdy element lewej kolekcji
             leftCollection.stream().allMatch(x ->
-                // ... występuje w prawej kolekcji
-                rightCollection.stream().anyMatch(x::equals));
+                    // ... występuje w prawej kolekcji
+                    rightCollection.stream().anyMatch(x::equals));
 
         qres.push(new BooleanResult(isIN));
     }
@@ -966,5 +834,18 @@ public class ConcreteASTVisitor implements ASTVisitor {
             return (ISingleResult)((IBinderResult) value).getValue();
         }
         else return value;
+    }
+
+    // Scalenie list elementów do jedej struktury
+    private ISingleResult MergeIntoStruct(List<ISingleResult> left, List<ISingleResult> right) {
+        return new StructResult(
+            new ArrayList<ISingleResult>() {{ addAll(left); addAll(right); }}
+        );
+    }
+
+    private List<ISingleResult> getElementsFromPotentialStruct(ISingleResult e1) {
+        return e1 instanceof IStructResult
+            ? ((IStructResult) e1).elements()
+            : Arrays.asList(e1);
     }
 }

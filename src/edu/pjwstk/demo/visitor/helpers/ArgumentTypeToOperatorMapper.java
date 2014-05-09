@@ -57,6 +57,7 @@ public class ArgumentTypeToOperatorMapper {
         //   CLOSE_BY, ORDER_BY
 
         operatorsAcceptingReferences = Arrays.asList(
+            Operator.COMMA,
             Operator.MINUS_SET,
             Operator.INTERSECT,
             Operator.IN

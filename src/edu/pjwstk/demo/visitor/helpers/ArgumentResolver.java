@@ -18,19 +18,6 @@ public final class ArgumentResolver {
 
     // Pobieranie argumentów połączone z walidacją
     //
-
-
-
-    public static Arguments getArgumentsForComma(IAbstractQueryResult left, IAbstractQueryResult right) {
-
-        // mogą być dowolne argumenty, musi wyjść struktura albo bag
-
-        left = getStructOrBagForComma(left);
-        right = getStructOrBagForComma(right);
-
-        return new Arguments(left, right);
-    }
-
     public static Arguments getArguments(Operator operator, IAbstractQueryResult argument)
             throws RuntimeException {
 
@@ -122,24 +109,6 @@ public final class ArgumentResolver {
         return argument;
     }
 
-    private static IAbstractQueryResult getStructOrBagForComma(IAbstractQueryResult argument) {
-
-        IAbstractQueryResult result = argument;
-        if (argument instanceof ISingleResult) {
-            if (!(argument instanceof IStructResult))   {
-                List <ISingleResult> struct = new ArrayList<>();
-                struct.add((ISingleResult)argument);
-                result = new StructResult(struct);
-            }
-        }
-
-        // walidacja
-        throwExceptionIfNullArgument(Operator.STRUCT, argument);
-        throwExceptionIfArgumentNotSupported(Operator.STRUCT, argument);
-        throwExceptionIfNullArgument(Operator.BAG, argument);
-        throwExceptionIfArgumentNotSupported(Operator.BAG, argument);
-        return result;
-    }
     private static IAbstractQueryResult dereference(IReferenceResult ref) {
         return StoreRepository.getInstance().get(ref);
     }

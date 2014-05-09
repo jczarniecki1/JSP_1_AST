@@ -1,6 +1,5 @@
 package edu.pjwstk.demo.visitor.helpers;
 
-import edu.pjwstk.demo.result.SingleResult;
 import edu.pjwstk.demo.result.StructResult;
 import edu.pjwstk.jps.result.*;
 
@@ -35,6 +34,8 @@ public class Arguments {
     public boolean isCollection;
     public boolean firstIsCollection;
     public boolean secondIsCollection;
+    public boolean firstIsStruct;
+    public boolean secondIsStruct;
 
     //
     // Constructors
@@ -60,11 +61,13 @@ public class Arguments {
         else if (first instanceof IBooleanResult) firstIsBoolean = true;
         else if (first instanceof IStringResult) firstIsString = true;
         else if (first instanceof ICollectionResult) firstIsCollection = true;
+        else if (first instanceof IStructResult) firstIsStruct = true;
         if (second instanceof IIntegerResult) secondIsInteger = true;
         else if (second instanceof IDoubleResult) secondIsDouble = true;
         else if (second instanceof IBooleanResult) secondIsBoolean = true;
         else if (second instanceof IStringResult) secondIsString = true;
         else if (second instanceof ICollectionResult) secondIsCollection = true;
+        else if (second instanceof IStructResult) secondIsStruct = true;
 
         mixedTypes = ! (
              (firstIsInteger && secondIsInteger)
@@ -91,29 +94,6 @@ public class Arguments {
     //
     // Double argument
     //
-
-    public IAbstractQueryResult first(){
-        return first;
-    }
-    public IAbstractQueryResult second(){
-        return second;
-    }
-
-    public ISingleResult firstSingle(){
-        return (ISingleResult) first;
-    }
-    public ISingleResult secondSingle(){
-        return (ISingleResult) second;
-    }
-
-    public IStructResult firstStruct() {
-        return (IStructResult) first;
-    }
-
-    public IStructResult secondStruct() {
-        return (IStructResult) second;
-    }
-
     public Boolean firstBoolean(){
         return ((IBooleanResult)first).getValue();
     }
