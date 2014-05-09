@@ -21,6 +21,21 @@ public final class ArgumentResolver {
 
 
 
+
+    public static Arguments getArgumentsForJoin(IAbstractQueryResult left, IAbstractQueryResult right) {
+
+        // mogą być dowolne argumenty, musi wyjść element albo kolekcja
+        // nie mogą być dwie kolekcje
+
+        if (left instanceof ICollectionResult && right instanceof ICollectionResult) {
+            throwExceptionIfArgumentsConflict(Operator.JOIN,left, right);
+        }
+
+        return new Arguments(left, right);
+
+        //
+    }
+
     public static Arguments getArgumentsForComma(IAbstractQueryResult left, IAbstractQueryResult right) {
 
         // mogą być dowolne argumenty, musi wyjść struktura albo bag
@@ -83,6 +98,20 @@ public final class ArgumentResolver {
         }
     }
 
+    // Rzucenie wyjątku jeśli konflikt argumentów
+    //
+    private static void throwExceptionIfArgumentsConflict(Operator operator, IAbstractQueryResult argument1, IAbstractQueryResult argument2)
+            throws RuntimeException {
+
+        ArgumentType type1 = getType(argument1);
+        ArgumentType type2 = getType(argument2);
+
+
+        throw new RuntimeException("Argument " + type1 + " for " + operator + " is in conflict with second argument " + type2 + ".");
+
+    }
+
+
     // Pobranie typu (rzutowanie na enum)
     //
     private static ArgumentType getType(IAbstractQueryResult argument)
@@ -122,6 +151,8 @@ public final class ArgumentResolver {
         return argument;
     }
 
+
+
     private static IAbstractQueryResult getStructOrBagForComma(IAbstractQueryResult argument) {
 
         IAbstractQueryResult result = argument;
@@ -143,4 +174,7 @@ public final class ArgumentResolver {
     private static IAbstractQueryResult dereference(IReferenceResult ref) {
         return StoreRepository.getInstance().get(ref);
     }
+
+
+
 }

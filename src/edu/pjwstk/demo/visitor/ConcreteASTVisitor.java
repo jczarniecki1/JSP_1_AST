@@ -2,6 +2,7 @@ package edu.pjwstk.demo.visitor;
 
 import edu.pjwstk.demo.datastore.IStoreRepository;
 import edu.pjwstk.demo.interpreter.envs.ENVS;
+import edu.pjwstk.demo.interpreter.envs.ENVSFrame;
 import edu.pjwstk.demo.result.*;
 import edu.pjwstk.demo.visitor.helpers.ArgumentResolver;
 import edu.pjwstk.demo.visitor.helpers.Arguments;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static edu.pjwstk.demo.visitor.helpers.ArgumentResolver.getArgumentsForComma;
+import static edu.pjwstk.demo.visitor.helpers.ArgumentResolver.getArgumentsForJoin;
 
 
 /*
@@ -37,16 +39,17 @@ import static edu.pjwstk.demo.visitor.helpers.ArgumentResolver.getArgumentsForCo
 
     TODO:
      * OrderBy, CloseBy
-     * Poprawki dla Comma, Join
+     * Poprawki Join
  */
 
 public class ConcreteASTVisitor implements ASTVisitor {
 
-    private final ENVS envs;
+    private final  ENVS envs;
 
     private final IQResStack qres;
     private final IStoreRepository repository;
-    private final ISBAStore store;
+   private final ISBAStore store;
+
 
     public ConcreteASTVisitor(IQResStack qres, IStoreRepository repository) {
 
@@ -418,9 +421,74 @@ public class ConcreteASTVisitor implements ASTVisitor {
     public void visitJoinExpression(IJoinExpression expr) {
 
         // TODO: Poprawić JOIN
+        IStructResult struct = null;
 
-        Arguments arguments = getArgumentsForBinaryExpression(Operator.JOIN, expr);
+       // Ewaluacja:
+       // 1. Zainicjalizuj pusty bag (nazywany dalej eres).
+        BagResult eres = new BagResult();
+       // 2. Wykonaj lewe podzapytanie.
+        expr.getLeftExpression().accept(this);
+       // 3. Podnieś jego rezultat z QRES.
+        IAbstractQueryResult leftResult = qres.pop();
+        if (leftResult instanceof ICollectionResult) {
+       // 4. Dla każdego elementu el należącego do podniesionego wyniku wykonaj:
+            if (leftResult instanceof ICollectionResult) {
+                for (ISingleResult el1 : ((IBagResult)leftResult).getElements()) {
+       //     1) Otwórz nową sekcję na ENVS.
+                    envs.init(store.getEntryOID(), store);
+       //     2) Wykonaj operację nested(el).
+                    envs.nested(leftResult,store);
+       //     3) Wykonaj prawe podzapytanie.
+                    expr.getRightExpression().accept(this);
+                    IAbstractQueryResult rightResult = qres.pop();
+       //     4) Dla każdego elementu el2 należącego do wyniku prawego podzapytania wykonaj:
+                    Arguments arg = getArgumentsForJoin(leftResult,rightResult);
+                    for (ISingleResult el2 : arg.secondAsCollection()) {
+       //               I. Utwórz  strukturę { el1, el2 }.
+                        List <ISingleResult> structElements = new ArrayList<>();
+                        structElements.add(el1);
+                        structElements.add(el2);
+                        struct = new StructResult(structElements);
+                    }
+       //                   Jeśli el2 to struktura/y należy wziąć ich elementy –
+       //                   analogicznie jak w przypadku operatora , (przecinka).
+       //                   el1 nie może być strukturą.
+       //     5) Dodaj nowo stworzoną strukturę do eres.
+                    eres.add(struct);
+                }
+            }
 
+        } else {
+            envs.init(store.getEntryOID(), store);
+            envs.nested(leftResult,store);
+            expr.getRightExpression().accept(this);
+            IAbstractQueryResult rightResult = qres.pop();
+
+            getArgumentsForJoin(leftResult,rightResult);
+            Arguments arg = getArgumentsForJoin(leftResult,rightResult);
+            ISingleResult el1 = arg.firstSingle();
+
+            for (ISingleResult el2 : arg.secondAsCollection())  {
+                List <ISingleResult> structElements = new ArrayList<>();
+                structElements.add(el1);
+                structElements.add(el2);
+                struct = new StructResult(structElements);
+            }
+            eres.add(struct);
+
+        }
+
+        // 5. Dodaj eres do QRES.
+
+        // zamiana bag na struct jeśli jest jednoelementowy
+        if (eres.getElements().size() == 1) {
+            qres.push(eres.getElements().iterator().next());
+        } else {
+            qres.push(eres);
+        }
+
+
+        /*
         Collection<ISingleResult> leftCollection  = arguments.firstAsCollection();
         Collection<ISingleResult> rightCollection = arguments.secondAsCollection();
 
@@ -428,6 +496,9 @@ public class ConcreteASTVisitor implements ASTVisitor {
         results.addAll(rightCollection);
 
         qres.push(new BagResult(results));
+        */
+
+
     }
 
     @Override
