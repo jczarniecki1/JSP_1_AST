@@ -35,7 +35,6 @@ import java.util.stream.Stream;
 
     TODO:
      * OrderBy, CloseBy
-     * Poprawki dla Join
  */
 
 public class ConcreteASTVisitor implements ASTVisitor {
@@ -151,15 +150,15 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
             ArrayList<ISingleResult> bagElements = new ArrayList<>();
 
-            for (ISingleResult elementFromLeft : arguments.firstAsCollection()) {
+            for (ISingleResult elementFromLeft : arguments.firstAsCollection()) {           // Dla każdego e1
 
                 List<ISingleResult> leftResults = getElementsFromPotentialStruct(elementFromLeft);
 
-                for (ISingleResult elementFromRight : arguments.secondAsCollection()) {
+                for (ISingleResult elementFromRight : arguments.secondAsCollection()) {     // Dla każdego e2
 
                     List<ISingleResult> rightResults = getElementsFromPotentialStruct(elementFromRight);
 
-                    bagElements.add(MergeIntoStruct(leftResults, rightResults));
+                    bagElements.add(MergeIntoStruct(leftResults, rightResults));            // Dodaj odpowiednią strukturę
                 }
             }
 
@@ -285,17 +284,37 @@ public class ConcreteASTVisitor implements ASTVisitor {
     @Override
     public void visitJoinExpression(IJoinExpression expr) {
 
-        // TODO: Poprawić JOIN
+        Arguments arguments = getArgumentsForBinaryExpressionWithCondition(Operator.JOIN, expr.getLeftExpression());
+        IExpression selection = expr.getRightExpression();
 
-        Arguments arguments = getArgumentsForBinaryExpression(Operator.JOIN, expr);
+            Collection<ISingleResult> results =
+                arguments.firstAsCollection()                               // Dla każdego e1
+                .stream()
+                .flatMap(x -> {
+                    envs.push(envs.nested(x, store));                       // Wrzuć obiekt na ENVS
+                    selection.accept(this);                                 // Wykonaj wyrażenie po prawej
+                    IAbstractQueryResult queryResult = qres.pop();          // Sciągnij wynik
+                    envs.pop();                                             // Zdejmij z ENVS
 
-        Collection<ISingleResult> leftCollection  = arguments.firstAsCollection();
-        Collection<ISingleResult> rightCollection = arguments.secondAsCollection();
+                    List<ISingleResult> leftResults = getElementsFromPotentialStruct(x);
 
-        List<ISingleResult> results = new ArrayList<>(leftCollection);
-        results.addAll(rightCollection);
+                    return streamResult(queryResult)                        // Dla każdego e2
+                        .map(y ->
+                            MergeIntoStruct(                                // Dodaj odpowiednią strukturę
+                                leftResults,
+                                getElementsFromPotentialStructOrReference(y)
+                            )
+                        )
+                        .collect(Collectors.toList())
+                        .stream();
+                })
+                .collect(Collectors.toList());                              // Scal wszystkie struktury do jednej listy
 
-        qres.push(new BagResult(results));
+        if (results.size() == 1) {
+            qres.push(results.iterator().next());
+        } else {
+            qres.push(new BagResult(results));
+        }
     }
 
     @Override
@@ -848,4 +867,11 @@ public class ConcreteASTVisitor implements ASTVisitor {
             ? ((IStructResult) e1).elements()
             : Arrays.asList(e1);
     }
+
+    private List<ISingleResult> getElementsFromPotentialStructOrReference(ISingleResult y) {
+        return (y instanceof IReferenceResult)
+            ? Arrays.asList((ISingleResult) repository.get((IReferenceResult) y))
+            : getElementsFromPotentialStruct(y);
+    }
+
 }

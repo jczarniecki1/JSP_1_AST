@@ -40,17 +40,4 @@ public class JoinExpressionTest extends AbstractBinaryExpressionTest {
 
         assertEquals("struct(<n,1>,1)", qres.pop().toString());
     }
-
-    @Test
-    public void shouldGiveBinder() throws Exception {
-
-        //(emp) join (married)
-        Expression e = new JoinExpression(
-                new NameExpression("emp"),
-                new NameExpression("merried")
-        );
-        e.accept(visitor);
-
-        assertEquals("bag(struct(ref(emp1), true), struct(ref(emp2), true))", qres.pop().toString());
-    }
 }

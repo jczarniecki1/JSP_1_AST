@@ -78,19 +78,6 @@ public class Arguments {
         );
     }
 
-
-    //
-    // Double collection argument
-    //
-    public Collection<ISingleResult> firstCollection() {
-        if (first instanceof IBagResult) return ((IBagResult)first).getElements();
-        else return ((ISequenceResult)first).getElements();
-    }
-    public Collection<ISingleResult> secondCollection() {
-        if (second instanceof IBagResult) return ((IBagResult)second).getElements();
-        else return ((ISequenceResult)second).getElements();
-    }
-
     //
     // Double argument
     //
@@ -214,24 +201,17 @@ public class Arguments {
     }
     
     public Collection<ISingleResult> firstAsCollection() {
-        if (first instanceof ICollectionResult) return firstCollection();
-        else return new ArrayList<>(Arrays.asList((ISingleResult) first));
+        return asCollection(first);
     }
     public Collection<ISingleResult> secondAsCollection() {
-        if (second instanceof ICollectionResult) return secondCollection();
-        else return new ArrayList<>(Arrays.asList((ISingleResult)second));
+        return asCollection(second);
     }
 
     //
     // Single collection argument
     //
-    public Collection<ISingleResult> getElements() {
-        if (first instanceof IBagResult) return ((IBagResult)first).getElements();
-        else return ((ISequenceResult)first).getElements();
-    }
     public Collection<ISingleResult> getAsCollection() {
-        if (first instanceof ICollectionResult) return getElements();
-        else return new ArrayList<>(Arrays.asList((ISingleResult) first));
+        return asCollection(first);
     }
 
     //
@@ -251,5 +231,13 @@ public class Arguments {
     }
     public String getString(){
         return firstString();
+    }
+
+    public static Collection<ISingleResult> asCollection(IAbstractQueryResult element) {
+        if (element instanceof ICollectionResult) {
+            if (element instanceof IBagResult) return ((IBagResult)element).getElements();
+            else return ((ISequenceResult)element).getElements();
+        }
+        else return new ArrayList<>(Arrays.asList((ISingleResult) element));
     }
 }
