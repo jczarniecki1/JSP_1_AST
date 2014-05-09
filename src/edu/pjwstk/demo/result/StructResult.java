@@ -3,6 +3,7 @@ package edu.pjwstk.demo.result;
 import edu.pjwstk.jps.result.ISingleResult;
 import edu.pjwstk.jps.result.IStructResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StructResult extends SingleResult implements IStructResult {
@@ -11,6 +12,10 @@ public class StructResult extends SingleResult implements IStructResult {
 
     public StructResult(List<ISingleResult> elements) {
         values = elements;
+    }
+
+    public StructResult() {
+        values = new ArrayList<>();
     }
 
     @Override

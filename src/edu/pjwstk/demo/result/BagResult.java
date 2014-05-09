@@ -23,6 +23,10 @@ public class BagResult implements IBagResult{
         return values;
     }
 
+    public void add(ISingleResult element) {
+        values.add(element);
+    }
+
     @Override
     public String toString(){
         int index=0;

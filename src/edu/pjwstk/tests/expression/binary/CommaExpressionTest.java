@@ -158,7 +158,7 @@ public class CommaExpressionTest extends AbstractBinaryExpressionTest {
                )
 
         );
-
+        // (struct(1, 2), (bag("test", „Ala”) as nazwa));
         e.accept(visitor);
         assertEquals("bag(struct(1,2,<nazwa,\"test\">),struct(1,2,<nazwa,\"Ala\">))",qres.pop().toString());
     }

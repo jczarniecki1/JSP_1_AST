@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static edu.pjwstk.demo.visitor.helpers.ArgumentResolver.getArgumentsForComma;
+
+
 /*
     Implementacja ASTVisitora
      - odpowiada za wykonywanie wyrażeń (Expressions)
@@ -141,11 +144,40 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
     }
 
-    // TODO: Tego się nie da utrzymać. Jeśli nie można tego uprościć, to zróbmy oddzielną klasę CommaExpressionEvaluator
     @Override
     public void visitCommaExpression(ICommaExpression expr) {
 
-        List<ISingleResult> list = new ArrayList<>();
+        expr.getLeftExpression().accept(this);
+        IAbstractQueryResult leftResult = qres.pop();
+
+        expr.getRightExpression().accept(this);
+        IAbstractQueryResult rightResult = qres.pop();
+
+        Arguments arguments = getArgumentsForComma(leftResult, rightResult);
+
+       if (arguments.firstIsCollection || arguments.secondIsCollection) {
+           BagResult bag = new BagResult();
+
+               for (ISingleResult e1: arguments.firstAsCollection())
+                   for (ISingleResult e2 : arguments.secondAsCollection()) {
+                       // struct(b1,b2)
+                       Arguments arg = getArgumentsForComma(e1, e2);
+
+                       IStructResult struct = new StructResult();
+                       struct.elements().addAll(arg.firstAsStruct().elements());
+                       struct.elements().addAll(arg.secondAsStruct().elements());
+                       bag.getElements().add(struct);
+                   }
+
+            qres.push(bag);
+       } else {
+           IStructResult struct = new StructResult();
+           struct.elements().addAll(arguments.firstStruct().elements());
+           struct.elements().addAll(arguments.secondStruct().elements());
+           qres.push(struct);
+       }
+
+       /**  List<ISingleResult> list = new ArrayList<>();
         List<ISingleResult> listLeft = new ArrayList<>();
         List<ISingleResult> listRight = new ArrayList<>();
         IBagResult leftBag = new BagResult();
@@ -270,6 +302,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
         else {
             qres.push(new StructResult(list));
         }
+        */
     }
 
     @Override

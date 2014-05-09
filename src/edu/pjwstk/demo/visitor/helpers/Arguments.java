@@ -1,10 +1,13 @@
 package edu.pjwstk.demo.visitor.helpers;
 
+import edu.pjwstk.demo.result.SingleResult;
+import edu.pjwstk.demo.result.StructResult;
 import edu.pjwstk.jps.result.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 //
 // Dostarcza wartości i informacje o typie przechowywanych argumentów
@@ -88,6 +91,29 @@ public class Arguments {
     //
     // Double argument
     //
+
+    public IAbstractQueryResult first(){
+        return first;
+    }
+    public IAbstractQueryResult second(){
+        return second;
+    }
+
+    public ISingleResult firstSingle(){
+        return (ISingleResult) first;
+    }
+    public ISingleResult secondSingle(){
+        return (ISingleResult) second;
+    }
+
+    public IStructResult firstStruct() {
+        return (IStructResult) first;
+    }
+
+    public IStructResult secondStruct() {
+        return (IStructResult) second;
+    }
+
     public Boolean firstBoolean(){
         return ((IBooleanResult)first).getValue();
     }
@@ -163,6 +189,28 @@ public class Arguments {
         else {
             return secondInteger();
         }
+    }
+
+    public IStructResult firstAsStruct() {
+       List <ISingleResult> collection = new ArrayList<>();
+       for (ISingleResult r: firstAsCollection())
+           if (r instanceof IStructResult)
+               collection.addAll(((IStructResult) r).elements());
+           else
+               collection.add(r);
+
+       return new StructResult(collection);
+    }
+
+    public IStructResult secondAsStruct() {
+        List <ISingleResult> collection = new ArrayList<>();
+        for (ISingleResult r: secondAsCollection())
+            if (r instanceof IStructResult)
+                collection.addAll(((IStructResult) r).elements());
+            else
+                collection.add(r);
+
+        return new StructResult(collection);
     }
 
     public String firstAsString() {
