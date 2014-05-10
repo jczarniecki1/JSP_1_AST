@@ -772,25 +772,21 @@ public class ConcreteASTVisitor implements ASTVisitor {
     // Szybkie wyciąganie wartości z wyrażenia i rzutownie na Double/Boolean
     //
     private double getDouble(IAbstractQueryResult result) {
+        if (result instanceof IIntegerResult) {
+            return ((IIntegerResult)result).getValue().doubleValue();
+        }
+        else if (result instanceof IBagResult) {
+            Collection<ISingleResult> elements = ((IBagResult)result).getElements();
+            if (elements.size() == 1) {
+                return getDouble(elements.iterator().next());
+            } else {
+                throw new RuntimeException("Collection is empty or has more than one element");
+            }
+        }
         try {
-            if (result instanceof IIntegerResult) {
-                return ((IIntegerResult)result).getValue().doubleValue();
-            }
-            else if (result instanceof IBagResult) {
-                Collection<ISingleResult> elements = ((IBagResult)result).getElements();
-                if (elements.size() == 1) {
-                    return getDouble(elements.iterator().next());
-                } else {
-                    throw new Exception("Collection is empty or has more than one element");
-                }
-            }
-            else {
-                return ((DoubleResult)result).getValue();
-            }
+            return ((DoubleResult)result).getValue();
         } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-            // TODO: Nie powinniśmy zwracać nic
+            throw new RuntimeException("Cannot cast "+result+" to Double.");
         }
     }
 
@@ -798,13 +794,13 @@ public class ConcreteASTVisitor implements ASTVisitor {
         expression.accept(this);
         IAbstractQueryResult queryResult = qres.pop();
 
-        // Jeśli to bag, to pobierz pierwszy element
+        // Pobierz pojedynczy element opakowany w bag
         if (queryResult instanceof IBagResult){
             Collection<ISingleResult> elements = ((IBagResult) queryResult).getElements();
-            if (elements.size() > 0) {
+            if (elements.size() == 1) {
                 queryResult = elements.iterator().next();
             } else {
-                return false;
+                throw new RuntimeException("Collection is empty or has more than one element");
             }
         }
         // Dereferencja
@@ -812,10 +808,11 @@ public class ConcreteASTVisitor implements ASTVisitor {
             queryResult = repository.get((IReferenceResult) queryResult);
         }
         // Jak teraz to jest wartość prosta, to zwróć ją
-        if (queryResult instanceof ISimpleResult) {
+        try {
             return (boolean)((ISimpleResult) queryResult).getValue();
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot cast "+queryResult+" to Boolean.");
         }
-        else return false;
     }
 
     private IAbstractQueryResult getResult(IExpression expression) {
