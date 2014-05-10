@@ -52,8 +52,8 @@ bag(1,2,3) intersect bag(2,3)	bag(2,3)
 bag("ala",2,3) intersect bag(2,3.40)	bag(2)
 1 join 2	struct(1,2)
 (1 as n) join n	struct(<n,1>,1)
-(emp) join (married)	bag(struct(ref(emp1),true),struct(ref(emp2),true))
-(emp as e) join (e.married)	bag(struct(<e,ref(emp1)>,true),struct(<e,ref(emp2)>,true))
+(emp) join (married)	bag(struct(ref(emp),true),struct(ref(emp),true))
+(emp as e) join (e.married)	bag(struct(<e,ref(emp)>,true),struct(<e,ref(emp)>,true))
 1 <= 1	true
 24.34 <= 24.35	true
 2.99 <= 3	true
@@ -98,7 +98,7 @@ unique(bag(1,2,1))	bag(1,2)
 unique(bag(1.01,2,1.01,"ala"))	bag(1.01,2,"ala")
 bag(1,2) where true	bag(1,2)
 bag(1,2,3) as n where n == 1	bag(<n,1>)
-emp where married	bag(ref(emp1),ref(emp2))
+emp where married	bag(ref(emp),ref(emp))
 sum(1)	1
 sum(bag(1.01,2.35,3))	6.36
 count(1)	1
