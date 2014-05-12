@@ -126,7 +126,7 @@ stringValue != "Ala"	false
 1 != true	true
 5 != "5"	true
 5.50 != 5	true
-avg(1)	1
+avg(1)	1.0
 avg(bag(1.01,2.35,3))	2.12
 exists(1)	true
 exists (bag(1.01,2.35,3))	true

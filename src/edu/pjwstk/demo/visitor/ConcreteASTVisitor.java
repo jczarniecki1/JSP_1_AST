@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
 /*
     Implementacja ASTVisitora
      - odpowiada za wykonywanie wyrażeń (Expressions)
@@ -187,6 +186,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
                 // return double
                 else qres.push(new DoubleResult(arguments.firstAsDouble() / arguments.secondAsDouble()));
             }
+            else qres.push(new StringResult("NaN"));
         }
         else {
             if (arguments.secondAsDouble() != 0.0) {
@@ -290,19 +290,22 @@ public class ConcreteASTVisitor implements ASTVisitor {
             Collection<ISingleResult> results =
                 arguments.firstAsCollection()                               // Dla każdego e1
                 .stream()
-                .flatMap(x -> {
-                    envs.push(envs.nested(x, store));                       // Wrzuć obiekt na ENVS
+                .flatMap(e1 -> {
+                    envs.push(envs.nested(e1, store));                      // Wrzuć obiekt na ENVS
                     selection.accept(this);                                 // Wykonaj wyrażenie po prawej
                     IAbstractQueryResult queryResult = qres.pop();          // Sciągnij wynik
                     envs.pop();                                             // Zdejmij z ENVS
 
-                    List<ISingleResult> leftResults = getElementsFromPotentialStruct(x);
+                    List<ISingleResult> leftResults = getElementsFromPotentialStruct(e1);
+
+                    if (leftResults.stream().anyMatch(x -> x instanceof IStructResult))
+                        throw new RuntimeException("Kurna no... tu w JOIN nie używaj struktury ze strukturą w środku.");
 
                     return streamResult(queryResult)                        // Dla każdego e2
-                        .map(y ->
+                        .map(e2 ->
                             MergeIntoStruct(                                // Dodaj odpowiednią strukturę
                                 leftResults,
-                                getElementsFromPotentialStructOrReference(y)
+                                getElementsFromPotentialStructOrReference(e2)
                             )
                         )
                         .collect(Collectors.toList())
@@ -673,7 +676,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
                 else sumDouble += getDouble(item);
             }
         }
-        if (sumDouble != 0.0){
+        if (sumDouble != 0.0) {
             qres.push(new DoubleResult(sumDouble + sumInt.doubleValue()));
         }
         else qres.push(new IntegerResult(sumInt));
@@ -682,7 +685,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
     @Override
     public void visitUniqueExpression(IUniqueExpression expr) {
 
-        // Zwraca kolekcję unikalnych wartości z baga
+        // Zwraca kolekcję unikalnych wartości z baga (distinct)
 
         Arguments arguments = getArgumentsForUnaryExpression(Operator.UNIQUE, expr);
         Collection<ISingleResult> elements = arguments.getAsCollection();
@@ -704,10 +707,6 @@ public class ConcreteASTVisitor implements ASTVisitor {
 
         if (elements.isEmpty()) {
             qres.push(BagResult.Empty());
-            return;
-        }
-        if (elements.size() == 1) {
-            qres.push(arguments.get());
             return;
         }
         double sum = 0;
