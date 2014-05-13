@@ -1,6 +1,7 @@
 package edu.pjwstk.demo.visitor;
 
 import edu.pjwstk.demo.datastore.IStoreRepository;
+import edu.pjwstk.demo.expression.binary.JoinExpression;
 import edu.pjwstk.demo.interpreter.envs.ENVS;
 import edu.pjwstk.demo.result.*;
 import edu.pjwstk.demo.visitor.helpers.ArgumentResolver;
@@ -18,10 +19,7 @@ import edu.pjwstk.jps.interpreter.qres.IQResStack;
 import edu.pjwstk.jps.result.*;
 import edu.pjwstk.jps.visitor.ASTVisitor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -206,7 +204,7 @@ public class ConcreteASTVisitor implements ASTVisitor {
         Arguments arguments = getArgumentsForBinaryExpressionWithCondition(Operator.DOT, expr.getLeftExpression());
         IExpression selection = expr.getRightExpression();
 
-        Collection<ISingleResult> results =
+        List<ISingleResult> results =
             arguments.getAsCollection().stream()
                 .flatMap(x -> {
                     envs.push(envs.nested(x, store));                       // Wrzuć obiekt na ENVS
@@ -219,7 +217,10 @@ public class ConcreteASTVisitor implements ASTVisitor {
                 .filter(x -> x != null)
                 .collect(Collectors.toList());
 
-        qres.push(new BagResult(results));
+        if (arguments.isSequence)
+            qres.push(new SequenceResult(results));
+        else
+            qres.push(new BagResult(results));
     }
 
     @Override
@@ -272,13 +273,10 @@ public class ConcreteASTVisitor implements ASTVisitor {
         Collection<ISingleResult> leftCollection  = arguments.firstAsCollection();
         Collection<ISingleResult> rightCollection = arguments.secondAsCollection();
 
-        Collection<ISingleResult> result =
-            leftCollection.stream().filter(x ->
-                rightCollection.stream().anyMatch(x::equals))
-            .distinct()
-            .collect(Collectors.toList());
+        leftCollection.retainAll(rightCollection);
+        Collection<ISingleResult> results = leftCollection.stream().distinct().collect(Collectors.toList());
 
-        qres.push(new BagResult(result));
+        qres.push(new BagResult(results));
     }
 
     @Override
@@ -411,6 +409,21 @@ public class ConcreteASTVisitor implements ASTVisitor {
     @Override
     public void visitOrderByExpression(IOrderByExpression expr) {
 
+        visitJoinExpression(new JoinExpression(expr.getLeftExpression(), expr.getRightExpression()));
+
+        List<ISingleResult> orderedElements =
+                streamResult(qres.pop())
+                .sorted((x,y) -> {
+                    List<ISingleResult> leftArgs  = getElementsFromPotentialStruct(x).stream().skip(1).collect(Collectors.toList());
+                    List<ISingleResult> rightArgs = getElementsFromPotentialStruct(y).stream().skip(1).collect(Collectors.toList());
+                    return compareLists(
+                            getWithoutBinders(leftArgs),
+                            getWithoutBinders(rightArgs));
+                })
+                .map(x -> ((IStructResult)x).elements().get(0))
+                .collect(Collectors.toList());
+
+        qres.push(new SequenceResult(orderedElements));
     }
 
     @Override
@@ -868,6 +881,56 @@ public class ConcreteASTVisitor implements ASTVisitor {
         return (y instanceof IReferenceResult)
             ? Arrays.asList((ISingleResult) repository.get((IReferenceResult) y))
             : getElementsFromPotentialStruct(y);
+    }
+
+    //
+    // Metody ukrywające logikę w OrderByExpression
+    //
+    private int compareLists(List<ISingleResult> leftArgs, List<ISingleResult> rightArgs) {
+        int limit = Math.min(leftArgs.size(), rightArgs.size());
+
+        for (int i = 0; i < limit; i++){
+            ISingleResult left = leftArgs.get(i);
+            ISingleResult right = rightArgs.get(i);
+
+            if (! left.equals(right)) {
+                return compareResults(left, right);
+            }
+        }
+
+        return 0;
+    }
+
+    private int compareResults(ISingleResult left, ISingleResult right) {
+
+        // Szybka dereferencja (binderów pozbyliśmy się wcześniej)
+        IAbstractQueryResult leftValue, rightValue;
+        leftValue = left instanceof IReferenceResult ? repository.get((IReferenceResult) left) : left;
+        rightValue = right instanceof IReferenceResult ? repository.get((IReferenceResult) right) : right;
+
+        // Rekurencja
+        if (leftValue instanceof ICollectionResult || rightValue instanceof ICollectionResult)
+            return compareLists(
+                    streamResult(leftValue).collect(Collectors.toList()),
+                    streamResult(rightValue).collect(Collectors.toList())
+                    );
+
+        // Porównania
+        if (leftValue instanceof IStringResult && rightValue instanceof IStringResult)
+            return ((IStringResult) leftValue).getValue().compareTo(((IStringResult) rightValue).getValue());
+
+        if (leftValue instanceof IDoubleResult && rightValue instanceof IDoubleResult)
+            return ((IDoubleResult) leftValue).getValue().compareTo(((IDoubleResult) rightValue).getValue());
+
+        if (leftValue instanceof IIntegerResult && rightValue instanceof IIntegerResult)
+            return ((IIntegerResult) leftValue).getValue().compareTo(((IIntegerResult) rightValue).getValue());
+
+        if (leftValue instanceof IBooleanResult && rightValue instanceof IBooleanResult)
+            return ((IBooleanResult) leftValue).getValue().compareTo(((IBooleanResult) rightValue).getValue());
+
+        throw new RuntimeException("Cannot compare "
+                +ArgumentResolver.getType(leftValue)+" with "
+                +ArgumentResolver.getType(rightValue)+" - operation is not supported.");
     }
 
 }

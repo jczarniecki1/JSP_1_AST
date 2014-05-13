@@ -34,8 +34,12 @@ public class Arguments {
     public boolean isCollection;
     public boolean firstIsCollection;
     public boolean secondIsCollection;
+    public boolean isStruct;
     public boolean firstIsStruct;
     public boolean secondIsStruct;
+    public boolean isSequence;
+    public boolean firstIsSequence;
+    public boolean secondIsSequence;
 
     //
     // Constructors
@@ -49,6 +53,9 @@ public class Arguments {
         else if (first instanceof IBooleanResult) isBoolean = true;
         else if (first instanceof IStringResult) isString = true;
         else if (first instanceof ICollectionResult) isCollection = true;
+        else if (first instanceof IStructResult) isStruct = true;
+
+        if (first instanceof ISequenceResult) isSequence = true;
     }
 
     public Arguments(IAbstractQueryResult first, IAbstractQueryResult second) {
@@ -62,12 +69,17 @@ public class Arguments {
         else if (first instanceof IStringResult) firstIsString = true;
         else if (first instanceof ICollectionResult) firstIsCollection = true;
         else if (first instanceof IStructResult) firstIsStruct = true;
+
+        if (first instanceof ISequenceResult) firstIsSequence = true;
+
         if (second instanceof IIntegerResult) secondIsInteger = true;
         else if (second instanceof IDoubleResult) secondIsDouble = true;
         else if (second instanceof IBooleanResult) secondIsBoolean = true;
         else if (second instanceof IStringResult) secondIsString = true;
         else if (second instanceof ICollectionResult) secondIsCollection = true;
         else if (second instanceof IStructResult) secondIsStruct = true;
+
+        if (second instanceof ISequenceResult) secondIsSequence = true;
 
         mixedTypes = ! (
              (firstIsInteger && secondIsInteger)

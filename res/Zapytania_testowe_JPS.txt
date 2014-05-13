@@ -140,3 +140,7 @@ bag(booleanValue, false) in bag(true, booleanValue2)	false
 bag(1,1,2) in bag(2,2,1)	true
 bag(1,1,2,3,3) minus bag(2,2,1)	bag(3)
 bag(1,1,2) intersect bag(2, 1, 1)	bag(1,2)
+((bag(1,1,2,3,3) as x) order by (0 - x)).x	sequence(3,3,2,1,1)
+((bag(11,2211,2,3,3) as x) order by x).x	sequence(2,3,3,11,2211)
+(emp order by fName).fName	sequence(ref("Anna"),ref("Maciej"))
+(emp order by count(book)).fName	sequence(ref("Anna"),ref("Maciej"))

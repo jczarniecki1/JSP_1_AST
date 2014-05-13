@@ -70,6 +70,8 @@ terminal String EQUALS;
 terminal String AS;
 terminal String GROUP_AS;
 
+terminal String ORDER_BY;
+
 terminal String MAX;
 terminal String MIN;
 
@@ -95,6 +97,7 @@ precedence left JOIN, WHERE;
 precedence left FOR_ALL, FOR_ANY;
 precedence left NOT;
 precedence left UNION, IN;
+precedence left ORDER_BY;
 precedence left COMMA;
 precedence left OR, AND;
 precedence left XOR;
@@ -149,6 +152,8 @@ expr  ::=
 
 	| 	expr:e1 AS:o	            IDENTIFIER:e2	{: RESULT = new AsExpression        (e1, e2); :}
 	| 	expr:e1 GROUP_AS:o	        IDENTIFIER:e2	{: RESULT = new GroupAsExpression   (e1, e2); :}
+
+	| 	expr:e1 ORDER_BY:o	        expr:e2	{: RESULT = new OrderByExpression   (e1, e2); :}
 
 	| 	INTEGER_LITERAL:o           {: RESULT = new IntegerExpression   ((Integer)o);  :}
 	| 	DOUBLE_LITERAL:o            {: RESULT = new DoubleExpression    ((Double)o);   :}

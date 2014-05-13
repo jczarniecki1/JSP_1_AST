@@ -77,6 +77,8 @@ WHITESPACE = {LineTerminator} | [ \t\f]
 	"as"                    { return createToken(AS                 ); }
 	"group as"              { return createToken(GROUP_AS           ); }
 
+	"order by"              { return createToken(ORDER_BY           ); }
+
 	"."					    { return createToken(DOT                ); }
 	","					    { return createToken(COMMA              ); }
 

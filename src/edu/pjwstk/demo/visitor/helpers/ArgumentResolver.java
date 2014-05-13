@@ -1,13 +1,9 @@
 package edu.pjwstk.demo.visitor.helpers;
 
 import edu.pjwstk.demo.datastore.StoreRepository;
-import edu.pjwstk.demo.result.StructResult;
 import edu.pjwstk.jps.result.*;
 
-
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 //
 // Zadaniem ArgumentResolver'a jest dostarczenie eleganckiej formy wybierania argumentow w metodach ConcreteASTVisitora
@@ -72,7 +68,7 @@ public final class ArgumentResolver {
 
     // Pobranie typu (rzutowanie na enum)
     //
-    private static ArgumentType getType(IAbstractQueryResult argument)
+    public static ArgumentType getType(IAbstractQueryResult argument)
             throws RuntimeException {
         if (argument instanceof IBooleanResult)     return ArgumentType.BOOLEAN;
         if (argument instanceof IStringResult)      return ArgumentType.STRING;

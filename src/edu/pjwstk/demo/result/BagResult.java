@@ -11,9 +11,6 @@ public class BagResult implements IBagResult{
 
     private Collection<ISingleResult> values = new ArrayList<>();
 
-    public BagResult() {
-        // pusty bag
-    }
     public BagResult(Collection<ISingleResult> values) {
         this.values = values;
     }
@@ -21,10 +18,6 @@ public class BagResult implements IBagResult{
     @Override
     public Collection<ISingleResult> getElements() {
         return values;
-    }
-
-    public void add(ISingleResult element) {
-        values.add(element);
     }
 
     @Override
@@ -43,6 +36,6 @@ public class BagResult implements IBagResult{
     }
 
     public static IBagResult Empty() {
-        return new BagResult();
+        return new BagResult(new ArrayList<>());
     }
 }
